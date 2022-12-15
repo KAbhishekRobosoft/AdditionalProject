@@ -1,9 +1,10 @@
 import React from 'react'
-import Login from './src/screens/Login'
+import OtpScreen from './src/screens/OtpScreen'
+import Register from './src/screens/Register'
 
 function App() {
   return (
-      <Login />
+   <OtpScreen />
   )
 }
 
