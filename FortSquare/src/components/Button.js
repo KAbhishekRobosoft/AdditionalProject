@@ -6,10 +6,10 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export function LargeButton({title}) {
+export function LargeButton({title,onPress,disabled}) {
   return (
     <View style={{width:"100%",alignItems:"center"}}>
-      <TouchableOpacity style={styles.buttonView}>
+      <TouchableOpacity onPress={onPress} style={styles.buttonView} disabled={disabled}>
         <Text style={styles.textStyle}>{title}</Text>
       </TouchableOpacity>
     </View>

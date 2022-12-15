@@ -5,39 +5,44 @@ import {
   ImageBackground,
   Image,
   View,
-  ScrollView
+  ScrollView,
+  useWindowDimensions
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
-import {SmallButton} from '../components/Button';
+import { resetPasswordValidationSchema } from '../utils/Functions';
 
-function Login() {
+function ResetPassword() {
+  const {height,width}= useWindowDimensions()
+  const top= width > height ? (Platform.OS === "ios" ? 50 : 50) : (Platform.OS === "ios" ? 72:72)
+  const top1= width > height ? (Platform.OS === "ios" ? 80 : 80) : (Platform.OS === "ios" ? 120:120)
   return (
     <View style={{flex: 1}}>
       <ImageBackground
         source={require('../assets/images/background.png')}
         resizeMode="cover"
         style={styles.imgBack}>
-        <ScrollView style={{flex:1}}>
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex:1}}>
         <View style={{flex:1}}>
           <Image
-            style={styles.logoImg}
+            style={[styles.logoImg,{top:top}]}
             source={require('../assets/images/logo.png')}
           />
             <Formik
               initialValues={{
-                email: '',
                 password: '',
+                confirmPassword: '',
               }}
+              validationSchema={resetPasswordValidationSchema}
               onSubmit={values => console.log(values)}>
               {({handleSubmit, isValid}) => (
-                <View style={{}}>
+                <View style={{marginTop:top1}}>
                   <Field
                     component={CustomField}
                     label="Enter Password"
                     name="password"
-                    keyboardType="email-address"
+                    secureTextEntry
                   />
                   <Field
                     component={CustomField}
@@ -78,7 +83,6 @@ const styles = StyleSheet.create({
 
 
   logoImg: {
-    top: 150,
     alignSelf: 'center',
   },
 
@@ -88,8 +92,8 @@ const styles = StyleSheet.create({
 
   butView: {
     width: '100%',
-    marginTop: 100,
+    marginVertical: 100,
     alignItems: 'center',
   },
 });
-export default Login;
+export default ResetPassword;

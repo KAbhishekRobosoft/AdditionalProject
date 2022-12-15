@@ -1,7 +1,5 @@
 import React from 'react';
 import {
-  Text,
-  SafeAreaView,
   StyleSheet,
   ImageBackground,
   Image,
@@ -12,6 +10,7 @@ import {
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
+import { registerValidationSchema } from '../utils/Functions';
 
 function Register() {
   return (
@@ -29,8 +28,11 @@ function Register() {
                 <Formik
                   initialValues={{
                     email: '',
-                    password: '',
+                    mobileNumber: '',
+                    password:'',
+                    confirmPassword:''
                   }}
+                  validationSchema={registerValidationSchema}
                   onSubmit={values => console.log(values)}>
                   {({handleSubmit, isValid}) => (
                     <View style={styles.fieldView}>
@@ -97,7 +99,7 @@ const styles = StyleSheet.create({
   },
 
   fieldView:{
-    marginTop:114
+    marginTop:100
   },
 
   facebook: {
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
   },
 
   logoImg: {
-    top: 52,
+    top: 62,
     alignSelf: 'center',
   },
 

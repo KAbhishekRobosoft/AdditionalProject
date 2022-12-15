@@ -1,12 +1,9 @@
 import React from 'react';
 import {
   Text,
-  SafeAreaView,
   StyleSheet,
   ImageBackground,
-  Dimensions,
   Image,
-  Button,
   View,
   ScrollView,
   useWindowDimensions,
@@ -16,6 +13,7 @@ import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
 import {SmallButton} from '../components/Button';
+import { loginValidationSchema } from '../utils/Functions';
 
 function Login() {
     const {height,width}= useWindowDimensions()
@@ -41,6 +39,7 @@ function Login() {
                 email: '',
                 password: '',
               }}
+              validationSchema={loginValidationSchema}
               onSubmit={values => console.log(values)}>
               {({handleSubmit, isValid}) => (
                 <View style={{marginTop:top1}}>
