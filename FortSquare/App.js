@@ -1,10 +1,8 @@
-import React from 'react'
-import Test from './src/screens/Test'
+import React from 'react';
+import ReviewScreen from './src/screens/ReviewScreen';
 
 function App() {
-  return (
-    <Test/>
-  )
+  return <ReviewScreen />;
 }
 
-export default App
+export default App;

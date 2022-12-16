@@ -1,10 +1,10 @@
 import React from 'react'
 import { FlatList,View } from 'react-native'
 
-function VirtualList({data,renderItem}) {
+function VirtualList({data,renderItem,keyExtractor}) {
   return (
     <View>
-        <FlatList data={data} renderItem= {renderItem} />
+        <FlatList showsVerticalScrollIndicator={false} data={data} renderItem= {renderItem} keyExtractor={keyExtractor}/>
     </View>
   )
 }

@@ -102,6 +102,10 @@ function OtpScreen() {
                       onPress={handleSubmit}
                       title="Submit"
                       disabled={!isValid}
+                      width="90%"
+                      borderRadius="8"
+                      backgroundColor="transparent"
+                      fontFamily="Avenir Book"
                     />
                   </View>
                 </View>

@@ -6,30 +6,27 @@ import {
   StyleSheet,
 } from 'react-native';
 
-export function LargeButton({title,onPress,disabled}) {
+export function LargeButton({title,onPress,disabled,backgroundColor,width,borderRadius,fontFamily}) {
   return (
     <View style={{width:"100%",alignItems:"center"}}>
-      <TouchableOpacity onPress={onPress} style={styles.buttonView} disabled={disabled}>
-        <Text style={styles.textStyle}>{title}</Text>
+      <TouchableOpacity onPress={onPress} style={[styles.buttonView,{backgroundColor:backgroundColor,width:width,borderRadius:parseInt(borderRadius)}]} disabled={disabled}>
+        <Text style={[styles.textStyle,{fontFamily:fontFamily}]}>{title}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 const styles = StyleSheet.create({
   buttonView: {
-    width: '90%',
     height: 54,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth:1,
     borderColor:"white",
-    borderRadius:8
   },
 
   textStyle: {
     color: 'white',
     fontSize:20,
-    fontFamily:"Avenir Book"
   },
 
   smallText:{

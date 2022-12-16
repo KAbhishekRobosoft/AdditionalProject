@@ -62,7 +62,11 @@ function Login() {
                     <LargeButton
                       onPress={handleSubmit}
                       title="Login"
+                      width= "90%"
+                      borderRadius= "8"
+                      backgroundColor="transparent"
                       disabled={!isValid}
+                      fontFamily="Avenir Medium"
                     />
                   </View>
                 </View>

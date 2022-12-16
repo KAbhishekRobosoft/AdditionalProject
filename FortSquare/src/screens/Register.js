@@ -3,14 +3,13 @@ import {
   StyleSheet,
   ImageBackground,
   Image,
-
   View,
   ScrollView,
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
-import { registerValidationSchema } from '../utils/Functions';
+import {registerValidationSchema} from '../utils/Functions';
 
 function Register() {
   return (
@@ -19,59 +18,63 @@ function Register() {
         source={require('../assets/images/background.png')}
         resizeMode="cover"
         style={styles.imgBack}>
-          <ScrollView style={{flex:1}}>
-            <View style={{flex: 1, marginVertical: 90}}>
-              <Image
-                style={styles.logoImg}
-                source={require('../assets/images/logo.png')}
-              />
-                <Formik
-                  initialValues={{
-                    email: '',
-                    mobileNumber: '',
-                    password:'',
-                    confirmPassword:''
-                  }}
-                  validationSchema={registerValidationSchema}
-                  onSubmit={values => console.log(values)}>
-                  {({handleSubmit, isValid}) => (
-                    <View style={styles.fieldView}>
-                      <Field
-                        component={CustomField}
-                        label="Email"
-                        name="email"
-                        keyboardType="email-address"
-                      />
-                      <Field
-                        component={CustomField}
-                        name="mobileNumber"
-                        label="Mobile Number"
-                        keyboardType="phone-pad"
-                      />
-                      <Field
-                        component={CustomField}
-                        label="Password"
-                        name="password"
-                        secureTextEntry
-                      />
-                      <Field
-                        component={CustomField}
-                        name="confirmPassword"
-                        label="Confirm Password"
-                        secureTextEntry
-                      />
-                      <View style={styles.butView}>
-                        <LargeButton
-                          onPress={handleSubmit}
-                          title="Login"
-                          disabled={!isValid}
-                        />
-                      </View>
-                    </View>
-                  )}
-                </Formik>
-              </View>
-          </ScrollView>
+        <ScrollView style={{flex: 1}}>
+          <View style={{flex: 1, marginVertical: 90}}>
+            <Image
+              style={styles.logoImg}
+              source={require('../assets/images/logo.png')}
+            />
+            <Formik
+              initialValues={{
+                email: '',
+                mobileNumber: '',
+                password: '',
+                confirmPassword: '',
+              }}
+              validationSchema={registerValidationSchema}
+              onSubmit={values => console.log(values)}>
+              {({handleSubmit, isValid}) => (
+                <View style={styles.fieldView}>
+                  <Field
+                    component={CustomField}
+                    label="Email"
+                    name="email"
+                    keyboardType="email-address"
+                  />
+                  <Field
+                    component={CustomField}
+                    name="mobileNumber"
+                    label="Mobile Number"
+                    keyboardType="phone-pad"
+                  />
+                  <Field
+                    component={CustomField}
+                    label="Password"
+                    name="password"
+                    secureTextEntry
+                  />
+                  <Field
+                    component={CustomField}
+                    name="confirmPassword"
+                    label="Confirm Password"
+                    secureTextEntry
+                  />
+                  <View style={styles.butView}>
+                    <LargeButton
+                      onPress={handleSubmit}
+                      title="Login"
+                      disabled={!isValid}
+                      width="90%"
+                      borderRadius="8"
+                      backgroundColor="transparent"
+                      fontFamily="Avenir Book"
+                    />
+                  </View>
+                </View>
+              )}
+            </Formik>
+          </View>
+        </ScrollView>
       </ImageBackground>
     </View>
   );
@@ -98,8 +101,8 @@ const styles = StyleSheet.create({
     height: 50,
   },
 
-  fieldView:{
-    marginTop:100
+  fieldView: {
+    marginTop: 100,
   },
 
   facebook: {
