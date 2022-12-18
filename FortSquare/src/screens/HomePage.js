@@ -7,15 +7,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import TopBar from '../components/TopBar';
-function HomePage() {
+
+function HomePage({navigation}) {
   return (
     <SafeAreaView style={styles.homeContainer}>
       <View style={styles.homeHeader}>
-        <TouchableOpacity>
-          <Image
-            style={styles.menuIcon}
-            source={require('../assets/images/menu_icon.png')}
-          />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.openDrawer();
+          }}>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.menuIcon}
+              source={require('../assets/images/menu_icon.png')}
+            />
+          </View>
         </TouchableOpacity>
         <Image
           style={styles.homeLogo}
@@ -23,10 +29,12 @@ function HomePage() {
         />
         <View style={styles.homeOptions}>
           <TouchableOpacity>
-            <Image
-              style={styles.filterIcon}
-              source={require('../assets/images/filter_icon.png')}
-            />
+            <View style={styles.iconHeader}>
+              <Image
+                style={styles.filterIcon}
+                source={require('../assets/images/filter_icon.png')}
+              />
+            </View>
           </TouchableOpacity>
           <TouchableOpacity>
             <View style={styles.iconHeader}>
@@ -59,6 +67,13 @@ const styles = StyleSheet.create({
   },
   topBar: {
     flex: 1,
+  },
+
+  iconHeader: {
+    height: 64,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   menuIcon: {

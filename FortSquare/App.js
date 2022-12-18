@@ -1,8 +1,16 @@
 import React from 'react';
-import ReviewScreen from './src/screens/ReviewScreen';
-
+import StackNavigation from './src/utils/StackNavigation';
+import {NavigationContainer} from '@react-navigation/native';
+import SearchScreen from './src/screens/SearchScreen';
+import TextInputComponent from './src/components/TextInputComponent';
+import ParameterWithHeaderList from './src/components/ParameterWithHeaderList';
 function App() {
-  return <ReviewScreen />;
+  return (
+    <NavigationContainer>
+      <StackNavigation />
+    </NavigationContainer>
+    // <ParameterWithHeaderList />
+  );
 }
 
 export default App;

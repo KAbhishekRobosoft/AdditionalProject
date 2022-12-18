@@ -5,7 +5,7 @@ import {mapStyle} from '../utils/Functions';
 import VirtualList from '../components/VirtualList';
 import ListDisplay from '../components/HotelListDisplay';
 
-function NearYou() {
+function NearYou({navigation}) {
   const {height,width}= useWindowDimensions()
   const height1= width > height ? (Platform.OS === "ios" ? 135: 125) : (Platform.OS === "ios" ? 200 : 200)
  
@@ -19,7 +19,7 @@ function NearYou() {
   ];
   
   const renderItem = ({item}) => {
-    return <ListDisplay item={item} />;
+    return <ListDisplay navigation={navigation} item={item} />;
   };
 
   return (

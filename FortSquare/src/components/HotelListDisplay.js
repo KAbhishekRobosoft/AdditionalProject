@@ -1,7 +1,14 @@
 import React from 'react';
-import {StyleSheet, View, Image, Text, useWindowDimensions} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  Image,
+  Text,
+  useWindowDimensions,
+  TouchableOpacity,
+} from 'react-native';
 
-function ListDisplay({item,height}) {
+function ListDisplay({item,navigation}) {
   const {height, width} = useWindowDimensions();
   const width1 =
     width > height
@@ -21,33 +28,37 @@ function ListDisplay({item,height}) {
       ? 5
       : 5;
   return (
-    <View style={[styles.listContainer, styles.shadowProp,{margin:margin}]}>
-      <View style={styles.listDisplay}>
-        <Image
-          style={styles.listImg}
-          source={require('../assets/images/hotel.jpeg')}
-        />
-        <View>
-          <View style={[styles.textWithImage, {width: width1}]}>
-            <Text style={styles.listName}>{item.name}</Text>
-            <Image
-              style={styles.favouriteImg}
-              source={require('../assets/images/favourite_icon.png')}
-            />
-          </View>
-          <View style={styles.ratingView}>
-            <Text style={styles.listRating}>{item.rating}</Text>
-          </View>
-          <View style={styles.typeDist}>
-            <Text style={styles.typeText}>{item.type}</Text>
-            <Text style={styles.distText}>{item.distance}</Text>
-          </View>
-          <View style={styles.addressView}>
-            <Text style={styles.addressText}>{item.address}</Text>
+    <TouchableOpacity onPress={()=>{
+      navigation.navigate('particular')
+    }}>
+      <View style={[styles.listContainer, styles.shadowProp, {margin: margin}]}>
+        <View style={styles.listDisplay}>
+          <Image
+            style={styles.listImg}
+            source={require('../assets/images/hotel.jpeg')}
+          />
+          <View>
+            <View style={[styles.textWithImage, {width: width1}]}>
+              <Text style={styles.listName}>{item.name}</Text>
+              <Image
+                style={styles.favouriteImg}
+                source={require('../assets/images/favourite_icon.png')}
+              />
+            </View>
+            <View style={styles.ratingView}>
+              <Text style={styles.listRating}>{item.rating}</Text>
+            </View>
+            <View style={styles.typeDist}>
+              <Text style={styles.typeText}>{item.type}</Text>
+              <Text style={styles.distText}>{item.distance}</Text>
+            </View>
+            <View style={styles.addressView}>
+              <Text style={styles.addressText}>{item.address}</Text>
+            </View>
           </View>
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -115,11 +126,11 @@ const styles = StyleSheet.create({
   typeText: {
     color: 'grey',
     marginLeft: 20,
-    fontFamily:"Avenir Book"
+    fontFamily: 'Avenir Book',
   },
 
   distText: {
-    fontFamily:"Avenir Book",
+    fontFamily: 'Avenir Book',
     marginLeft: 10,
     color: 'grey',
   },

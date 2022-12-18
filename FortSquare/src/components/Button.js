@@ -36,10 +36,10 @@ const styles = StyleSheet.create({
   }
 });
 
-export function SmallButton({title}){
+export function SmallButton({title,onPress}){
     return(
         <View>
-            <TouchableOpacity>
+            <TouchableOpacity onPress={onPress}>
                 <Text style={styles.smallText}>{title}</Text>
             </TouchableOpacity>
         </View>

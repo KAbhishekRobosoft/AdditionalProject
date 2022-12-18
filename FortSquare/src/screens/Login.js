@@ -7,32 +7,51 @@ import {
   View,
   ScrollView,
   useWindowDimensions,
-  Platform
+  Platform,
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
 import {SmallButton} from '../components/Button';
-import { loginValidationSchema } from '../utils/Functions';
+import {loginValidationSchema} from '../utils/Functions';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
-function Login() {
-    const {height,width}= useWindowDimensions()
-    const top= width > height ? (Platform.OS === "ios" ? 50 : 50) : (Platform.OS === "ios" ? 72:72)
-    const top1= width > height ? (Platform.OS === "ios" ? 80 : 80) : (Platform.OS === "ios" ? 120:120)
-    
-    return (
+function Login({navigation}) {
+  const {height, width} = useWindowDimensions();
+  const top =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 50
+        : 50
+      : Platform.OS === 'ios'
+      ? 72
+      : 72;
+  const top1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 80
+        : 80
+      : Platform.OS === 'ios'
+      ? 120
+      : 120;
+
+  return (
     <View style={{flex: 1}}>
       <ImageBackground
         source={require('../assets/images/background.png')}
         resizeMode="cover"
         style={styles.imgBack}>
-        <ScrollView showsVerticalScrollIndicator={false} style={{flex:1}}>
-        <View style={{flex:1}}>
-          <Text style={styles.skipText}>Skip {'>'}</Text>
-          <Image
-            style={[styles.logoImg,{top:top}]}
-            source={require('../assets/images/logo.png')}
-          />
+        <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
+          <View style={{flex: 1}}>
+            <TouchableOpacity onPress={()=>{
+              navigation.navigate('drawer')
+            }}>
+                <Text style={styles.skipText}>Skip {'>'}</Text>
+            </TouchableOpacity>
+            <Image
+              style={[styles.logoImg, {top: top}]}
+              source={require('../assets/images/logo.png')}
+            />
 
             <Formik
               initialValues={{
@@ -40,9 +59,11 @@ function Login() {
                 password: '',
               }}
               validationSchema={loginValidationSchema}
-              onSubmit={values => console.log(values)}>
+              onSubmit={values => {
+                navigation.navigate('drawer');
+              }}>
               {({handleSubmit, isValid}) => (
-                <View style={{marginTop:top1}}>
+                <View style={{marginTop: top1}}>
                   <Field
                     component={CustomField}
                     label="Email"
@@ -56,14 +77,19 @@ function Login() {
                     secureTextEntry
                   />
                   <View style={styles.forgotView}>
-                    <SmallButton title="Forgot Password?" />
+                    <SmallButton
+                      onPress={() => {
+                        navigation.navigate('otp');
+                      }}
+                      title="Forgot Password?"
+                    />
                   </View>
                   <View style={styles.butView}>
                     <LargeButton
                       onPress={handleSubmit}
                       title="Login"
-                      width= "90%"
-                      borderRadius= "8"
+                      width="90%"
+                      borderRadius="8"
                       backgroundColor="transparent"
                       disabled={!isValid}
                       fontFamily="Avenir Medium"
@@ -73,7 +99,12 @@ function Login() {
               )}
             </Formik>
             <View style={styles.accountText}>
-              <SmallButton title="Create an Account" />
+              <SmallButton
+                onPress={() => {
+                  navigation.navigate('register');
+                }}
+                title="Create an Account"
+              />
             </View>
             <View style={styles.alter}>
               <Text style={styles.alterText}>OR</Text>
@@ -97,7 +128,7 @@ function Login() {
 
 const styles = StyleSheet.create({
   imgBack: {
-    flex:1,
+    flex: 1,
   },
 
   skipText: {
@@ -126,6 +157,13 @@ const styles = StyleSheet.create({
   accountText: {
     alignItems: 'center',
     marginTop: 34,
+  },
+
+  iconHeader: {
+    height: 64,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   alter: {

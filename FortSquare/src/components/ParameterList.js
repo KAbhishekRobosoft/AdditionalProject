@@ -1,9 +1,9 @@
 import React from 'react';
-import {View,StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import ListDisplay from './HotelListDisplay';
 import VirtualList from './VirtualList';
 
-function ParameterList() {
+function ParameterList({navigation}) {
   const DATA = [
     {
       id: 1,
@@ -47,13 +47,13 @@ function ParameterList() {
     },
   ];
 
-  const renderItem= ({item})=>{
-    return(<ListDisplay item={item}/>)
-  }
+  const renderItem = ({item}) => {
+    return <ListDisplay navigation={navigation} item={item} />;
+  };
 
   return (
     <View style={styles.parameterContainer}>
-        <VirtualList data={DATA} renderItem= {renderItem} />
+      <VirtualList data={DATA} renderItem={renderItem} />
     </View>
   );
 }
@@ -61,7 +61,7 @@ function ParameterList() {
 const styles = StyleSheet.create({
   parameterContainer: {
     flex: 1,
-    marginVertical:5
+    marginVertical: 5,
   },
 });
 

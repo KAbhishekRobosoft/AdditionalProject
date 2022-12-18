@@ -15,7 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import {mapStyle} from '../utils/Functions';
 import MapView, {Marker} from 'react-native-maps';
 
-function ParticularHotel() {
+function ParticularHotel({navigation}) {
   return (
     <SafeAreaView style={styles.particularContainer}>
     <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
@@ -23,7 +23,9 @@ function ParticularHotel() {
         source={require('../assets/images/hotel.jpeg')}
         style={styles.particularBack}>
         <View style={styles.particularHeader}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>{
+            navigation.goBack()
+          }}>
             <View style={styles.iconHeader}>
               <Image
                 style={styles.backImg}
@@ -133,13 +135,6 @@ function ParticularHotel() {
             end={{x: 1, y: 1}}
             locations={[0.2, 1]}
             colors={['rgba(245,245,245,1)', 'rgba(0,0,0,0)']}>
-            <View style={styles.mapAddress}>
-              <Text style={styles.addressText}>
-                Daffodils, Laxmindra almanpur nagar, Baindoor
-              </Text>
-              <Text style={styles.phoneText}>+91 9844 635685</Text>
-              <Text style={styles.driveText}>Drive: 5km</Text>
-            </View>
           </LinearGradient>
         </MapView>
       </View>
