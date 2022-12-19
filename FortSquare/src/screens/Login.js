@@ -15,8 +15,31 @@ import {LargeButton} from '../components/Button';
 import {SmallButton} from '../components/Button';
 import {loginValidationSchema} from '../utils/Functions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
+import {checkIn} from '../services/UserCredentials';
+import Toast from 'react-native-simple-toast';
+import {setToken} from '../redux/AuthSlice';
+import {useDispatch} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IndicatorButton } from '../components/Button';
 
 function Login({navigation}) {
+  const dispatch = useDispatch();
+
+  async function signIn(userData) {
+    const response = await checkIn(userData);
+    if (response !== undefined) {
+      try {
+        await AsyncStorage.setItem('token', response.access_token);
+      } catch (e) {
+        console.log(e);
+      }
+      dispatch(setToken(response.access_token));
+      Toast.show('Login successfull');
+    } else {
+      Toast.show("User doesn't exists");
+    }
+  }
+
   const {height, width} = useWindowDimensions();
   const top =
     width > height
@@ -35,6 +58,11 @@ function Login({navigation}) {
       ? 120
       : 120;
 
+  const initialValues = {
+    email: '',
+    password: '',
+  };
+
   return (
     <View style={{flex: 1}}>
       <ImageBackground
@@ -43,10 +71,11 @@ function Login({navigation}) {
         style={styles.imgBack}>
         <ScrollView showsVerticalScrollIndicator={false} style={{flex: 1}}>
           <View style={{flex: 1}}>
-            <TouchableOpacity onPress={()=>{
-              navigation.navigate('drawer')
-            }}>
-                <Text style={styles.skipText}>Skip {'>'}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('drawer');
+              }}>
+              <Text style={styles.skipText}>Skip {'>'}</Text>
             </TouchableOpacity>
             <Image
               style={[styles.logoImg, {top: top}]}
@@ -54,15 +83,12 @@ function Login({navigation}) {
             />
 
             <Formik
-              initialValues={{
-                email: '',
-                password: '',
-              }}
+              initialValues={initialValues}
               validationSchema={loginValidationSchema}
               onSubmit={values => {
-                navigation.navigate('drawer');
+                signIn(values);
               }}>
-              {({handleSubmit, isValid}) => (
+              {({handleSubmit, isValid, resetForm}) => (
                 <View style={{marginTop: top1}}>
                   <Field
                     component={CustomField}
@@ -86,7 +112,9 @@ function Login({navigation}) {
                   </View>
                   <View style={styles.butView}>
                     <LargeButton
-                      onPress={handleSubmit}
+                      onPress={() => {
+                        handleSubmit();
+                      }}
                       title="Login"
                       width="90%"
                       borderRadius="8"

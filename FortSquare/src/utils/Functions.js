@@ -1,14 +1,11 @@
 import * as yup from 'yup';
-import {StyleSheet} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { refreshToken } from '../services/UserCredentials';
 
 export const registerValidationSchema = yup.object().shape({
-  fullName: yup
-    .string()
-    .matches(/(\w.+\s).+/, 'Enter at least 2 names')
-    .required('Full name is required'),
   mobileNumber: yup
     .string()
-    .matches(/(01)(\d){8}\b/, 'Enter a valid phone number')
+    .matches(/(\d){10}\b/, 'Enter a valid phone number')
     .required('Phone number is required'),
   email: yup
     .string()
@@ -282,3 +279,31 @@ export const mapStyle = [
     ]
   }
 ]
+
+
+export function isTokenExpired(token) {
+  var jwt_decode = require('jwt-decode')
+  var decoded = jwt_decode(token);
+  const time= new Date(decoded.exp)
+  const time2= new Date(Date.now() / 1000)
+  if (time.getTime() <= time2.getTime()) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+export async function getVerifiedKeys(key) {
+ 
+  if (key) {
+    if (isTokenExpired(key)) {
+      let response = await refreshToken(key);
+      await AsyncStorage.setItem('token',response.access_token)
+      return response.access_token;
+    } else {
+      return key;
+    }
+  } else {
+    return 'Enter access token';
+  }
+}

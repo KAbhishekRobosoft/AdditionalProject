@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,8 @@ import {
   Image,
   Text,
   useWindowDimensions,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import {
   DrawerContentScrollView,
@@ -13,10 +15,23 @@ import {
 } from '@react-navigation/drawer';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {logOut} from '../redux/AuthSlice';
+import {useDispatch, u, useSelector} from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-simple-toast';
+import {getProfile} from '../services/UserCredentials';
+import {getVerifiedKeys} from '../utils/Functions';
+import {setToken} from '../redux/AuthSlice';
+import {setLoader, desetLoader} from '../redux/AuthSlice';
+import ImagePicker from 'react-native-image-crop-picker';
+import {uploadImage} from '../services/UserCredentials';
+import {setInitialState} from '../redux/AuthSlice';
 
 function CustomDrawer(props) {
   const {height, width} = useWindowDimensions();
-
+  const dispatch = useDispatch();
+  const [userData, setUserData] = useState({});
+  const authData = useSelector(state => state.auth);
   const height1 =
     width > height
       ? Platform.OS === 'ios'
@@ -25,24 +40,138 @@ function CustomDrawer(props) {
       : Platform.OS === 'ios'
       ? '28%'
       : '28%';
+
+  const marginRight =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 70
+        : 70
+      : Platform.OS === 'ios'
+      ? 20
+      : 20;
+
+      const marginTop =
+      width > height
+        ? Platform.OS === 'ios'
+          ? 20
+          : 20
+        : Platform.OS === 'ios'
+        ? 50
+        : 20;
+
+  useEffect(() => {
+    if (authData.userToken !== null) {
+      dispatch(setLoader());
+      setTimeout(async () => {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const response = await getProfile(cred);
+        if (response !== undefined) {
+          setUserData(response);
+          dispatch(desetLoader());
+        } else {
+          Toast.show('Unable to get data');
+        }
+      }, 500);
+    }
+  }, [authData.initialState]);
+
+  const pickImage = () => {
+    ImagePicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(async image => {
+        const payload = new FormData();
+        payload.append('image', {
+          uri: image.path,
+          type: image.mime,
+          name: `${image.filename}.${image.mime.substring(
+            image.mime.indexOf('/') + 1,
+          )}`,
+        });
+        let cred = await getVerifiedKeys(authData.userToken);
+        const resp = await uploadImage(payload, cred);
+        console.log(resp);
+        if (resp.hasOwnProperty('message')) {
+          dispatch(setInitialState(authData.initialState));
+          Toast.show('Profile Updated');
+        }
+      })
+      .catch(er => Toast.show('User cancelled selection'));
+  };
+
   return (
     <View style={styles.drawerView}>
       <ImageBackground
         blurRadius={20}
         style={styles.imgBack}
         source={require('../assets/images/background.png')}>
-        <View style={[styles.profileView, {height: height1}]}>
-          <Image
-            style={styles.profilePic}
-            source={require('../assets/images/profillephotp.png')}
-          />
-          <Text style={styles.profileText}>Swapnil Swarup</Text>
-        </View>
+        {authData.userToken !== null ? (
+          !authData.stateLoader && JSON.stringify(userData) !== '{}' ? (
+            <View style={[styles.profileView, {height: height1,marginTop:marginTop}]}>
+              <TouchableOpacity
+                onPress={() => {
+                  pickImage();
+                }}>
+                <Image
+                  style={styles.profilePic}
+                  source={{uri: 'https' + userData.userImage.substring(4)}}
+                />
+              </TouchableOpacity>
+              <Text style={styles.profileText}>
+                {userData.email.substring(0, userData.email.indexOf('@'))}
+              </Text>
+            </View>
+          ) : (
+            <View
+              style={{
+                height: height1,
+                alignItems: 'center',
+                marginTop: 20,
+                width: '100%',
+                justifyContent: 'center',
+              }}>
+              <ActivityIndicator size="large" color="white" />
+            </View>
+          )
+        ) : (
+          <View style={[styles.profileView, {height: height1,marginTop:marginTop}]}>
+            <Image
+              style={styles.profilePic1}
+              source={require('../assets/images/profile.png')}
+            />
+          </View>
+        )}
+
         <DrawerContentScrollView {...props}>
-          <View>
+          <View style={{marginVertical:5}}>
             <DrawerItemList {...props} />
-            <View style={styles.logoutView}>
-              <TouchableOpacity style={styles.logout}>
+            <View style={[styles.logoutView,{marginRight:marginRight}]}>
+              <TouchableOpacity
+                onPress={async () => {
+                  Alert.alert('Confirm', 'Are you sure you want to delete ?', [
+                    {
+                      text: 'Yes',
+                      onPress: async () => {
+                        try {
+                          await AsyncStorage.removeItem('token');
+                          dispatch(logOut());
+                        } catch (e) {
+                          console.log(e);
+                        }
+                      },
+                    },
+                    {
+                      text: 'No',
+                      onPress: () => {
+                        Toast.show('Logout cancelled');
+                      },
+                    },
+                  ]);
+                }}
+                style={styles.logout}>
                 <Icon
                   style={styles.logoutIcon}
                   name="log-out-outline"
@@ -80,7 +209,6 @@ const styles = StyleSheet.create({
     borderBottomColor: '#52434D',
     width: '80%',
     alignSelf: 'center',
-    marginRight:5
   },
 
   logout: {
@@ -104,13 +232,19 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
 
+  profilePic1: {
+    height: 80,
+    width: 80,
+    marginTop: 80,
+    borderRadius: 40,
+  },
+
   imgBack: {
     flex: 1,
   },
 
   profileView: {
     alignItems: 'center',
-    marginTop: 20,
     width: '100%',
   },
 });

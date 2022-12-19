@@ -11,7 +11,7 @@ import {
 import ListDisplay from '../components/HotelListDisplay';
 import VirtualList from './VirtualList';
 
-function ParameterWithHeaderList({navigation}) {
+function ParameterWithHeaderList({navigation,route}) {
   const {height, width} = useWindowDimensions();
   const left =
     width > height
@@ -64,13 +64,16 @@ function ParameterWithHeaderList({navigation}) {
       distance: '6.5 km',
     },
   ];
-  const renderItem = ({item}) => {
+  const renderItem = ({item,route}) => {
     return <ListDisplay navigation={navigation} item={item} />;
   };
+
   return (
     <SafeAreaView style={styles.parameterContainer}>
       <View style={styles.reviewHeader}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{
+          navigation.goBack()
+        }}>
           <View style={styles.iconHeader}>
             <Image
               style={styles.backIcon}
@@ -78,7 +81,7 @@ function ParameterWithHeaderList({navigation}) {
             />
           </View>
         </TouchableOpacity>
-        <Text style={[styles.reviewHotelText, {marginLeft: left}]}>Attil</Text>
+        <Text style={[styles.reviewHotelText, {marginLeft: left}]}>{route.params.headerName}</Text>
       </View>
       <View style={styles.parameterList}>
         <VirtualList data={DATA} renderItem={renderItem} />

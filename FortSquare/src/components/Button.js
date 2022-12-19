@@ -4,6 +4,7 @@ import {
   TouchableOpacity,
   Text,
   StyleSheet,
+  ActivityIndicator
 } from 'react-native';
 
 export function LargeButton({title,onPress,disabled,backgroundColor,width,borderRadius,fontFamily}) {
@@ -46,3 +47,12 @@ export function SmallButton({title,onPress}){
     )
 }
 
+export function IndicatorButton({disabled,backgroundColor,width,borderRadius,fontFamily}) {
+  return (
+    <View style={{width:"100%",alignItems:"center"}}>
+      <TouchableOpacity style={[styles.buttonView,{backgroundColor:backgroundColor,width:width,borderRadius:parseInt(borderRadius)}]} disabled={disabled}>
+          <ActivityIndicator size= "large" color="white"/>
+      </TouchableOpacity>
+    </View>
+  );
+}

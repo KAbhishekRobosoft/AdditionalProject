@@ -53,26 +53,46 @@ function SearchByPlace({navigation}) {
       <View style={styles.nearBy}>
         <Text style={styles.nearByText}>Suggestions</Text>
       </View>
-      <TouchableOpacity onPress={()=>{
-        navigation.navigate('parameter',{name:'getTopPlace',headerName:"Top picks"})
-      }}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('parameterHeader', {
+            name: 'getTopPlace',
+            headerName: 'Top picks',
+          });
+        }}>
         <View style={styles.nearByPlaceList}>
           <Text style={styles.placeName}>Top pick</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity onPress={()=>{
-        navigation.navigate('parameter',{name:'getPopularPlace',headerName:"Top picks"})
-      }}>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('parameterHeader', {
+            name: 'getPopularPlace',
+            headerName: 'Popular',
+          });
+        }}>
         <View style={styles.nearByPlaceList}>
           <Text style={styles.placeName}>Popular</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('parameterHeader', {
+            name: 'getRestaurants',
+            headerName: 'Lunch',
+          });
+        }}>
         <View style={styles.nearByPlaceList}>
           <Text style={styles.placeName}>Lunch</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate('parameterHeader', {
+            name: 'getCafe',
+            headerName: 'Coffee',
+          });
+        }}>
         <View style={styles.nearByPlaceList}>
           <Text style={styles.placeName}>Coffee</Text>
         </View>
@@ -91,6 +111,7 @@ const styles = StyleSheet.create({
   nearByPlaceList: {
     height: 70,
     borderBottomWidth: 1,
+    backgroundColor: 'white',
     borderBottomColor: '#e4e4e4',
     flexDirection: 'row',
     alignItems: 'center',

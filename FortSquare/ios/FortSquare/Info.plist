@@ -35,8 +35,14 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>FoursquareApp requires camera access for picture access.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
+	<string>Foursquare requires location access.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Foursquare App requires quite access for all.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Foursquare App requires photo,images access.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>fonts/FontAwesome.ttf</string>

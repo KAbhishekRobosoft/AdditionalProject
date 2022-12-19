@@ -10,8 +10,27 @@ import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
 import {registerValidationSchema} from '../utils/Functions';
+import {register} from '../services/UserCredentials';
+import Toast from 'react-native-simple-toast';
 
-function Register() {
+function Register({navigation}) {
+  async function signUp(userData) {
+    const response = await register(userData);
+    if (response.hasOwnProperty('message')) {
+      Toast.show('Registered Successfully');
+      navigation.navigate('login');
+    } else {
+      Toast.show('User already exists');
+    }
+  }
+
+  const initialValues = {
+    email: '',
+    mobileNumber: '',
+    password: '',
+    confirmPassword: '',
+  };
+
   return (
     <View style={{flex: 1}}>
       <ImageBackground
@@ -25,15 +44,12 @@ function Register() {
               source={require('../assets/images/logo.png')}
             />
             <Formik
-              initialValues={{
-                email: '',
-                mobileNumber: '',
-                password: '',
-                confirmPassword: '',
-              }}
+              initialValues={initialValues}
               validationSchema={registerValidationSchema}
-              onSubmit={values => console.log(values)}>
-              {({handleSubmit, isValid}) => (
+              onSubmit={values => {
+                signUp(values);
+              }}>
+              {({handleSubmit, isValid, resetForm}) => (
                 <View style={styles.fieldView}>
                   <Field
                     component={CustomField}
@@ -61,7 +77,10 @@ function Register() {
                   />
                   <View style={styles.butView}>
                     <LargeButton
-                      onPress={handleSubmit}
+                      onPress={() => {
+                        handleSubmit();
+                        resetForm({initialValues});
+                      }}
                       title="Login"
                       disabled={!isValid}
                       width="90%"

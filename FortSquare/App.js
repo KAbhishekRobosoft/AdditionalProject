@@ -1,15 +1,21 @@
 import React from 'react';
-import StackNavigation from './src/utils/StackNavigation';
 import {NavigationContainer} from '@react-navigation/native';
-import SearchScreen from './src/screens/SearchScreen';
-import TextInputComponent from './src/components/TextInputComponent';
-import ParameterWithHeaderList from './src/components/ParameterWithHeaderList';
+import NavigationFunctionality from './src/utils/NavigationFunctionality';
+import store from './src/redux/Store'
+import {Provider} from 'react-redux';
+import {PersistGate} from 'redux-persist/integration/react';
+import {persistStore} from 'redux-persist';
+
+let persistor = persistStore(store);
 function App() {
   return (
-    <NavigationContainer>
-      <StackNavigation />
-    </NavigationContainer>
-    // <ParameterWithHeaderList />
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <NavigationContainer>
+          <NavigationFunctionality />
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }
 

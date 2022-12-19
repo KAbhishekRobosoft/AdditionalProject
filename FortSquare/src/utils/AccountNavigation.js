@@ -1,9 +1,5 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import Login from '../screens/Login';
-import Register from '../screens/Register';
-import OtpScreen from '../screens/OtpScreen';
-import ResetPassword from '../screens/ResetPassword';
 import ParticularHotel from '../screens/ParticularHotel';
 import ReviewScreen from '../screens/ReviewScreen';
 import NearYou from '../screens/NearYou';
@@ -11,40 +7,13 @@ import DrawerNavigation from './DrawerNavigation';
 import ParameterList from '../components/ParameterList';
 import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
+import FilterScreen from '../screens/FilterScreen';
 
 const Stack = createStackNavigator();
 
-function StackNavigation() {
+function AccountNavigation() {
   return (
-    <Stack.Navigator initialRouteName="Login">
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="login"
-        component={Login}
-      />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="register"
-        component={Register}
-      />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="otp"
-        component={OtpScreen}
-      />
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="resetPassword"
-        component={ResetPassword}
-      />
+    <Stack.Navigator initialRouteName="drawer">
       <Stack.Screen
         options={{
           headerShown: false,
@@ -97,8 +66,16 @@ function StackNavigation() {
         name="parameterHeader"
         component={ParameterWithHeaderList}
       />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="filter"
+        component={FilterScreen}
+      />
     </Stack.Navigator>
   );
 }
 
-export default StackNavigation;
+export default AccountNavigation;

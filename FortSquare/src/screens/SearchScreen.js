@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   SafeAreaView,
@@ -10,14 +10,17 @@ import {
 import TextInputComponent from '../components/TextInputComponent';
 import {ScrollView} from 'react-native-gesture-handler';
 import SearchByPlace from '../components/SearchByPlace';
+import SearchNearMe from '../components/SearchNearMe';
 
 function SearchScreen({navigation}) {
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
+  const [searchPlace, setSearchPlace] = useState(false);
+  const [searchNearMe, setSearchNearMe] = useState(false);
 
   return (
     <SafeAreaView style={styles.searchContainer}>
-      <ScrollView>
+      <ScrollView bounces={false}>
         <View style={styles.searchHeader}>
           <TouchableOpacity
             onPress={() => {
@@ -32,12 +35,23 @@ function SearchScreen({navigation}) {
           </TouchableOpacity>
           <View style={styles.searchInput}>
             <View>
-              <TextInputComponent placeholder="Search" name="search-outline" />
+              <TextInputComponent
+                onFocus={() => {
+                  setSearchPlace(true);
+                  setSearchNearMe(false);
+                }}
+                placeholder="Search"
+                name="search-outline"
+              />
             </View>
             <View style={{marginTop: 10}}>
               <TextInputComponent
                 placeholder="Near Me"
                 name="compass-outline"
+                onFocus={() => {
+                  setSearchPlace(false);
+                  setSearchNearMe(true);
+                }}
               />
             </View>
           </View>
@@ -50,7 +64,8 @@ function SearchScreen({navigation}) {
             </View>
           </TouchableOpacity>
         </View>
-        <SearchByPlace navigation={navigation}/>
+        {searchPlace && <SearchByPlace navigation={navigation}/>}
+        {searchNearMe && <SearchNearMe />}
       </ScrollView>
     </SafeAreaView>
   );
@@ -59,6 +74,7 @@ function SearchScreen({navigation}) {
 const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
+    backgroundColor: 'white',
   },
 
   searchHeader: {
@@ -94,44 +110,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  searchByPlaceName: {
-    width: '100%',
-    height: 230,
-    backgroundColor: 'white',
-  },
 
-  nearByPlaceList: {
-    height: 70,
-    borderBottomWidth: 1,
-    borderBottomColor: '#e4e4e4',
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-
-  placeName: {
-    fontFamily: 'Avenir Book',
-    fontSize: 18,
-    marginLeft: 20,
-    color: 'black',
-  },
-
-  nearBy: {
-    width: '100%',
-    height: 60,
-    justifyContent: 'center',
-    backgroundColor: '#f2f1f1',
-  },
-
-  nearByText: {
-    marginLeft: 30,
-    fontSize: 18,
-    fontFamily: 'Avenir Medium',
-    color: '#858585',
-  },
-
-  nearByList: {
-    flex: 1,
-  },
 });
 
 export default SearchScreen;

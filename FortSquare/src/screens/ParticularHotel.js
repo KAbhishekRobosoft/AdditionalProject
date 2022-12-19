@@ -129,14 +129,21 @@ function ParticularHotel({navigation}) {
             title={'Test Marker'}
             description={'This is a description of the marker'}
           />
-          <LinearGradient
+        </MapView>
+            <LinearGradient
             style={{flex: 1}}
             start={{x: 0, y: 1}}
             end={{x: 1, y: 1}}
-            locations={[0.2, 1]}
-            colors={['rgba(245,245,245,1)', 'rgba(0,0,0,0)']}>
+            locations={[0.1, 0.7]}
+            colors={['rgba(249,245,238,1)', 'rgba(249,245,238,0)']}>
+             <View style={styles.mapAddress}>
+              <Text style={styles.addressText}>
+                Daffodils, Laxmindra almanpur nagar, Baindoor
+              </Text>
+              <Text style={styles.phoneText}>+91 9844 635685</Text>
+              <Text style={styles.driveText}>Drive: 5km</Text>
+            </View>
           </LinearGradient>
-        </MapView>
       </View>
       <View>
         <LargeButton title="Add Review" backgroundColor="#351347" width="100%" borderRadius="0" fontFamily="Avenir Medium"/>

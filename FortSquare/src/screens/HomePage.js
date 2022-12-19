@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -28,7 +28,9 @@ function HomePage({navigation}) {
           source={require('../assets/images/logo.png')}
         />
         <View style={styles.homeOptions}>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>{
+            navigation.navigate('filter')
+          }}>
             <View style={styles.iconHeader}>
               <Image
                 style={styles.filterIcon}
@@ -36,7 +38,9 @@ function HomePage({navigation}) {
               />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={()=>{
+            navigation.navigate('search')
+          }}>
             <View style={styles.iconHeader}>
               <Image
                 style={styles.searchIcon}
