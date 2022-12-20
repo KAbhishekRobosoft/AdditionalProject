@@ -8,16 +8,25 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-function ListDisplay({item,navigation}) {
+function ListDisplay({item, navigation}) {
   const {height, width} = useWindowDimensions();
   const width1 =
     width > height
       ? Platform.OS === 'ios'
-        ? '66%'
-        : '66%'
+        ? '90%'
+        : '90%'
       : Platform.OS === 'ios'
-      ? '63%'
-      : '63%';
+      ? '90%'
+      : '90%';
+
+  const width2 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '85%'
+        : '85%'
+      : Platform.OS === 'ios'
+      ? '69%'
+      : '69%';
 
   const margin =
     width > height
@@ -28,32 +37,45 @@ function ListDisplay({item,navigation}) {
       ? 5
       : 5;
   return (
-    <TouchableOpacity onPress={()=>{
-      navigation.navigate('particular')
-    }}>
+    <TouchableOpacity
+      onPress={() => {
+        navigation.navigate('particular', {
+          distance: Math.round(
+            ((item.distance.calculated / 1609) * 100) / 100,
+          ).toFixed(2),
+          id: item._id,
+        });
+      }}>
       <View style={[styles.listContainer, styles.shadowProp, {margin: margin}]}>
         <View style={styles.listDisplay}>
           <Image
             style={styles.listImg}
-            source={require('../assets/images/hotel.jpeg')}
+            source={{uri: 'https' + item.placeImage.substring(4)}}
           />
-          <View>
+          <View style={{width: width2}}>
             <View style={[styles.textWithImage, {width: width1}]}>
-              <Text style={styles.listName}>{item.name}</Text>
+              <Text style={styles.listName}>{item.placeName}</Text>
               <Image
                 style={styles.favouriteImg}
                 source={require('../assets/images/favourite_icon.png')}
               />
             </View>
             <View style={styles.ratingView}>
-              <Text style={styles.listRating}>{item.rating}</Text>
+              <Text style={styles.listRating}>{item.rating * 2}</Text>
             </View>
             <View style={styles.typeDist}>
-              <Text style={styles.typeText}>{item.type}</Text>
-              <Text style={styles.distText}>{item.distance}</Text>
+              <Text style={styles.typeText}>Indian .{item.priceRange}</Text>
+              <Text style={styles.distText}>
+                {Math.round(
+                  ((item.distance.calculated / 1609) * 100) / 100,
+                ).toFixed(2)}{' '}
+                meter
+              </Text>
             </View>
             <View style={styles.addressView}>
-              <Text style={styles.addressText}>{item.address}</Text>
+              <Text style={styles.addressText}>
+                {item.address.trim()}, {item.city}
+              </Text>
             </View>
           </View>
         </View>
@@ -67,7 +89,6 @@ const styles = StyleSheet.create({
     height: 125,
     width: '97.5%',
     backgroundColor: 'white',
-    borderWidth: 1,
     borderColor: 'white',
   },
 
@@ -112,7 +133,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#73cf42',
     width: '6%',
     height: '16%',
-    marginTop: 20,
+    marginTop: 5,
     marginLeft: 20,
     alignItems: 'center',
     borderRadius: 3,
@@ -121,6 +142,7 @@ const styles = StyleSheet.create({
 
   listDisplay: {
     flexDirection: 'row',
+    width: '100%',
   },
 
   typeText: {

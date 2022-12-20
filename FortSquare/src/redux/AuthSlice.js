@@ -4,10 +4,11 @@ const authenticateSlice = createSlice({
   name: 'auth',
   initialState: {
     userCredentials: {},
+    setCoord: {},
     isLoading: null,
-    stateLoader:null,
+    stateLoader: null,
     userToken: null,
-    initialState:false
+    places: [],
   },
 
   reducers: {
@@ -23,6 +24,10 @@ const authenticateSlice = createSlice({
       state.isLoading = true;
     },
 
+    setCoordinate: (state, action) => {
+      state.setCoord = action.payload;
+    },
+
     desetLoading: state => {
       state.isLoading = false;
     },
@@ -31,8 +36,8 @@ const authenticateSlice = createSlice({
       state.stateLoader = true;
     },
 
-    setInitialState:(state,action)=>{
-      state.initialState= !action.payload
+    setInitialState: (state, action) => {
+      state.initialState = !action.payload;
     },
 
     desetLoader: state => {
@@ -41,6 +46,17 @@ const authenticateSlice = createSlice({
   },
 });
 
-export const {login, logOut, setToken, setImage, setLoading, desetLoading,setLoader,desetLoader,setInitialState} =
-  authenticateSlice.actions;
+export const {
+  login,
+  logOut,
+  setToken,
+  setImage,
+  setCoordinate,
+  setLoading,
+  setPlaces,
+  desetLoading,
+  setLoader,
+  desetLoader,
+  setInitialState,
+} = authenticateSlice.actions;
 export default authenticateSlice.reducer;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect,useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,7 +6,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import { useSelector } from 'react-redux';
 import TopBar from '../components/TopBar';
+
 
 function HomePage({navigation}) {
   return (

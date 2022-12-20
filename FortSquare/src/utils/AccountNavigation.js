@@ -4,7 +4,6 @@ import ParticularHotel from '../screens/ParticularHotel';
 import ReviewScreen from '../screens/ReviewScreen';
 import NearYou from '../screens/NearYou';
 import DrawerNavigation from './DrawerNavigation';
-import ParameterList from '../components/ParameterList';
 import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
@@ -36,13 +35,6 @@ function AccountNavigation() {
         component={ParticularHotel}
       />
 
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-        name="parameter"
-        component={ParameterList}
-      />
       <Stack.Screen
         options={{
           headerShown: false,

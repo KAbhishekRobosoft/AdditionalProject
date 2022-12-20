@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,11 +7,16 @@ import {
   StyleSheet,
   TouchableOpacity,
   useWindowDimensions,
+  ActivityIndicator,
 } from 'react-native';
 import ListDisplay from '../components/HotelListDisplay';
 import VirtualList from './VirtualList';
+import { getParameter } from '../services/Places';
+import { useSelector } from 'react-redux';
 
 function ParameterWithHeaderList({navigation,route}) {
+  const coord= useSelector(state=>state.auth.setCoord)
+  const [placeData,setPlaceData]= useState([])
   const {height, width} = useWindowDimensions();
   const left =
     width > height
@@ -22,54 +27,19 @@ function ParameterWithHeaderList({navigation,route}) {
       ? 50
       : 50;
 
-  const DATA = [
-    {
-      id: 1,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 2,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 3,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 4,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 5,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-  ];
+  useEffect(()=>{
+    setTimeout(async ()=>{
+        const resp= await getParameter(route.params.name,coord)
+        setPlaceData(resp)
+    })
+  })
   const renderItem = ({item,route}) => {
     return <ListDisplay navigation={navigation} item={item} />;
   };
 
   return (
     <SafeAreaView style={styles.parameterContainer}>
+    {placeData.length > 0 ? <>
       <View style={styles.reviewHeader}>
         <TouchableOpacity onPress={()=>{
           navigation.goBack()
@@ -84,8 +54,11 @@ function ParameterWithHeaderList({navigation,route}) {
         <Text style={[styles.reviewHotelText, {marginLeft: left}]}>{route.params.headerName}</Text>
       </View>
       <View style={styles.parameterList}>
-        <VirtualList data={DATA} renderItem={renderItem} />
+        <VirtualList data={placeData} renderItem={renderItem} />
       </View>
+      </>:(<View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
+            <ActivityIndicator size="large" color="purple" />
+      </View>)}
     </SafeAreaView>
   );
 }

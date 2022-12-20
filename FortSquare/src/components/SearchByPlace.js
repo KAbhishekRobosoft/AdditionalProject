@@ -1,36 +1,27 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import NearBySearch from './NearBySearch';
+import {useSelector} from 'react-redux';
+import {getNearPlace} from '../services/Places';
 
-function SearchByPlace({navigation}) {
-  const DATA = [
-    {
-      id: 1,
-      name: 'Attil',
-    },
-    {
-      id: 2,
-      name: 'Attil',
-    },
-    {
-      id: 3,
-      name: 'Attil',
-    },
-    {
-      id: 4,
-      name: 'Attil',
-    },
-    {
-      id: 5,
-      name: 'Attil',
-    },
-  ];
+function SearchByPlace({navigation, data}) {
+  const coord = useSelector(state => state.auth.setCoord);
+  const [placeData, setPlaceData] = useState([]);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      const resp = await getNearPlace(coord);
+      setPlaceData(resp);
+    }, 500);
+  }, []);
+
   return (
     <View>
       <View style={styles.searchByPlaceName}>
@@ -41,15 +32,16 @@ function SearchByPlace({navigation}) {
           showsVerticalScrollIndicator={false}
           nestedScrollEnabled={true}>
           <View style={styles.nearByList}>
-            {DATA.length > 0
-              ? DATA.map(ele => {
-                  return <NearBySearch key={ele.id} item={ele} />;
-                })
-              : null}
+            {placeData.length > 0 ? (
+              placeData.map(ele => {
+                return <NearBySearch key={ele._id} item={ele} />;
+              })
+            ) : (
+              <ActivityIndicator color="purple" />
+            )}
           </View>
         </ScrollView>
       </View>
-
       <View style={styles.nearBy}>
         <Text style={styles.nearByText}>Suggestions</Text>
       </View>

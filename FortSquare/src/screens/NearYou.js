@@ -3,72 +3,94 @@ import {
   View,
   StyleSheet,
   useWindowDimensions,
-  ToastAndroid,
+  PermissionsAndroid,
   ActivityIndicator,
+  Text,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {mapStyle} from '../utils/Functions';
 import VirtualList from '../components/VirtualList';
 import ListDisplay from '../components/HotelListDisplay';
 import Geolocation from '@react-native-community/geolocation';
+import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-simple-toast';
+import {getNearPlace} from '../services/Places';
 import {setLoader, desetLoader} from '../redux/AuthSlice';
-import {useDispatch} from 'react-redux';
+import {setCoordinate} from '../redux/AuthSlice';
 
 function NearYou({navigation}) {
   const mapRef = useRef(null);
   const dispatch = useDispatch();
-  const [currentLongitude, setCurrentLongitude] = useState(13.4567);
-  const [currentLatitude, setCurrentLatitude] = useState(74.3456);
-  const [locationStatus, setLocationStatus] = useState('');
+  const [currentLongitude, setCurrentLongitude] = useState(0);
+  const [currentLatitude, setCurrentLatitude] = useState(0);
+  const [placeData, setPlaceData] = useState([]);
+  const loading = useSelector(state => state.auth.stateLoader);
+  const authData = useSelector(state => state.auth);
 
   useEffect(() => {
-    setTimeout(() => {
-      const requestLocationPermission = async () => {
-        if (Platform.OS === 'ios') {
-          getOneTimeLocation();
-        } else {
-          try {
-            const granted = await PermissionsAndroid.request(
-              PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-              {
-                title: 'Location Access Required',
-                message: 'This App needs to Access your location',
-              },
-            );
-            if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-              getOneTimeLocation();
-            } else {
-              setLocationStatus('Permission Denied');
-            }
-          } catch (err) {
-            console.warn(err);
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'ios') {
+        getOneTimeLocation();
+      } else {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Access Required',
+              message: 'This App needs to Access your location',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getOneTimeLocation();
+          } else {
+            Toast.show('Permission Denied');
           }
+        } catch (err) {
+          console.warn(err);
         }
-      };
-      requestLocationPermission();
-    }, 1000);
+      }
+    };
+    requestLocationPermission();
   }, []);
 
   const getOneTimeLocation = () => {
-    setLocationStatus('Getting Location ...');
     Geolocation.getCurrentPosition(
       position => {
-        setTimeout(()=>{
-        setCurrentLatitude(position.coords.latitude);
-        setCurrentLongitude(position.coords.longitude);
-        mapRef.current.animateToRegion(
-          {
-            latitude: 13.456,
-            longitude: 76.4567,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          },
-          3 * 1000,
-        );
-      },500)
+        setTimeout(async () => {
+          try {
+            const resp = await getNearPlace({
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+            setPlaceData(resp);
+            mapRef.current.animateToRegion(
+              {
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.2,
+              },
+              3 * 1000,
+            );
+            dispatch(
+              setCoordinate({
+                latitude: position.coords.latitude,
+                longitude: position.coords.longitude,
+              }),
+            );
+          } catch (error) {
+            console.log(error);
+            dispatch(desetLoader());
+          }
+        }, 500);
+
+        const currentLongitude = position.coords.longitude;
+        const currentLatitude = position.coords.latitude;
+        setCurrentLongitude(currentLongitude);
+        setCurrentLatitude(currentLatitude);
       },
       error => {
-        setLocationStatus(error.message);
+        Toast.show(error.message);
       },
       {
         enableHighAccuracy: false,
@@ -88,57 +110,10 @@ function NearYou({navigation}) {
       ? 200
       : 200;
 
-  const DATA = [
-    {
-      id: 1,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 2,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 3,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 4,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-    {
-      id: 5,
-      name: 'Attil',
-      address: 'karkala 2nd cross',
-      rating: '8.5',
-      type: 'indian .....',
-      distance: '6.5 km',
-    },
-  ];
-
-  const renderItem = ({item}) => {
-    return <ListDisplay navigation={navigation} item={item} />;
-  };
-
   return (
     <View style={styles.main_container}>
       <View style={[styles.mapView, styles.shadowProp, {height: height1}]}>
-        {currentLatitude !== 0 ? (
+        {currentLatitude !== 0 && currentLongitude !== 0 ? (
           <MapView
             ref={mapRef}
             style={styles.mapStyle}
@@ -155,15 +130,24 @@ function NearYou({navigation}) {
             />
           </MapView>
         ) : (
-          <ActivityIndicator color="orange" size="large" />
+          <ActivityIndicator size="large" color="purple" />
         )}
       </View>
       <View style={styles.listContainer}>
-        <VirtualList
-          data={DATA}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-        />
+        {placeData.length > 0 ? (
+          <VirtualList
+            data={placeData}
+            renderItem={({item}) => {
+              return <ListDisplay navigation={navigation} item={item} />;
+            }}
+            keyExtractor={item => item._id}
+          />
+        ) : (
+          <View
+            style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Getting Data</Text>
+          </View>
+        )}
       </View>
     </View>
   );

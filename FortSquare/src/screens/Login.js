@@ -15,12 +15,11 @@ import {LargeButton} from '../components/Button';
 import {SmallButton} from '../components/Button';
 import {loginValidationSchema} from '../utils/Functions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import {checkIn} from '../services/UserCredentials';
+import { checkIn } from '../services/UserCredentials';
 import Toast from 'react-native-simple-toast';
 import {setToken} from '../redux/AuthSlice';
 import {useDispatch} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IndicatorButton } from '../components/Button';
 
 function Login({navigation}) {
   const dispatch = useDispatch();

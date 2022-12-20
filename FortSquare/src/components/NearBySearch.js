@@ -1,15 +1,17 @@
 import React from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
+import { useSelector } from 'react-redux';
 
 function NearBySearch({item}) {
+
   return (
     <TouchableOpacity>
       <View style={styles.nearByPlaceList}>
         <Image
           style={styles.placeImg}
-          source={require('../assets/images/hotel.jpeg')}
+          source={{uri:'https'+item.placeImage.substring(4)}}
         />
-        <Text style={styles.placeName}>{item.name}</Text>
+        <Text style={styles.placeName}>{item.city}</Text>
       </View>
     </TouchableOpacity>
   );

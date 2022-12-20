@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   SafeAreaView,
@@ -6,11 +6,14 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
+  ActivityIndicator,
 } from 'react-native';
 import TextInputComponent from '../components/TextInputComponent';
 import {ScrollView} from 'react-native-gesture-handler';
 import SearchByPlace from '../components/SearchByPlace';
 import SearchNearMe from '../components/SearchNearMe';
+
+import { useDispatch,useSelector } from 'react-redux';
 
 function SearchScreen({navigation}) {
   const {height, width} = useWindowDimensions();
@@ -18,9 +21,11 @@ function SearchScreen({navigation}) {
   const [searchPlace, setSearchPlace] = useState(false);
   const [searchNearMe, setSearchNearMe] = useState(false);
 
+
+
   return (
     <SafeAreaView style={styles.searchContainer}>
-      <ScrollView bounces={false}>
+<ScrollView bounces={false}>
         <View style={styles.searchHeader}>
           <TouchableOpacity
             onPress={() => {
