@@ -15,6 +15,8 @@ import Toast from 'react-native-simple-toast';
 
 function Register({navigation}) {
   async function signUp(userData) {
+    console.log(userData)
+    try{
     const response = await register(userData);
     if (response.hasOwnProperty('message')) {
       Toast.show('Registered Successfully');
@@ -22,6 +24,10 @@ function Register({navigation}) {
     } else {
       Toast.show('User already exists');
     }
+  }
+  catch(er){
+    Toast.show("User already exists")
+  }
   }
 
   const initialValues = {
@@ -79,7 +85,6 @@ function Register({navigation}) {
                     <LargeButton
                       onPress={() => {
                         handleSubmit();
-                        resetForm({initialValues});
                       }}
                       title="Login"
                       disabled={!isValid}

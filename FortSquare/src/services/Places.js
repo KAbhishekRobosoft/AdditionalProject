@@ -36,16 +36,18 @@ export const getParticularInfo = async id => {
   }
 };
 
-export const addFavourites = async (id,token) => {
+export const addFavourites = async (id, token) => {
   try {
-    const response = await axios.post(`${BASE_URL}/addFavourite`, {
-      _id: id,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.post(
+      `${BASE_URL}/addFavourite`,
+      {
+        _id: id,
       },
-    },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
     );
     return response.data;
   } catch (er) {
@@ -53,7 +55,7 @@ export const addFavourites = async (id,token) => {
   }
 };
 
-export const searchAllFavourites = async (token) => {
+export const searchAllFavourites = async token => {
   try {
     const response = await axios.post(
       `${BASE_URL}/searchFavourite`,
@@ -71,5 +73,47 @@ export const searchAllFavourites = async (token) => {
     console.log('Error');
   }
 };
+
+export const searchParticularPlace = async (coord, text) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/searchPlace`, {
+      latitude: coord.latitude,
+      longitude: coord.longitude,
+      text: text,
+    });
+    return response.data;
+  } catch (er) {
+    console.log('Error');
+  }
+};
+
+export const getNearCity = async values => {
+  try {
+    const response = await axios.post(`${BASE_URL}/getNearCity`, {
+      latitude: values.latitude,
+      longitude: values.longitude,
+    });
+    return response.data;
+  } catch (er) {
+    console.log('Error');
+  }
+};
+
+export const getFavourites = async token => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/getFavouriteId`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (er) {
+    console.log('Error');
+  }
+};
+
 
 

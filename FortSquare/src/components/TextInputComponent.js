@@ -2,7 +2,7 @@ import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-function TextInputComponent({name, placeholder,onFocus}) {
+function TextInputComponent({name, placeholder,onFocus,onChangeText}) {
   return (
     <View style={styles.inputContainer}>
       <Icon style={styles.searchIcon} name={name} size={22} color="#dfdfdf" />
@@ -10,7 +10,9 @@ function TextInputComponent({name, placeholder,onFocus}) {
         style={styles.inputStyle}
         placeholder={placeholder}
         keyboardType="default"
+        onChangeText={onChangeText}
         onFocus={onFocus}
+
       />
     </View>
   );

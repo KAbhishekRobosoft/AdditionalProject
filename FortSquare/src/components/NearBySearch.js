@@ -1,15 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {View, Text, StyleSheet, Image, TouchableOpacity} from 'react-native';
 import { useSelector } from 'react-redux';
+import { searchParticularPlace } from '../services/Places';
 
-function NearBySearch({item}) {
+function NearBySearch({item,setSearchPlace,setPlaceResults,setList}) {
+  const coord= useSelector(state=>state.auth.setCoord)
+
+  const getPlace= async (val)=> {
+    const resp = await searchParticularPlace(coord, val);
+    setPlaceResults(resp);
+  }
 
   return (
-    <TouchableOpacity>
+    <TouchableOpacity onPress= {()=>{
+      setSearchPlace(false)
+      getPlace(item.city)
+      setList(true)  
+    }}>
       <View style={styles.nearByPlaceList}>
         <Image
           style={styles.placeImg}
-          source={{uri:'https'+item.placeImage.substring(4)}}
+          source={{uri:'https'+item.image.substring(4)}}
         />
         <Text style={styles.placeName}>{item.city}</Text>
       </View>

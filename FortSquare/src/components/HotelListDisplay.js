@@ -7,9 +7,15 @@ import {
   useWindowDimensions,
   TouchableOpacity,
 } from 'react-native';
+import { useSelector } from 'react-redux';
+
 
 function ListDisplay({item, navigation}) {
   const {height, width} = useWindowDimensions();
+  const favourites= useSelector(state=>state.auth.favourites)
+  const authData= useSelector(state=>state.auth)
+  const loading = useSelector(state => state.auth.stateLoader);
+
   const width1 =
     width > height
       ? Platform.OS === 'ios'
@@ -55,21 +61,87 @@ function ListDisplay({item, navigation}) {
           <View style={{width: width2}}>
             <View style={[styles.textWithImage, {width: width1}]}>
               <Text style={styles.listName}>{item.placeName}</Text>
-              <Image
-                style={styles.favouriteImg}
-                source={require('../assets/images/favourite_icon.png')}
-              />
+
+              {authData.userToken !== null ? (
+                  favourites.favouritePlaces.length > 0 ? (
+                    favourites.favouritePlaces.filter(ele => ele.placeId === item._id)
+                      .length > 0 ? (
+                      !loading ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleFavourite(route.params.id);
+                          }}>
+                          <View style={styles.iconHeader} key={item._id}>
+                            <Image
+                              style={styles.favouriteImg}
+                              source={require('../assets/images/favourite_icon_selected.png')}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      ) : (
+                        <View style={styles.iconHeader}>
+                          <ActivityIndicator color="yellow" />
+                        </View>
+                      )
+                    ) : !loading ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleFavourite(route.params.id);
+                        }}>
+                        <View style={styles.iconHeader} key={item._id}>
+                          <Image
+                            style={styles.favouriteImg}
+                            source={require('../assets/images/favourite_icon.png')}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ) : (
+                      <View style={styles.iconHeader}>
+                        <ActivityIndicator color="yellow" />
+                      </View>
+                    )
+                  ) : !loading ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleFavourite(item._id);
+                      }}>
+                      <View style={styles.iconHeader}>
+                        <Image
+                          style={styles.favouriteImg}
+                          source={require('../assets/images/favourite_icon.png')}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <View style={styles.iconHeader}>
+                      <ActivityIndicator color="yellow" />
+                    </View>
+                  )
+                ) : (
+                  <View>
+                    <Image
+                      style={styles.favouriteImg}
+                      source={require('../assets/images/favourite_icon.png')}
+                    />
+                  </View>
+                )}
             </View>
             <View style={styles.ratingView}>
               <Text style={styles.listRating}>{item.rating * 2}</Text>
             </View>
             <View style={styles.typeDist}>
-              <Text style={styles.typeText}>Indian .{item.priceRange}</Text>
+              <Text style={styles.typeText}>
+                Indian .
+                {item.priceRange > 750
+                  ? '₹₹₹₹'
+                  : item.priceRange > 500
+                  ? '₹₹₹'
+                  : item.priceRange > 250
+                  ? '₹₹'
+                  : '₹'}
+              </Text>
               <Text style={styles.distText}>
-                {Math.round(
-                  ((item.distance.calculated / 1609) * 100) / 100,
-                ).toFixed(2)}{' '}
-                meter
+                {(item.distance.calculated / 1609).toFixed(2)} Km
               </Text>
             </View>
             <View style={styles.addressView}>

@@ -9,6 +9,7 @@ const authenticateSlice = createSlice({
     stateLoader: null,
     userToken: null,
     places: [],
+    favourites:[]
   },
 
   reducers: {
@@ -26,6 +27,10 @@ const authenticateSlice = createSlice({
 
     setCoordinate: (state, action) => {
       state.setCoord = action.payload;
+    },
+
+    setFavourites:(state,action)=>{
+      state.favourites= action.payload
     },
 
     desetLoading: state => {
@@ -58,5 +63,6 @@ export const {
   setLoader,
   desetLoader,
   setInitialState,
+  setFavourites
 } = authenticateSlice.actions;
 export default authenticateSlice.reducer;

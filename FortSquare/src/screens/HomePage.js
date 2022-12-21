@@ -6,11 +6,27 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import { useSelector,useDispatch } from 'react-redux';
 import TopBar from '../components/TopBar';
-
+import { getFavourites } from '../services/Places';
+import { setToken } from '../redux/AuthSlice';
+import { getVerifiedKeys } from '../utils/Functions';
+import { setFavourites } from '../redux/AuthSlice';
 
 function HomePage({navigation}) {
+  const authData= useSelector(state=>state.auth)
+  const dispatch= useDispatch()
+  
+
+  useEffect(()=>{
+    setTimeout(async ()=>{
+      const cred= await getVerifiedKeys(authData.userToken)
+      dispatch(setToken(cred))
+      const resp= await getFavourites(cred)
+      dispatch(setFavourites(resp))
+    },500)
+  },[])
+  
   return (
     <SafeAreaView style={styles.homeContainer}>
       <View style={styles.homeHeader}>

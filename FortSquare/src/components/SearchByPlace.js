@@ -9,15 +9,15 @@ import {
 } from 'react-native';
 import NearBySearch from './NearBySearch';
 import {useSelector} from 'react-redux';
-import {getNearPlace} from '../services/Places';
+import { getNearCity } from '../services/Places';
 
-function SearchByPlace({navigation, data}) {
+function SearchByPlace({navigation, data,text,setText,searchPlace,setSearchPlace,setPlaceResults,setList}) {
   const coord = useSelector(state => state.auth.setCoord);
   const [placeData, setPlaceData] = useState([]);
 
   useEffect(() => {
     setTimeout(async () => {
-      const resp = await getNearPlace(coord);
+      const resp = await getNearCity(coord);
       setPlaceData(resp);
     }, 500);
   }, []);
@@ -34,7 +34,7 @@ function SearchByPlace({navigation, data}) {
           <View style={styles.nearByList}>
             {placeData.length > 0 ? (
               placeData.map(ele => {
-                return <NearBySearch key={ele._id} item={ele} />;
+                return <NearBySearch setList= {setList} setPlaceResults= {setPlaceResults} setText= {setText} setSearchPlace= {setSearchPlace} key={ele._id} item={ele} />;
               })
             ) : (
               <ActivityIndicator color="purple" />

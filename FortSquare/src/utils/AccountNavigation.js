@@ -8,6 +8,7 @@ import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
 
+
 const Stack = createStackNavigator();
 
 function AccountNavigation() {

@@ -36,6 +36,7 @@ function ParticularHotel({navigation, route}) {
     setTimeout(async () => {
       try {
         const response = await getParticularInfo(route.params.id);
+        console.log(response)
         setData(response);
       } catch (er) {
         Toast.show('Network Error');
@@ -63,7 +64,6 @@ function ParticularHotel({navigation, route}) {
       const cred = await getVerifiedKeys(authData.userToken);
       dispatch(setToken(cred));
       const resp = await addFavourites(id, cred);
-      console.log(resp);
       if (resp !== undefined) {
         dispatch(setInitialState(state));
       }
@@ -74,7 +74,7 @@ function ParticularHotel({navigation, route}) {
 
   return (
     <SafeAreaView style={styles.particularContainer}>
-      {(JSON.stringify(data) !== '{}' && favourites.length > 0) ? (
+      {(JSON.stringify(data) !== '{}') ? (
         <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
           <ImageBackground
             source={{uri: 'https' + data.placeImage.substring(4)}}
@@ -145,7 +145,7 @@ function ParticularHotel({navigation, route}) {
                       onPress={() => {
                         handleFavourite(route.params.id);
                       }}>
-                      <View>
+                      <View style={styles.iconHeader}>
                         <Image
                           style={styles.favouriteImg}
                           source={require('../assets/images/favouriteEmpty.png')}

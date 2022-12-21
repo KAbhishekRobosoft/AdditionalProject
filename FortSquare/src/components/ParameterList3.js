@@ -72,7 +72,7 @@ function ParameterList3({navigation}) {
 
   return (
     placeData.length > 0 ?  <View style={styles.parameterContainer}>
-    <VirtualList data={placeData} renderItem={renderItem} />
+    <VirtualList data={placeData} renderItem={renderItem}  keyExtractor={(item)=>item._id}/>
   </View> : (
     <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
         <ActivityIndicator size="large" color="purple"/>

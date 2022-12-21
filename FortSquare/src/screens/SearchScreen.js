@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {
   View,
   SafeAreaView,
@@ -7,71 +7,255 @@ import {
   Image,
   useWindowDimensions,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
+import MapView, {Marker} from 'react-native-maps';
 import TextInputComponent from '../components/TextInputComponent';
 import {ScrollView} from 'react-native-gesture-handler';
 import SearchByPlace from '../components/SearchByPlace';
 import SearchNearMe from '../components/SearchNearMe';
-
-import { useDispatch,useSelector } from 'react-redux';
+import {LargeButton} from '../components/Button';
+import {searchParticularPlace} from '../services/Places';
+import {useDispatch, useSelector} from 'react-redux';
+import ListDisplay from '../components/HotelListDisplay';
+import Card from '../components/Card';
+import {mapStyle} from '../utils/Functions';
 
 function SearchScreen({navigation}) {
+  const coords = useSelector(state => state.auth.setCoord);
+  const mapRef = useRef(null);
+  const [Viewable, SetViewable] = React.useState([]);
+  const ref = React.useRef(null);
+
+  const onViewRef = React.useRef(viewableItems => {
+    let Check = [];
+    for (var i = 0; i < viewableItems.viewableItems.length; i++) {
+      Check.push(viewableItems.viewableItems[i].item);
+    }
+    SetViewable(Check);
+  });
+
+  const viewConfigRef = React.useRef({viewAreaCoveragePercentThreshold: 80});
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
   const [searchPlace, setSearchPlace] = useState(false);
   const [searchNearMe, setSearchNearMe] = useState(false);
+  const [text, setText] = useState('');
+  const coord = useSelector(state => state.auth.setCoord);
+  const [list, setList] = useState(false);
+  const [placeResults, setPlaceResults] = useState([]);
+  const [mapView, setMapView] = useState(false);
 
+  const bottom =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 0
+        : 30
+      : Platform.OS === 'ios'
+      ? 230
+      : 230;
+  const height1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '60%'
+        : '60%'
+      : Platform.OS === 'ios'
+      ? '22%'
+      : '22%';
 
+  const renderItem = ({item}) => {
+    return <Card item={item} navigation={navigation} />;
+  };
+
+  const getPlace = async text => {
+    const resp = await searchParticularPlace(coord, text);
+    setPlaceResults(resp);
+  };
 
   return (
     <SafeAreaView style={styles.searchContainer}>
-<ScrollView bounces={false}>
-        <View style={styles.searchHeader}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}>
-            <View style={styles.iconHeader}>
-              <Image
-                style={styles.backImg}
-                source={require('../assets/images/back_icon.png')}
-              />
-            </View>
-          </TouchableOpacity>
-          <View style={styles.searchInput}>
-            <View>
-              <TextInputComponent
-                onFocus={() => {
-                  setSearchPlace(true);
-                  setSearchNearMe(false);
-                }}
-                placeholder="Search"
-                name="search-outline"
-              />
-            </View>
-            <View style={{marginTop: 10}}>
-              <TextInputComponent
-                placeholder="Near Me"
-                name="compass-outline"
-                onFocus={() => {
+      <View style={styles.searchHeader}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+            setList(false);
+          }}>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.backImg}
+              source={require('../assets/images/back_icon.png')}
+            />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.searchInput}>
+          <View>
+            <TextInputComponent
+              onFocus={() => {
+                setSearchPlace(true);
+                setSearchNearMe(false);
+                setList(false);
+                setMapView(false);
+              }}
+              onChangeText={val => {
+                if (val.length !== 0) {
+                  getPlace(val);
                   setSearchPlace(false);
-                  setSearchNearMe(true);
-                }}
+                  setList(true);
+                }
+                if (val.length === 0) {
+                  setList(false);
+                  setSearchPlace(true);
+                }
+              }}
+              placeholder="Search"
+              name="search-outline"
+            />
+          </View>
+          <View style={{marginTop: 10}}>
+            <TextInputComponent
+              placeholder="Near Me"
+              name="compass-outline"
+              onFocus={() => {
+                setSearchPlace(false);
+                setSearchNearMe(true);
+                setList(false);
+                setMapView(false);
+              }}
+            />
+          </View>
+        </View>
+        <TouchableOpacity>
+          <View style={[styles.iconHeader, {marginRight: right}]}>
+            <Image
+              style={styles.filterIcon}
+              source={require('../assets/images/filter_icon.png')}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+
+      {searchPlace && (
+        <ScrollView bounces={false}>
+          <SearchByPlace
+            text={text}
+            setText={setText}
+            searchPlace={searchPlace}
+            setSearchPlace={setSearchPlace}
+            navigation={navigation}
+            setPlaceResults={setPlaceResults}
+            setList={setList}
+          />
+        </ScrollView>
+      )}
+      {searchNearMe && <SearchNearMe />}
+      {list && (
+        <ScrollView>
+          <View style={styles.listView}>
+            {placeResults.length > 0 ? (
+              placeResults.map(ele => {
+                return (
+                  <ListDisplay
+                    navigation={navigation}
+                    item={ele}
+                    key={ele._id}
+                  />
+                );
+              })
+            ) : (
+              <View style={{flex: 1, alignItems: 'center'}}>
+                <ActivityIndicator size="large" color="purple" />
+              </View>
+            )}
+          </View>
+        </ScrollView>
+      )}
+      {list && (
+        <View>
+          <LargeButton
+            title="Map View"
+            backgroundColor="#351347"
+            width="100%"
+            borderRadius="0"
+            fontFamily="Avenir Medium"
+            onPress={() => {
+              setList(false);
+              setMapView(true);
+              try {
+                setTimeout(() => {
+                  mapRef.current.animateToRegion(
+                    {
+                      latitude: coords.latitude,
+                      longitude: coords.longitude,
+                      latitudeDelta: 0.1,
+                      longitudeDelta: 0.1,
+                    },
+                    3 * 1000,
+                  );
+                }, 500);
+              } catch (er) {
+                console.log('hello');
+              }
+            }}
+          />
+        </View>
+      )}
+      {mapView &&
+        (placeResults.length > 0 ? (
+          <View style={styles.container}>
+            <MapView
+              ref={mapRef}
+              style={styles.mapStyle}
+              customMapStyle={mapStyle}>
+              {placeResults.map(ele => {
+                return (
+                  <Marker
+                    key={ele._id}
+                    coordinate={{
+                      latitude: ele.location.coordinates[1],
+                      longitude: ele.location.coordinates[0],
+                      latitudeDelta: 0.1,
+                      longitudeDelta: 0.1,
+                    }}
+                    title={ele.placeName}
+                  />
+                );
+              })}
+            </MapView>
+            <View style={{height: height1, bottom: bottom, width: '100%'}}>
+              <FlatList
+                data={placeResults}
+                renderItem={renderItem}
+                keyExtractor={item => item._id}
+                horizontal
+                pagingEnabled
+                ref={ref}
+                onViewableItemsChanged={onViewRef.current}
+                viewabilityConfig={viewConfigRef.current}
               />
             </View>
           </View>
-          <TouchableOpacity>
-            <View style={[styles.iconHeader, {marginRight: right}]}>
-              <Image
-                style={styles.filterIcon}
-                source={require('../assets/images/filter_icon.png')}
-              />
-            </View>
-          </TouchableOpacity>
+        ) : (
+          <View
+            style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator size="large" color="purple" />
+          </View>
+        ))}
+
+      {mapView && (
+        <View>
+          <LargeButton
+            title="List View"
+            backgroundColor="#351347"
+            width="100%"
+            borderRadius="0"
+            fontFamily="Avenir Medium"
+            onPress={() => {
+              setList(true);
+              setMapView(false);
+            }}
+          />
         </View>
-        {searchPlace && <SearchByPlace navigation={navigation}/>}
-        {searchNearMe && <SearchNearMe />}
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }
@@ -80,6 +264,11 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
     backgroundColor: 'white',
+  },
+
+  listView: {
+    flex: 1,
+    justifyContent: 'center',
   },
 
   searchHeader: {
@@ -97,6 +286,11 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
 
+  mapView: {
+    borderWidth: 1,
+    height: '100%',
+  },
+
   searchInput: {
     width: '70%',
     justifyContent: 'center',
@@ -108,14 +302,38 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
 
+  container: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+  },
+
+  mapStyle: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
+
+  inputContainerStyle: {
+    marginBottom: 20,
+  },
+
+  buttonContainer: {
+    flexDirection: 'row',
+    marginTop: 10,
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 50,
+  },
+
   iconHeader: {
     height: 64,
     width: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
-
-
 });
 
 export default SearchScreen;
