@@ -15,17 +15,61 @@ import Toast from 'react-native-simple-toast'
 function ParameterList4({navigation}) {
   const dispatch = useDispatch();
   const [placeData, setPlaceData] = useState([]);
-  const coord = useSelector(state => state.auth.setCoord);
+  const authData = useSelector(state => state.auth);
+
   useEffect(() => {
-    setTimeout(async () => {
-      try {
-        const resp = await getParameter('getCafe', coord);
-        setPlaceData(resp);
-      } catch (er) {
-        Toast.show('Network error');
+    const requestLocationPermission = async () => {
+      if (Platform.OS === 'ios') {
+        getOneTimeLocation();
+      } else {
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: 'Location Access Required',
+              message: 'This App needs to Access your location',
+            },
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getOneTimeLocation();
+          } else {
+            Toast.show('Permission Denied');
+          }
+        } catch (err) {
+          console.warn(err);
+        }
       }
-    }, 500);
+    };
+    requestLocationPermission();
   }, []);
+
+  const getOneTimeLocation = () => {
+    Geolocation.getCurrentPosition(
+      position => {
+        setTimeout(async () => {
+          try {
+            const resp = await getParameter('getCafe',{
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+            });
+            setPlaceData(resp);
+          } catch (error) {
+            console.log(error);
+            dispatch(desetLoader());
+          }
+        }, 500);
+      },
+      error => {
+        Toast.show(error.message);
+      },
+      {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 1000,
+      },
+    );
+  };
+
 
   const renderItem = ({item}) => {
     return <ListDisplay navigation={navigation} item={item} />;

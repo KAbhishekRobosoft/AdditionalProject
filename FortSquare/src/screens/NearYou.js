@@ -62,6 +62,7 @@ function NearYou({navigation}) {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
             });
+            console.log(resp)
             setPlaceData(resp);
             mapRef.current.animateToRegion(
               {

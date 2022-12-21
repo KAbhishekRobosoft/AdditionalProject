@@ -15,9 +15,9 @@ function DrawerNavigation() {
       drawerContent={props => <CustomDrawer {...props} />}
       initialRouteName="HomePage"
       screenOptions={{
-        drawerStyle:{width:"85%"},
-        drawerType:"slide",
-        overlayColor:"transparent",
+        drawerStyle: {width: '85%'},
+        drawerType: 'slide',
+        overlayColor: 'transparent',
         drawerLabelStyle: {
           marginLeft: -25,
           fontSize: 18,
@@ -43,6 +43,7 @@ function DrawerNavigation() {
       />
       <Drawer.Screen
         options={{
+          headerShown: false,
           drawerIcon: () => (
             <Icon
               style={{marginLeft: 5}}
@@ -57,6 +58,7 @@ function DrawerNavigation() {
       />
       <Drawer.Screen
         options={{
+          headerShown: false,
           drawerIcon: () => (
             <Icon
               style={{marginLeft: 5}}
@@ -71,6 +73,7 @@ function DrawerNavigation() {
       />
       <Drawer.Screen
         options={{
+          headerShown: false,
           drawerIcon: () => (
             <Icon
               style={{marginLeft: 5}}

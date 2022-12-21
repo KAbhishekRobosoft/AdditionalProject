@@ -72,3 +72,4 @@ export const searchAllFavourites = async (token) => {
   }
 };
 
+
