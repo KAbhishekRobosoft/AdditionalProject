@@ -45,6 +45,7 @@ function SearchScreen({navigation}) {
   const [list, setList] = useState(false);
   const [placeResults, setPlaceResults] = useState([]);
   const [mapView, setMapView] = useState(false);
+  const state= useSelector(state=>state.auth.initialState)
 
   const bottom =
     width > height
@@ -64,7 +65,7 @@ function SearchScreen({navigation}) {
       : '22%';
 
   const renderItem = ({item}) => {
-    return <Card item={item} navigation={navigation} />;
+    return <Card state={state} item={item} navigation={navigation} />;
   };
 
   const getPlace = async text => {
@@ -158,6 +159,7 @@ function SearchScreen({navigation}) {
                     navigation={navigation}
                     item={ele}
                     key={ele._id}
+                    state={state}
                   />
                 );
               })

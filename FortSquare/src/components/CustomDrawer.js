@@ -93,7 +93,6 @@ function CustomDrawer(props) {
         });
         let cred = await getVerifiedKeys(authData.userToken);
         const resp = await uploadImage(payload, cred);
-        console.log(resp);
         if (resp.hasOwnProperty('message')) {
           dispatch(setInitialState(authData.initialState));
           Toast.show('Profile Updated');
@@ -117,7 +116,7 @@ function CustomDrawer(props) {
                 }}>
                 <Image
                   style={styles.profilePic}
-                  source={{uri: 'https' + userData.userImage.substring(4)}}
+                  source={{uri: userData.userImage}}
                 />
               </TouchableOpacity>
               <Text style={styles.profileText}>

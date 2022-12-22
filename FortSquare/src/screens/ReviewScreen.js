@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect,useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -9,85 +9,65 @@ import {
 } from 'react-native';
 import VirtualList from '../components/VirtualList';
 import ReviewList from '../components/ReviewList';
+import {getReviews} from '../services/Places';
+import Toast from 'react-native-simple-toast';
 
-function ReviewScreen() {
-  const data = [
-    {
-      id: 1,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 2,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 3,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 4,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 5,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 6,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-    {
-      id: 7,
-      name: 'Saish Balu',
-      review: 'Must try crab soup and oyesters cooked in ghee !!',
-      date: 'June 24, 2015',
-    },
-  ];
+function ReviewScreen({navigation, route}) {
+  const [reviewData, setReviewData] = useState([]);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      try {
+        const resp = await getReviews(route.params.id);
+        setReviewData(resp.reviewText);
+      } catch (er) {
+        Toast.show('Network Error');
+      }
+    }, 500);
+  }, []);
+
 
   const renderItem = ({item}) => {
-    return <ReviewList item={item} />;
+    return <ReviewList item={item} navigation= {navigation}/>;
   };
 
   return (
     <SafeAreaView style={styles.reviewContainer}>
-        <View style={styles.reviewHeader}>
-          <TouchableOpacity>
-            <View style={styles.iconHeader}>
-              <Image
-                style={styles.backIcon}
-                source={require('../assets/images/back_icon.png')}
-              />
-            </View>
-          </TouchableOpacity>
-          <Text style={styles.reviewHotelText}>Attil</Text>
-          <TouchableOpacity>
-            <View style={styles.iconHeader}>
-              <Image
-                style={styles.review}
-                source={require('../assets/images/review.png')}
-              />
-            </View>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.reviewHeader}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.backIcon}
+              source={require('../assets/images/back_icon.png')}
+            />
+          </View>
+        </TouchableOpacity>
+        <Text style={styles.reviewHotelText}>{route.params.name}</Text>
+        <TouchableOpacity>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.review}
+              source={require('../assets/images/review.png')}
+            />
+          </View>
+        </TouchableOpacity>
+      </View>
+      {reviewData.length > 0 ? (
         <View style={styles.reviewView}>
           <VirtualList
-            data={data}
+            data={reviewData}
             renderItem={renderItem}
-            keyExtractor={item => item.id}
+            keyExtractor={item => item.reviewerId}
           />
         </View>
+      ) : (
+        <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+            <Text style={{fontFamily:"Avenir Book",fontSize:18}}>No reviews posted</Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

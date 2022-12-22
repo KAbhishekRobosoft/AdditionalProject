@@ -40,9 +40,9 @@ function FavouriteList({item,navigation}) {
     <TouchableOpacity
       onPress={() => {
         navigation.navigate('particular', {
-        //   distance: Math.round(
-        //     ((item.distance.calculated / 1609) * 100) / 100,
-        //   ).toFixed(2),
+          distance: Math.round(
+            ((item.distance.calculated / 1609) * 100) / 100,
+          ).toFixed(2),
           id: item.placeId,
         });
       }}>
@@ -56,18 +56,24 @@ function FavouriteList({item,navigation}) {
             <View style={[styles.textWithImage, {width: width1}]}>
               <Text style={styles.listName}>{item.placeName}</Text>
             </View>
-            {/* <View style={styles.ratingView}>
-              <Text style={styles.listRating}>{item.rating * 2}</Text>
-            </View> */}
-            {/* <View style={styles.typeDist}>
-              <Text style={styles.typeText}>Indian .{item.priceRange}</Text>
-              <Text style={styles.distText}>
-                {Math.round(
-                  ((item.distance.calculated / 1609) * 100) / 100,
-                ).toFixed(2)}{' '}
-                meter
-              </Text>
-            </View> */}
+            <View style={styles.ratingView}>
+              <Text style={styles.listRating}>{item.placeRating * 2}</Text>
+            </View>
+              <View style={styles.typeDist}>
+                <Text style={styles.typeText}>Indian .  {item.placepPriceRange > 750
+                  ? '₹₹₹₹'
+                  : item.placePriceRange > 500
+                  ? '₹₹₹'
+                  : item.placePriceRange > 250
+                  ? '₹₹'
+                  : '₹'}</Text>
+                <Text style={styles.distText}>
+                  {Math.round(
+                    ((item.distance.calculated / 1609) * 100) / 100,
+                  ).toFixed(2)}{' '}
+                  meter
+                </Text>
+              </View>
             <View style={styles.addressView}>
               <Text style={styles.addressText}>
                 {item.placeAddress.trim()}, {item.city}
@@ -127,7 +133,7 @@ const styles = StyleSheet.create({
   
     ratingView: {
       backgroundColor: '#73cf42',
-      width: '6%',
+      width: '10%',
       height: '16%',
       marginTop: 5,
       marginLeft: 20,

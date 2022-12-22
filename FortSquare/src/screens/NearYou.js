@@ -15,8 +15,13 @@ import Geolocation from '@react-native-community/geolocation';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import {getNearPlace} from '../services/Places';
-import {setLoader, desetLoader} from '../redux/AuthSlice';
+import {setLoader, desetLoader, setInitialState} from '../redux/AuthSlice';
 import {setCoordinate} from '../redux/AuthSlice';
+import { getVerifiedKeys } from '../utils/Functions';
+import { setFavourites } from '../redux/AuthSlice';
+import { getFavourites } from '../services/Places';
+import { setToken } from '../redux/AuthSlice';
+import { addFavourites } from '../services/Places';
 
 function NearYou({navigation}) {
   const mapRef = useRef(null);
@@ -26,6 +31,20 @@ function NearYou({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const loading = useSelector(state => state.auth.stateLoader);
   const authData = useSelector(state => state.auth);
+  const state= useSelector(state=>state.auth.initialState)
+
+  async function handleFavourite(id) {
+    try {
+      const cred = await getVerifiedKeys(authData.userToken);
+      dispatch(setToken(cred));
+      const resp = await addFavourites(id, cred);
+      if (resp !== undefined) {
+        dispatch(setInitialState(state));
+      }
+    } catch (er) {
+      Toast.show('Network Error');
+    }
+  }
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -106,6 +125,15 @@ function NearYou({navigation}) {
     );
   };
 
+ useEffect(()=>{
+    setTimeout(async ()=>{
+      const cred= await getVerifiedKeys(authData.userToken)
+      dispatch(setToken(cred))
+      const resp= await getFavourites(cred)
+      dispatch(setFavourites(resp))
+    },500)
+  },[state])
+
   const {height, width} = useWindowDimensions();
   const height1 =
     width > height
@@ -144,7 +172,7 @@ function NearYou({navigation}) {
           <VirtualList
             data={placeData}
             renderItem={({item}) => {
-              return <ListDisplay navigation={navigation} item={item} />;
+              return <ListDisplay state= {state} navigation={navigation} item={item} />;
             }}
             keyExtractor={item => item._id}
           />

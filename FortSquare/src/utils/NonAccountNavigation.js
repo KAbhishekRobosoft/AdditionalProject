@@ -97,6 +97,7 @@ function NonAccountNavigation() {
         name="filter"
         component={FilterScreen}
       />
+
     </Stack.Navigator>
   );
 }

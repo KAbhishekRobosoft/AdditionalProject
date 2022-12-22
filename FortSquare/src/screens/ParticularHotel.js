@@ -9,8 +9,9 @@ import {
   TouchableOpacity,
   ScrollView,
   ActivityIndicator,
+  Modal,
+  useWindowDimensions,
 } from 'react-native';
-import {LargeButton} from '../components/Button';
 import {AirbnbRating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
 import {mapStyle} from '../utils/Functions';
@@ -23,6 +24,9 @@ import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
 import {addFavourites} from '../services/Places';
 import {setInitialState} from '../redux/AuthSlice';
+import {addRatings} from '../services/Places';
+import {LargeButton} from '../components/Button';
+import { getFavourites } from '../services/Places';
 
 function ParticularHotel({navigation, route}) {
   const [data, setData] = useState({});
@@ -31,12 +35,68 @@ function ParticularHotel({navigation, route}) {
   const dispatch = useDispatch();
   const state = useSelector(state => state.auth.initialState);
   const loading = useSelector(state => state.auth.stateLoader);
+  const {height, width} = useWindowDimensions();
+  const [modal, setModal] = useState(false);
+  const [rate, setRate] = useState(0);
+
+  const ratingCompleted = async rating => {
+    try {
+      const key = await getVerifiedKeys(authData.userToken);
+      dispatch(setToken(key));
+      const response = await addRatings(key, route.params.id, rating);
+      if (response !== undefined) {
+        if (response.message === 'Rating already given') {
+          Toast.show('You have already rated');
+        }
+        if (response.message === 'Rating added') {
+          Toast.show('Rated successfully');
+        }
+      }
+    } catch (er) {
+      Toast.show('network Error');
+    }
+  };
+
+  const height1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 210
+        : 210
+      : Platform.OS === 'ios'
+      ? 430
+      : 450;
+
+  const height2 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 250
+        : 250
+      : Platform.OS === 'ios'
+      ? 600
+      : 600;
+
+  const top =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 10
+        : 10
+      : Platform.OS === 'ios'
+      ? 70
+      : 60;
+
+  const left =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 715
+        : 715
+      : Platform.OS === 'ios'
+      ? 355
+      : 355;
 
   useEffect(() => {
     setTimeout(async () => {
       try {
         const response = await getParticularInfo(route.params.id);
-        console.log(response)
         setData(response);
       } catch (er) {
         Toast.show('Network Error');
@@ -50,8 +110,8 @@ function ParticularHotel({navigation, route}) {
         try {
           const cred = await getVerifiedKeys(authData.userToken);
           dispatch(setToken(cred));
-          const response = await searchAllFavourites(cred);
-          setFavourites(response);
+          const response = await getFavourites(cred);
+          setFavourites(response.favouritePlaces);
         } catch (er) {
           Toast.show('Network Error');
         }
@@ -74,7 +134,7 @@ function ParticularHotel({navigation, route}) {
 
   return (
     <SafeAreaView style={styles.particularContainer}>
-      {(JSON.stringify(data) !== '{}') ? (
+      {JSON.stringify(data) !== '{}' ? (
         <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
           <ImageBackground
             source={{uri: 'https' + data.placeImage.substring(4)}}
@@ -83,6 +143,7 @@ function ParticularHotel({navigation, route}) {
               <TouchableOpacity
                 onPress={() => {
                   navigation.goBack();
+                  dispatch(setInitialState(state));
                 }}>
                 <View style={styles.iconHeader}>
                   <Image
@@ -179,7 +240,10 @@ function ParticularHotel({navigation, route}) {
           </ImageBackground>
           <View style={styles.userPreference}>
             <View style={{marginLeft: 38}}>
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  setModal(true);
+                }}>
                 <View>
                   <Image
                     style={styles.ratingImg}
@@ -201,7 +265,12 @@ function ParticularHotel({navigation, route}) {
               </TouchableOpacity>
             </View>
             <View style={{marginRight: 38}}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{
+                navigation.navigate("review",{
+                  id:data._id,
+                  name:data.placeName
+                })
+              }}>
                 <View>
                   <Image
                     style={styles.ratingImg}
@@ -259,6 +328,11 @@ function ParticularHotel({navigation, route}) {
               width="100%"
               borderRadius="0"
               fontFamily="Avenir Medium"
+              onPress={()=>{
+                navigation.navigate('addReview',{
+                  id:route.params.id
+                })
+              }}
             />
           </View>
         </ScrollView>
@@ -267,6 +341,73 @@ function ParticularHotel({navigation, route}) {
           <ActivityIndicator size="large" color="purple" />
         </View>
       )}
+
+      <Modal visible={modal} animationType="fade" transparent={true}>
+        <View style={{flex: 1, backgroundColor: '#7A7A7A7C'}}>
+          <SafeAreaView
+            style={{alignItems: 'center', flex: 1, justifyContent: 'center'}}>
+            <View
+              style={{
+                height: height2,
+                width: '100%',
+                flexDirection: 'row',
+                justifyContent: 'center',
+              }}>
+              <View
+                style={{
+                  width: '90%',
+                  height: height1,
+                  borderWidth: 1,
+                  borderColor: '#cccccc',
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  backgroundColor: 'white',
+                }}>
+                <Text style={styles.ratingText1}>Overall Rating</Text>
+                <Text style={styles.ratingVal}>{data.rating}</Text>
+                <Text style={styles.howRate}>
+                  How would you rate your experience?
+                </Text>
+                <View style={{marginTop: 40}}>
+                  <AirbnbRating
+                    size={25}
+                    showRating={false}
+                    defaultRating={data.rating}
+                    isDisabled={false}
+                    onFinishRating={rating => setRate(rating)}
+                  />
+                </View>
+                <TouchableOpacity
+                  onPress={() => {
+                    ratingCompleted(rate);
+                  }}
+                  style={{
+                    height: 70,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    marginTop: 45,
+                    borderColor: '#cccccc',
+                    borderWidth: 1,
+                  }}>
+                  <Text style={styles.submitRate}>Submit</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={[styles.cancelImg, {top: top, left: left}]}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModal(false);
+                  }}>
+                  <Image
+                    style={{height: 15, width: 15}}
+                    source={require('../assets/images/close_icon_grey_hdpi.png')}
+                  />
+                </TouchableOpacity>
+              </View>
+            </View>
+          </SafeAreaView>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -311,10 +452,23 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 
+  ratingVal: {
+    marginTop: 10,
+    fontFamily: 'Avenir Black',
+    color: '#36B000',
+    fontSize: 29,
+  },
+
   particularText: {
     fontFamily: 'Avenir Medium',
     fontSize: 22,
     color: '#b4b4b4',
+  },
+
+  submitRate: {
+    color: '#351347',
+    fontSize: 24,
+    fontFamily: 'Avenir Medium',
   },
 
   mapStyle: {
@@ -342,6 +496,14 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginTop: 10,
     color: 'grey',
+  },
+
+  howRate: {
+    fontFamily: 'Avenir Book',
+    fontSize: 24,
+    color: 'Black',
+    textAlign: 'center',
+    marginTop: 45,
   },
 
   textRating: {
@@ -378,6 +540,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 
+  ratingText1: {
+    marginTop: 50,
+    fontFamily: 'Avenir Medium',
+    fontSize: 24,
+    color: 'black',
+  },
+
   iconHeader: {
     height: 64,
     width: 50,
@@ -391,6 +560,18 @@ const styles = StyleSheet.create({
     height: 70,
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+
+  cancelImg: {
+    height: 28,
+    width: 28,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#a3a3a3',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    position: 'absolute',
   },
 
   shareImg: {

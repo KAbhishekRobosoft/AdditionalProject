@@ -6,15 +6,30 @@ import {
   Text,
   useWindowDimensions,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
-import { useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getVerifiedKeys} from '../utils/Functions';
+import {addFavourites} from '../services/Places';
+import {setToken} from '../redux/AuthSlice';
+import Toast from 'react-native-simple-toast';
+import {setInitialState} from '../redux/AuthSlice';
 
-
-function ListDisplay({item, navigation}) {
+function ListDisplay({item, navigation, handleFavourite, state}) {
+  const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
-  const favourites= useSelector(state=>state.auth.favourites)
-  const authData= useSelector(state=>state.auth)
+  const favourites = useSelector(state => state.auth.favourites);
+  const authData = useSelector(state => state.auth);
   const loading = useSelector(state => state.auth.stateLoader);
+
+  async function handleFavourite(id) {
+    const cred = await getVerifiedKeys(authData.userToken);
+    dispatch(setToken(cred));
+    const resp = await addFavourites(id, cred);
+    if (resp !== undefined) {
+      dispatch(setInitialState(state));
+    }
+  }
 
   const width1 =
     width > height
@@ -63,35 +78,19 @@ function ListDisplay({item, navigation}) {
               <Text style={styles.listName}>{item.placeName}</Text>
 
               {authData.userToken !== null ? (
-                  favourites.favouritePlaces.length > 0 ? (
-                    favourites.favouritePlaces.filter(ele => ele.placeId === item._id)
-                      .length > 0 ? (
-                      !loading ? (
-                        <TouchableOpacity
-                          onPress={() => {
-                            handleFavourite(route.params.id);
-                          }}>
-                          <View style={styles.iconHeader} key={item._id}>
-                            <Image
-                              style={styles.favouriteImg}
-                              source={require('../assets/images/favourite_icon_selected.png')}
-                            />
-                          </View>
-                        </TouchableOpacity>
-                      ) : (
-                        <View style={styles.iconHeader}>
-                          <ActivityIndicator color="yellow" />
-                        </View>
-                      )
-                    ) : !loading ? (
+                favourites.favouritePlaces.length > 0 ? (
+                  favourites.favouritePlaces.filter(
+                    ele => ele.placeId === item._id,
+                  ).length > 0 ? (
+                    !loading ? (
                       <TouchableOpacity
                         onPress={() => {
-                          handleFavourite(route.params.id);
+                          handleFavourite(item._id);
                         }}>
                         <View style={styles.iconHeader} key={item._id}>
                           <Image
                             style={styles.favouriteImg}
-                            source={require('../assets/images/favourite_icon.png')}
+                            source={require('../assets/images/favourite_icon_selected.png')}
                           />
                         </View>
                       </TouchableOpacity>
@@ -105,7 +104,7 @@ function ListDisplay({item, navigation}) {
                       onPress={() => {
                         handleFavourite(item._id);
                       }}>
-                      <View style={styles.iconHeader}>
+                      <View style={styles.iconHeader} key={item._id}>
                         <Image
                           style={styles.favouriteImg}
                           source={require('../assets/images/favourite_icon.png')}
@@ -117,14 +116,31 @@ function ListDisplay({item, navigation}) {
                       <ActivityIndicator color="yellow" />
                     </View>
                   )
+                ) : !loading ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleFavourite(item._id);
+                    }}>
+                    <View style={styles.iconHeader}>
+                      <Image
+                        style={styles.favouriteImg}
+                        source={require('../assets/images/favourite_icon.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 ) : (
-                  <View>
-                    <Image
-                      style={styles.favouriteImg}
-                      source={require('../assets/images/favourite_icon.png')}
-                    />
+                  <View style={styles.iconHeader}>
+                    <ActivityIndicator color="yellow" />
                   </View>
-                )}
+                )
+              ) : (
+                <View>
+                  <Image
+                    style={styles.favouriteImg}
+                    source={require('../assets/images/favourite_icon.png')}
+                  />
+                </View>
+              )}
             </View>
             <View style={styles.ratingView}>
               <Text style={styles.listRating}>{item.rating * 2}</Text>
@@ -203,7 +219,7 @@ const styles = StyleSheet.create({
 
   ratingView: {
     backgroundColor: '#73cf42',
-    width: '6%',
+    width: '10%',
     height: '16%',
     marginTop: 5,
     marginLeft: 20,

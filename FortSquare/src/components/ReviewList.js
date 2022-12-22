@@ -1,20 +1,40 @@
 import React from 'react';
-import {View, StyleSheet, Text, Image,TouchableOpacity} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  TouchableOpacity,
+  useWindowDimensions,
+  Platform,
+} from 'react-native';
+import moment from 'moment';
 
 function ReviewList({item}) {
+  const {height, width} = useWindowDimensions();
+  const left =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 0
+        : 0
+      : Platform.OS === 'ios'
+      ? 25
+      : 25;
+
   return (
     <TouchableOpacity>
       <View style={styles.reviewListCon}>
         <View style={styles.imgWithDetails}>
-          <Image
-            style={styles.profileImg}
-            source={require('../assets/images/profillephotp.png')}
-          />
-          <View style={styles.reviewInfo}>
-            <Text style={styles.reviewName}>{item.name}</Text>
+          <Image style={styles.profileImg} source={{uri: item.reviewerImage}} />
+          <View style={[styles.reviewInfo,{marginLeft:left}]}>
+            <Text style={styles.reviewName}>{item.reviewBy}</Text>
             <Text style={styles.reviewDet}>{item.review}</Text>
           </View>
-          <Text style={styles.dateText}>{item.date}</Text>
+          <Text style={styles.dateText}>
+            {moment(new Date(item.reviewDate.toString()))
+              .format('MMMM DD,YYYY')
+              .toString()}
+          </Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -23,7 +43,7 @@ function ReviewList({item}) {
 const styles = StyleSheet.create({
   reviewListCon: {
     height: 110,
-    marginVertical:5,
+    marginVertical: 5,
     width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#CCCCCC',
@@ -32,6 +52,8 @@ const styles = StyleSheet.create({
   dateText: {
     marginTop: 18,
     marginRight: 20,
+    fontSize: 16,
+    fontFamily: 'Avenir Book',
   },
 
   reviewName: {
@@ -49,10 +71,9 @@ const styles = StyleSheet.create({
   },
 
   reviewInfo: {
-    width: '50%',
-    height: 80,
+    width: '42%',
+    height: 86,
     marginTop: 15,
-    marginLeft: 15,
   },
 
   profileImg: {

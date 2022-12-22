@@ -2,18 +2,33 @@ import {
   View,
   Text,
   StyleSheet,
-  Dimensions,
   useWindowDimensions,
   TouchableOpacity,
   Image,
+  ActivityIndicator
 } from 'react-native';
 import React from 'react';
 import {useSelector, useDispatch} from 'react-redux';
-import MapView, {Marker} from 'react-native-maps';
-import {mapStyle} from '../utils/Functions';
+import {getVerifiedKeys} from '../utils/Functions';
+import {addFavourites} from '../services/Places';
+import {setToken} from '../redux/AuthSlice';
+import {setInitialState} from '../redux/AuthSlice';
 
-const Card = ({item,navigation}) => {
+const Card = ({item,navigation,state}) => {
   const {width, height} = useWindowDimensions();
+  const authData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const loading = useSelector(state => state.auth.stateLoader);
+  const favourites = useSelector(state => state.auth.favourites);
+
+  async function handleFavourite(id) {
+    const cred = await getVerifiedKeys(authData.userToken);
+    dispatch(setToken(cred));
+    const resp = await addFavourites(id, cred);
+    if (resp !== undefined) {
+      dispatch(setInitialState(state));
+    }
+  }
 
   const width1 =
     width > height
@@ -86,10 +101,71 @@ const Card = ({item,navigation}) => {
             <View style={{width: width2}}>
               <View style={[styles.textWithImage, {width: width1}]}>
                 <Text style={styles.listName}>{item.placeName}</Text>
-                <Image
-                  style={styles.favouriteImg}
-                  source={require('../assets/images/favourite_icon.png')}
-                />
+             
+                {authData.userToken !== null ? (
+                favourites.favouritePlaces.length > 0 ? (
+                  favourites.favouritePlaces.filter(
+                    ele => ele.placeId === item._id,
+                  ).length > 0 ? (
+                    !loading ? (
+                      <TouchableOpacity
+                        onPress={() => {
+                          handleFavourite(item._id);
+                        }}>
+                        <View style={styles.iconHeader} key={item._id}>
+                          <Image
+                            style={styles.favouriteImg}
+                            source={require('../assets/images/favourite_icon_selected.png')}
+                          />
+                        </View>
+                      </TouchableOpacity>
+                    ) : (
+                      <View style={styles.iconHeader}>
+                        <ActivityIndicator color="yellow" />
+                      </View>
+                    )
+                  ) : !loading ? (
+                    <TouchableOpacity
+                      onPress={() => {
+                        handleFavourite(item._id);
+                      }}>
+                      <View style={styles.iconHeader} key={item._id}>
+                        <Image
+                          style={styles.favouriteImg}
+                          source={require('../assets/images/favourite_icon.png')}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <View style={styles.iconHeader}>
+                      <ActivityIndicator color="yellow" />
+                    </View>
+                  )
+                ) : !loading ? (
+                  <TouchableOpacity
+                    onPress={() => {
+                      handleFavourite(item._id);
+                    }}>
+                    <View style={styles.iconHeader}>
+                      <Image
+                        style={styles.favouriteImg}
+                        source={require('../assets/images/favourite_icon.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <View style={styles.iconHeader}>
+                    <ActivityIndicator color="yellow" />
+                  </View>
+                )
+              ) : (
+                <View>
+                  <Image
+                    style={styles.favouriteImg}
+                    source={require('../assets/images/favourite_icon.png')}
+                  />
+                </View>
+              )}
               </View>
               <View style={styles.ratingView}>
                 <Text style={styles.listRating}>8.5</Text>

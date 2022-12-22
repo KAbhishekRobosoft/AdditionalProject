@@ -7,7 +7,7 @@ import DrawerNavigation from './DrawerNavigation';
 import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
-
+import AddReviewScreen from '../screens/AddReviewScreen';
 
 const Stack = createStackNavigator();
 
@@ -66,6 +66,14 @@ function AccountNavigation() {
         }}
         name="filter"
         component={FilterScreen}
+      />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="addReview"
+        component={AddReviewScreen}
       />
     </Stack.Navigator>
   );

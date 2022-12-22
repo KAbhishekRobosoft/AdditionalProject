@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,40 +9,46 @@ import {
   useWindowDimensions,
   ActivityIndicator,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import TextInputComponent from '../components/TextInputComponent';
 import VirtualList from '../components/VirtualList';
-import { searchAllFavourites } from '../services/Places';
-import { getVerifiedKeys } from '../utils/Functions';
-import { setToken } from '../redux/AuthSlice';
+import {searchAllFavourites} from '../services/Places';
+import {getVerifiedKeys} from '../utils/Functions';
+import {setToken} from '../redux/AuthSlice';
 import ListDisplay from '../components/HotelListDisplay';
 import FavouriteList from '../components/FavouriteList';
+import { searchTextFavourites } from '../services/Places';
 
 function Favourites({navigation}) {
-  const authData= useSelector(state=>state.auth)
-  const dispatch= useDispatch()
-  const [favourite,setFavourite]= useState([])
+  const authData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const [favourite, setFavourite] = useState([]);
+  const coord = useSelector(state => state.auth.setCoord);
 
-  useEffect(()=>{
-    setTimeout(async ()=>{
+  useEffect(() => {
+    setTimeout(async () => {
+      const cred = await getVerifiedKeys(authData.userToken);
+      dispatch(setToken(cred));
+      const resp = await searchAllFavourites(cred, coord);
+      setFavourite(resp);
+    }, 500);
+  }, []);
+
+  async function searchFavourite(text){
       const cred= await getVerifiedKeys(authData.userToken)
       dispatch(setToken(cred))
-      const resp= await searchAllFavourites(cred)
-      setFavourite(resp)
-    },500)
-  },[])
-
-  const renderItem= ({item})=>{
-    return(
-      <FavouriteList item={item}  navigation={navigation}/>
-    )
+      const resp= await searchTextFavourites(cred,coord,text)
+      setFavourite(resp);
   }
+
+  const renderItem = ({item}) => {
+    return <FavouriteList item={item} navigation={navigation} />;
+  };
 
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
   return (
     <SafeAreaView style={styles.favouriteContainer}>
-    {favourite.length > 0 ? <>
       <View style={styles.searchHeader}>
         <TouchableOpacity
           onPress={() => {
@@ -58,7 +64,9 @@ function Favourites({navigation}) {
         <View style={styles.searchInput}>
           <Text style={styles.favouriteText}>Favourites</Text>
           <View style={{marginTop: 20}}>
-            <TextInputComponent placeholder="Search" name="search-outline" />
+            <TextInputComponent onChangeText={(val)=>{
+                searchFavourite(val)
+            }} placeholder="Search" name="search-outline" />
           </View>
         </View>
         <TouchableOpacity>
@@ -70,12 +78,21 @@ function Favourites({navigation}) {
           </View>
         </TouchableOpacity>
       </View>
-      <View style={{flex:1}}>
-          <VirtualList data={favourite} renderItem={renderItem} keyExtractor={(item)=>item._id}/>
-      </View>
-      </>:<View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
-            <ActivityIndicator color="purple" size="large" />
-      </View>}
+      {favourite.length > 0 ? (
+        <View style={{flex: 1}}>
+          <VirtualList
+            data={favourite}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
+          />
+        </View>
+      ) : (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text style={{fontSize: 18, fontFamily: 'Avenir Book'}}>
+            No Favourites added
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 }

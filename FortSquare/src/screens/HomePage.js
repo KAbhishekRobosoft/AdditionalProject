@@ -1,4 +1,4 @@
-import React, { useEffect,useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -6,27 +6,9 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import { useSelector,useDispatch } from 'react-redux';
 import TopBar from '../components/TopBar';
-import { getFavourites } from '../services/Places';
-import { setToken } from '../redux/AuthSlice';
-import { getVerifiedKeys } from '../utils/Functions';
-import { setFavourites } from '../redux/AuthSlice';
 
 function HomePage({navigation}) {
-  const authData= useSelector(state=>state.auth)
-  const dispatch= useDispatch()
-  
-
-  useEffect(()=>{
-    setTimeout(async ()=>{
-      const cred= await getVerifiedKeys(authData.userToken)
-      dispatch(setToken(cred))
-      const resp= await getFavourites(cred)
-      dispatch(setFavourites(resp))
-    },500)
-  },[])
-  
   return (
     <SafeAreaView style={styles.homeContainer}>
       <View style={styles.homeHeader}>
@@ -46,9 +28,10 @@ function HomePage({navigation}) {
           source={require('../assets/images/logo.png')}
         />
         <View style={styles.homeOptions}>
-          <TouchableOpacity onPress={()=>{
-            navigation.navigate('filter')
-          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('filter');
+            }}>
             <View style={styles.iconHeader}>
               <Image
                 style={styles.filterIcon}
@@ -56,9 +39,10 @@ function HomePage({navigation}) {
               />
             </View>
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>{
-            navigation.navigate('search')
-          }}>
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('search');
+            }}>
             <View style={styles.iconHeader}>
               <Image
                 style={styles.searchIcon}

@@ -17,6 +17,7 @@
 		7699B88040F8A987B510C191 /* libPods-FortSquare-FortSquareTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-FortSquare-FortSquareTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		D25CD00FD57A471C9C639D1D /* Avenir Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 407D3E435FFC48F08472688F /* Avenir Medium.ttf */; };
+		E9ABCA6186EE4AD08A3D88CE /* Avenir Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F37512C44909460292125968 /* Avenir Black.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -50,6 +51,7 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = FortSquare/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-FortSquare-FortSquareTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FortSquare-FortSquareTests.release.xcconfig"; path = "Target Support Files/Pods-FortSquare-FortSquareTests/Pods-FortSquare-FortSquareTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F37512C44909460292125968 /* Avenir Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Avenir Black.ttf"; path = "../assets/fonts/Avenir Black.ttf"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -94,6 +96,7 @@
 			children = (
 				5D9A2696D7994CAA8989A555 /* Avenir Book.ttf */,
 				407D3E435FFC48F08472688F /* Avenir Medium.ttf */,
+				F37512C44909460292125968 /* Avenir Black.ttf */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -264,6 +267,7 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				4B35A8525DEA46E4AAA2F18E /* Avenir Book.ttf in Resources */,
 				D25CD00FD57A471C9C639D1D /* Avenir Medium.ttf in Resources */,
+				E9ABCA6186EE4AD08A3D88CE /* Avenir Black.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -6,11 +6,17 @@ import Geolocation from '@react-native-community/geolocation';
 import { useDispatch,useSelector } from 'react-redux';
 import { getParameter } from '../services/Places';
 import Toast from 'react-native-simple-toast'
+import { getVerifiedKeys } from '../utils/Functions';
+import { addFavourites } from '../services/Places';
+import { setToken } from '../redux/AuthSlice';
+import { getFavourites } from '../services/Places';
+import { setFavourites } from '../redux/AuthSlice';
 
 function ParameterList3({navigation}) {
   const dispatch = useDispatch();
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
+  const state= useSelector(state=>state.auth.initialState)
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -65,9 +71,19 @@ function ParameterList3({navigation}) {
     );
   };
 
+  useEffect(()=>{
+    setTimeout(async ()=>{
+      const cred= await getVerifiedKeys(authData.userToken)
+      dispatch(setToken(cred))
+      const resp= await getFavourites(cred)
+      dispatch(setFavourites(resp))
+    },500)
+  },[state])
+
+
 
   const renderItem = ({item}) => {
-    return <ListDisplay navigation={navigation} item={item} />;
+    return <ListDisplay state={state} navigation={navigation} item={item} />;
   };
 
   return (
