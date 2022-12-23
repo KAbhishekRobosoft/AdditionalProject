@@ -8,20 +8,21 @@ import {
 import ListDisplay from './HotelListDisplay';
 import VirtualList from './VirtualList';
 import Geolocation from '@react-native-community/geolocation';
-import {useDispatch,useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {getParameter} from '../services/Places';
-import Toast from 'react-native-simple-toast'
-import { getVerifiedKeys } from '../utils/Functions';
-import { addFavourites } from '../services/Places';
-import { setToken } from '../redux/AuthSlice';
-import { getFavourites } from '../services/Places';
-import { setFavourites } from '../redux/AuthSlice';
+import Toast from 'react-native-simple-toast';
+import {getVerifiedKeys} from '../utils/Functions';
+import {addFavourites} from '../services/Places';
+import {setToken} from '../redux/AuthSlice';
+import {getFavourites} from '../services/Places';
+import {setFavourites} from '../redux/AuthSlice';
 
 function ParameterList4({navigation}) {
   const dispatch = useDispatch();
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
-  const state= useSelector(state=>state.auth.initialState)
+  const state = useSelector(state => state.auth.initialState);
+  const coord= useSelector(state=>state.auth.setCoord)
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -47,21 +48,20 @@ function ParameterList4({navigation}) {
       }
     };
     requestLocationPermission();
-  }, []);
+  }, [state]);
 
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
       position => {
         setTimeout(async () => {
           try {
-            const resp = await getParameter('getCafe',{
+            const resp = await getParameter('getCafe', {
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
             });
             setPlaceData(resp);
           } catch (error) {
             console.log(error);
-            dispatch(desetLoader());
           }
         }, 500);
       },
@@ -76,16 +76,14 @@ function ParameterList4({navigation}) {
     );
   };
 
-  useEffect(()=>{
-    setTimeout(async ()=>{
-      const cred= await getVerifiedKeys(authData.userToken)
-      dispatch(setToken(cred))
-      const resp= await getFavourites(cred)
-      dispatch(setFavourites(resp))
-    },500)
-  },[state])
-
-
+  useEffect(() => {
+    setTimeout(async () => {
+      const cred = await getVerifiedKeys(authData.userToken);
+      dispatch(setToken(cred));
+      const resp = await getFavourites(cred);
+      dispatch(setFavourites(resp));
+    }, 500);
+  }, [state]);
 
   const renderItem = ({item}) => {
     return <ListDisplay state={state} navigation={navigation} item={item} />;
@@ -93,7 +91,11 @@ function ParameterList4({navigation}) {
 
   return placeData.length > 0 ? (
     <View style={styles.parameterContainer}>
-      <VirtualList data={placeData} renderItem={renderItem}  keyExtractor={(item)=>item._id}/>
+      <VirtualList
+        data={placeData}
+        renderItem={renderItem}
+        keyExtractor={item => item._id}
+      />
     </View>
   ) : (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>

@@ -7,7 +7,6 @@ import { useDispatch,useSelector } from 'react-redux';
 import { getParameter } from '../services/Places';
 import Toast from 'react-native-simple-toast'
 import { getVerifiedKeys } from '../utils/Functions';
-import { addFavourites } from '../services/Places';
 import { setToken } from '../redux/AuthSlice';
 import { getFavourites } from '../services/Places';
 import { setFavourites } from '../redux/AuthSlice';
@@ -17,6 +16,7 @@ function ParameterList3({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
   const state= useSelector(state=>state.auth.initialState)
+  const coord= useSelector(state=>state.auth.setCoord)
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -77,7 +77,7 @@ function ParameterList3({navigation}) {
       dispatch(setToken(cred))
       const resp= await getFavourites(cred)
       dispatch(setFavourites(resp))
-    },500)
+    },1000)
   },[state])
 
 

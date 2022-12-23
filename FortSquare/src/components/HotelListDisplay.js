@@ -14,6 +14,7 @@ import {addFavourites} from '../services/Places';
 import {setToken} from '../redux/AuthSlice';
 import Toast from 'react-native-simple-toast';
 import {setInitialState} from '../redux/AuthSlice';
+import Icon from 'react-native-vector-icons'
 
 function ListDisplay({item, navigation, handleFavourite, state}) {
   const dispatch = useDispatch();

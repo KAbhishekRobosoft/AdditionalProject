@@ -8,6 +8,7 @@ import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
 import AddReviewScreen from '../screens/AddReviewScreen';
+import ImageDisplay from '../screens/ImageDisplay';
 
 const Stack = createStackNavigator();
 
@@ -74,6 +75,13 @@ function AccountNavigation() {
         }}
         name="addReview"
         component={AddReviewScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="imgDisplay"
+        component={ImageDisplay}
       />
     </Stack.Navigator>
   );

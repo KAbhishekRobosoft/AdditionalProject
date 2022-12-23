@@ -254,7 +254,9 @@ function ParticularHotel({navigation, route}) {
               </TouchableOpacity>
             </View>
             <View>
-              <TouchableOpacity>
+              <TouchableOpacity onPress={()=>{
+                navigation.navigate('imgDisplay',{id:route.params.id,name:data.placeName.trim()})
+              }}>
                 <View>
                   <Image
                     style={styles.ratingImg}

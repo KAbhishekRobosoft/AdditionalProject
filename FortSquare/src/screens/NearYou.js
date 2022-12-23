@@ -32,6 +32,7 @@ function NearYou({navigation}) {
   const loading = useSelector(state => state.auth.stateLoader);
   const authData = useSelector(state => state.auth);
   const state= useSelector(state=>state.auth.initialState)
+  const coord= useSelector(state=>state.auth.setCoord)
 
   async function handleFavourite(id) {
     try {
@@ -97,12 +98,6 @@ function NearYou({navigation}) {
               },
               3 * 1000,
             );
-            dispatch(
-              setCoordinate({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              }),
-            );
           } catch (error) {
             console.log(error);
             dispatch(desetLoader());
@@ -129,9 +124,9 @@ function NearYou({navigation}) {
     setTimeout(async ()=>{
       const cred= await getVerifiedKeys(authData.userToken)
       dispatch(setToken(cred))
-      const resp= await getFavourites(cred)
-      dispatch(setFavourites(resp))
-    },500)
+      const resp1= await getFavourites(cred)
+      dispatch(setFavourites(resp1))
+    },1000)
   },[state])
 
   const {height, width} = useWindowDimensions();
