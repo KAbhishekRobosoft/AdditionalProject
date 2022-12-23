@@ -14,9 +14,11 @@ import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import {LargeButton} from '../components/Button';
 import {ScrollView} from 'react-native-gesture-handler';
-import {addReviewImage} from '../services/Places';
+import {addReview, addReviewImage} from '../services/Places';
 import {getVerifiedKeys} from '../utils/Functions';
 import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from '../redux/AuthSlice';
+import {setInitialState} from '../redux/AuthSlice';
 
 function AddReviewScreen({navigation, route}) {
   const [imgArray, setImgArray] = useState([]);
@@ -24,6 +26,7 @@ function AddReviewScreen({navigation, route}) {
   const [text, setText] = useState('');
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
+  const state = useSelector(state => state.auth.initialState);
 
   const left =
     width > height
@@ -40,28 +43,50 @@ function AddReviewScreen({navigation, route}) {
         ? 280
         : 280
       : Platform.OS === 'ios'
-      ? 220
+      ? 230
       : 250;
 
+  const height1= width > height
+  ? Platform.OS === 'ios'
+    ? 280
+    : 0
+  : Platform.OS === 'ios'
+  ? 200
+  :190;
+
+
   const sendReview = async () => {
-    const payload = new FormData();
-    payload.append('_id', route.params.id);
-    for (let i = 0; i < imgArray.length; i++) {
-      payload.append(imgArray[i].name, {
-        uri: imgArray[i].path,
-        type: imgArray[i].mime,
-        name: `${imgArray[i].filename}.${imgArray[i].mime.substring(
-          imgArray[i].mime.indexOf('/') + 1,
-        )}`,
-      });
-    }
     let cred = await getVerifiedKeys(authData.userToken);
     dispatch(setToken(cred));
-    const resp = await addReviewImage(payload, cred);
-    if(resp !== undefined){
-        if(resp.hasOwnProperty('message')){
-            setImgArray([])
-        }
+    let resp;
+    let resp1;
+    if (imgArray.length > 0) {
+      const payload = new FormData();
+      payload.append('_id', route.params.id);
+      for (let i = 0; i < imgArray.length; i++) {
+        payload.append(imgArray[i].name, {
+          uri: imgArray[i].path,
+          type: imgArray[i].mime,
+          name: `${imgArray[i].filename}.${imgArray[i].mime.substring(
+            imgArray[i].mime.indexOf('/') + 1,
+          )}`,
+        });
+      }
+      resp = await addReviewImage(payload, cred);
+    }
+    resp1 = await addReview(cred, text, route.params.id);
+    console.log(resp1)
+    if (resp1 !== undefined) {
+      if (resp1.message === "Already reviewed this particular place") {
+        setImgArray([]);
+        setText('');
+        Toast.show('Already Reviewed');
+      }
+      else{
+        setImgArray([]);
+        setText('');
+        Toast.show('Review Added');
+      }
     }
   };
 
@@ -90,6 +115,7 @@ function AddReviewScreen({navigation, route}) {
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
+              dispatch(setInitialState(state));
               navigation.goBack();
             }}>
             <View style={styles.iconHeader}>
@@ -106,10 +132,10 @@ function AddReviewScreen({navigation, route}) {
         <View>
           <Text style={styles.writeReview}>Write Review</Text>
           <TextInput
-            onChange={val => {
+            onChangeText={val => {
               setText(val);
             }}
-            style={styles.inputStyle}
+            style={[styles.inputStyle,{height:height1}]}
             multiline={true}
             numberOfLines={8}
           />
@@ -157,7 +183,11 @@ function AddReviewScreen({navigation, route}) {
             borderRadius="0"
             fontFamily="Avenir Medium"
             onPress={() => {
-              sendReview();
+              if (text.length > 0) {
+                sendReview();
+              } else {
+                Toast.show('Please enter your reviews');
+              }
             }}
           />
         </View>

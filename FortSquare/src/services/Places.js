@@ -55,14 +55,14 @@ export const addFavourites = async (id, token) => {
   }
 };
 
-export const searchAllFavourites = async (token,coord) => {
+export const searchAllFavourites = async (token, coord) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/searchFavourite`,
       {
         text: '',
-        latitude:coord.latitude,
-        longitude:coord.longitude
+        latitude: coord.latitude,
+        longitude: coord.longitude,
       },
       {
         headers: {
@@ -134,28 +134,25 @@ export const addRatings = async (token, placeId, rating) => {
   }
 };
 
-export const getReviews= async (placeId) => {
+export const getReviews = async placeId => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/getReview`,
-      {
-        _id: placeId
-      },
-    );
+    const response = await axios.post(`${BASE_URL}/getReview`, {
+      _id: placeId,
+    });
     return response.data;
   } catch (er) {
     console.log('Error');
   }
 };
 
-export const searchTextFavourites = async (token,coord,text) => {
+export const searchTextFavourites = async (token, coord, text) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/searchFavourite`,
       {
         text: text,
-        latitude:coord.latitude,
-        longitude:coord.longitude
+        latitude: coord.latitude,
+        longitude: coord.longitude,
       },
       {
         headers: {
@@ -169,14 +166,14 @@ export const searchTextFavourites = async (token,coord,text) => {
   }
 };
 
-export const addReview = async (token,text,id) => {
+export const addReview = async (token, text, id) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/addReview`,
       {
-        _id:id,
-        review:text
-    },
+        _id: id,
+        review: text,
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -189,19 +186,32 @@ export const addReview = async (token,text,id) => {
   }
 };
 
-export const addReviewImage = async (payload,token) => {
-  try{
-  let res = await fetch(`${BASE_URL}/addReviewImage`, {
-    method: 'post',
-    body: payload,
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-  });
-  let data = await res.json()
-  return data;
-}
-catch(er){
-  Toast.show("Error")
-}
+export const addReviewImage = async (payload, token) => {
+  try {
+    let res = await fetch(`${BASE_URL}/addReviewImage`, {
+      method: 'post',
+      body: payload,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    let data = await res.json();
+    return data;
+  } catch (er) {
+    Toast.show('Error');
+  }
+};
+
+export const getImages = async (page) => {
+  try {
+    const response = await axios.post(
+      `${BASE_URL}/getReviewImage?page=${page}}&limit=5`,
+      {
+        _id: "63a178a939dec0f0d95c8565",
+      },
+    );
+    return response.data;
+  } catch (er) {
+    console.log('Error');
+  }
 };

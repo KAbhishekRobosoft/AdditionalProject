@@ -8,6 +8,7 @@ import {
   useWindowDimensions,
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import TextInputComponent from '../components/TextInputComponent';
@@ -45,7 +46,7 @@ function SearchScreen({navigation}) {
   const [list, setList] = useState(false);
   const [placeResults, setPlaceResults] = useState([]);
   const [mapView, setMapView] = useState(false);
-  const state= useSelector(state=>state.auth.initialState)
+  const state = useSelector(state => state.auth.initialState);
 
   const bottom =
     width > height
@@ -80,6 +81,7 @@ function SearchScreen({navigation}) {
           onPress={() => {
             navigation.goBack();
             setList(false);
+            setMapView(false);
           }}>
           <View style={styles.iconHeader}>
             <Image
@@ -101,11 +103,13 @@ function SearchScreen({navigation}) {
                 if (val.length !== 0) {
                   getPlace(val);
                   setSearchPlace(false);
-                  setList(true);
+                  if (mapView === false) setList(true);
                 }
                 if (val.length === 0) {
-                  setList(false);
-                  setSearchPlace(true);
+                  if(mapView === true)
+                    setList(false);
+                  if(list === true)
+                    setMapView(false)
                 }
               }}
               placeholder="Search"
@@ -223,7 +227,7 @@ function SearchScreen({navigation}) {
                 );
               })}
             </MapView>
-            <View style={{height: height1, bottom: bottom, width: '100%'}}>
+            <View style={{position:"absolute", width: '100%',top:0}}>
               <FlatList
                 data={placeResults}
                 renderItem={renderItem}
@@ -244,7 +248,7 @@ function SearchScreen({navigation}) {
         ))}
 
       {mapView && (
-        <View>
+ 
           <LargeButton
             title="List View"
             backgroundColor="#351347"
@@ -256,7 +260,6 @@ function SearchScreen({navigation}) {
               setMapView(false);
             }}
           />
-        </View>
       )}
     </SafeAreaView>
   );
@@ -266,6 +269,10 @@ const styles = StyleSheet.create({
   searchContainer: {
     flex: 1,
     backgroundColor: 'white',
+  },
+
+  container: {
+    flex: 1,
   },
 
   listView: {

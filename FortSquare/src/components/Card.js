@@ -203,8 +203,6 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 5,
-    justifyContent: 'center',
     alignItems: 'center',
   },
 

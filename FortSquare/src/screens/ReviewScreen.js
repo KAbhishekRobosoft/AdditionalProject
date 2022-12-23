@@ -11,9 +11,11 @@ import VirtualList from '../components/VirtualList';
 import ReviewList from '../components/ReviewList';
 import {getReviews} from '../services/Places';
 import Toast from 'react-native-simple-toast';
+import { useSelector } from 'react-redux';
 
 function ReviewScreen({navigation, route}) {
   const [reviewData, setReviewData] = useState([]);
+  const state= useSelector(state=>state.auth.initialState)
 
   useEffect(() => {
     setTimeout(async () => {
@@ -24,7 +26,7 @@ function ReviewScreen({navigation, route}) {
         Toast.show('Network Error');
       }
     }, 500);
-  }, []);
+  }, [state]);
 
 
   const renderItem = ({item}) => {
@@ -46,7 +48,9 @@ function ReviewScreen({navigation, route}) {
           </View>
         </TouchableOpacity>
         <Text style={styles.reviewHotelText}>{route.params.name}</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{
+          navigation.navigate('addReview',{id:route.params.id})
+        }}>
           <View style={styles.iconHeader}>
             <Image
               style={styles.review}
