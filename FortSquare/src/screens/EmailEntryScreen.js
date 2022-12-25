@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -7,19 +7,26 @@ import {
   View,
   ScrollView,
   useWindowDimensions,
+  Platform,
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
-import {resetPasswordValidationSchema} from '../utils/Functions';
-import {resetPassword} from '../services/UserCredentials';
+import {SmallButton} from '../components/Button';
+import { emailEntry } from '../utils/Functions';
+import {TouchableOpacity} from 'react-native-gesture-handler';
+import {checkIn} from '../services/UserCredentials';
+import Toast from 'react-native-simple-toast';
+import {setToken} from '../redux/AuthSlice';
 import {useDispatch} from 'react-redux';
-import {deSetReset} from '../redux/AuthSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setReset,desSetReset } from '../redux/AuthSlice';
 
-function ResetPassword({navigation, route}) {
-  const {height, width} = useWindowDimensions();
+function EmailEntryScreen({navigation}) {
   const dispatch = useDispatch();
+  const [email, setEmail] = useState('');
 
+  const {height, width} = useWindowDimensions();
   const top =
     width > height
       ? Platform.OS === 'ios'
@@ -34,8 +41,13 @@ function ResetPassword({navigation, route}) {
         ? 80
         : 80
       : Platform.OS === 'ios'
-      ? 120
-      : 120;
+      ? 200
+      : 200;
+
+  const initialValues = {
+    email: '',
+  };
+
   return (
     <View style={{flex: 1}}>
       <ImageBackground
@@ -48,45 +60,34 @@ function ResetPassword({navigation, route}) {
               style={[styles.logoImg, {top: top}]}
               source={require('../assets/images/logo.png')}
             />
+
             <Formik
-              initialValues={{
-                password: '',
-                confirmPassword: '',
-              }}
-              validationSchema={resetPasswordValidationSchema}
-              onSubmit={async values => {
-                const resp = await resetPassword({
-                  email: route.params.email,
-                  password: values.password,
-                });
-                if (resp !== undefined) {
-                  dispatch(deSetReset());
-                  navigation.navigate('login');
-                }
+              initialValues={initialValues}
+              validationSchema={emailEntry}
+              onSubmit={values => {
+                dispatch(setReset())
+                navigation.navigate('otp',{email:values.email.toLowerCase()})
               }}>
               {({handleSubmit, isValid}) => (
                 <View style={{marginTop: top1}}>
                   <Field
                     component={CustomField}
-                    label="Enter Password"
-                    name="password"
-                    secureTextEntry
+                    label="Enter Email"
+                    name="email"
+                    keyboardType="email-address"
                   />
-                  <Field
-                    component={CustomField}
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    secureTextEntry
-                  />
+
                   <View style={styles.butView}>
                     <LargeButton
-                      onPress={handleSubmit}
-                      title="Submit"
-                      disabled={!isValid}
+                      onPress={() => {
+                        handleSubmit();
+                      }}
+                      title="Verify OTP"
                       width="90%"
                       borderRadius="8"
                       backgroundColor="transparent"
-                      fontFamily="Avenir Book"
+                      disabled={!isValid}
+                      fontFamily="Avenir Medium"
                     />
                   </View>
                 </View>
@@ -108,9 +109,41 @@ const styles = StyleSheet.create({
     fontFamily: 'Avenir Book',
     fontSize: 18,
     color: '#FFFFFF',
-    marginTop: 80,
+    marginTop: 60,
     right: 40,
     alignSelf: 'flex-end',
+  },
+
+  iconHeader: {
+    height: 64,
+    width: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  alter: {
+    fontFamily: 'Avenir Book',
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
+    width: '10%',
+    height: 40,
+    borderRadius: 30,
+    alignSelf: 'center',
+    backgroundColor: '#3E3C57',
+  },
+
+  alterText: {
+    color: 'white',
+    fontSize: 14,
+    fontFamily: 'Avenir Book',
+  },
+
+  otherLogin: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    marginVertical: 20,
   },
 
   logoImg: {
@@ -118,13 +151,18 @@ const styles = StyleSheet.create({
   },
 
   fieldStyle: {
-    marginTop: 220,
+    top: 114,
   },
 
   butView: {
     width: '100%',
-    marginVertical: 100,
+    marginTop: 42,
+    alignItems: 'center',
+  },
+
+  forgotView: {
+    marginTop: 34,
     alignItems: 'center',
   },
 });
-export default ResetPassword;
+export default EmailEntryScreen;

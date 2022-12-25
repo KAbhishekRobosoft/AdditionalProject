@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Text,
   StyleSheet,
@@ -23,6 +23,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Login({navigation}) {
   const dispatch = useDispatch();
+  const [email,setEmail]= useState('')
 
   async function signIn(userData) {
     const response = await checkIn(userData);
@@ -61,7 +62,7 @@ function Login({navigation}) {
     email: '',
     password: '',
   };
-
+  console.log(email)
   return (
     <View style={{flex: 1}}>
       <ImageBackground
@@ -87,7 +88,7 @@ function Login({navigation}) {
               onSubmit={values => {
                 signIn(values);
               }}>
-              {({handleSubmit, isValid, resetForm}) => (
+              {({handleSubmit, isValid}) => (
                 <View style={{marginTop: top1}}>
                   <Field
                     component={CustomField}
@@ -104,7 +105,7 @@ function Login({navigation}) {
                   <View style={styles.forgotView}>
                     <SmallButton
                       onPress={() => {
-                        navigation.navigate('otp');
+                        navigation.navigate('emailEntry');
                       }}
                       title="Forgot Password?"
                     />

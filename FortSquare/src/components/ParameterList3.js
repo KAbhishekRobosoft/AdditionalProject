@@ -56,7 +56,6 @@ function ParameterList3({navigation}) {
             setPlaceData(resp);
           } catch (error) {
             console.log(error);
-            dispatch(desetLoader());
           }
         }, 500);
       },

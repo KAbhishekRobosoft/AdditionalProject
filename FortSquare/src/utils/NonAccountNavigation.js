@@ -11,6 +11,7 @@ import DrawerNavigation from './DrawerNavigation';
 import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
+import EmailEntryScreen from '../screens/EmailEntryScreen';
 
 const Stack = createStackNavigator();
 
@@ -31,6 +32,15 @@ function NonAccountNavigation() {
         name="register"
         component={Register}
       />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="emailEntry"
+        component={EmailEntryScreen}
+      />
+
       <Stack.Screen
         options={{
           headerShown: false,
@@ -97,7 +107,6 @@ function NonAccountNavigation() {
         name="filter"
         component={FilterScreen}
       />
-
     </Stack.Navigator>
   );
 }

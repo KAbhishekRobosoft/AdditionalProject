@@ -62,7 +62,6 @@ function ParameterList({navigation}) {
             
           } catch (error) {
             console.log(error);
-            dispatch(desetLoader());
           }
         }, 500);
       },

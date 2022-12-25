@@ -9,6 +9,7 @@ import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
 import AddReviewScreen from '../screens/AddReviewScreen';
 import ImageDisplay from '../screens/ImageDisplay';
+import IndividualImageDisplay from '../screens/IndividualImageDisplay';
 
 const Stack = createStackNavigator();
 
@@ -82,6 +83,14 @@ function AccountNavigation() {
         }}
         name="imgDisplay"
         component={ImageDisplay}
+      />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="IndividualImg"
+        component={IndividualImageDisplay}
       />
     </Stack.Navigator>
   );

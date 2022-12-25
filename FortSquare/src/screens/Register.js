@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   ImageBackground,
@@ -10,25 +10,8 @@ import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton} from '../components/Button';
 import {registerValidationSchema} from '../utils/Functions';
-import {register} from '../services/UserCredentials';
-import Toast from 'react-native-simple-toast';
 
 function Register({navigation}) {
-  async function signUp(userData) {
-    console.log(userData)
-    try{
-    const response = await register(userData);
-    if (response.hasOwnProperty('message')) {
-      Toast.show('Registered Successfully');
-      navigation.navigate('login');
-    } else {
-      Toast.show('User already exists');
-    }
-  }
-  catch(er){
-    Toast.show("User already exists")
-  }
-  }
 
   const initialValues = {
     email: '',
@@ -53,7 +36,7 @@ function Register({navigation}) {
               initialValues={initialValues}
               validationSchema={registerValidationSchema}
               onSubmit={values => {
-                signUp(values);
+                navigation.navigate('otp', {data: values});
               }}>
               {({handleSubmit, isValid, resetForm}) => (
                 <View style={styles.fieldView}>

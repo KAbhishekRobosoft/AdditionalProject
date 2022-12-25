@@ -64,6 +64,13 @@ export const otpValidationSchema = yup.object().shape({
     .required('OTP is required'),
 });
 
+export const emailEntry = yup.object().shape({
+  email: yup
+    .string()
+    .email('Please enter valid email')
+    .required('Email Address is Required'),
+});
+
 export const mapStyle = [
   {
     "elementType": "geometry",

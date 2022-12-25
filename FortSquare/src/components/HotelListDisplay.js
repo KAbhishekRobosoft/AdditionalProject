@@ -149,11 +149,11 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>
                 Indian .
-                {item.priceRange > 750
+                {item.priceRange === 4
                   ? '₹₹₹₹'
-                  : item.priceRange > 500
+                  : item.priceRange === 3
                   ? '₹₹₹'
-                  : item.priceRange > 250
+                  : item.priceRange === 2
                   ? '₹₹'
                   : '₹'}
               </Text>

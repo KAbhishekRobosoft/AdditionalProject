@@ -35,31 +35,6 @@ const ImageDisplay = ({navigation, route}) => {
     setUsers([...response.data.reviewImage]);
   };
 
-  const pickImage = () => {
-    ImagePicker.openPicker({
-      width: 200,
-      height: 200,
-      cropping: true,
-    }).then(async image => {
-      const payload = new FormData();
-      payload.append('_id', route.params.id);
-      payload.append('image', {
-        uri: image.path,
-        type: image.mime,
-        name: `${image.filename}.${image.mime.substring(
-          image.mime.indexOf('/') + 1,
-        )}`,
-      });
-      let cred = await getVerifiedKeys(authData.userToken);
-      dispatch(setToken(cred));
-      const resp = await addReviewImage(payload, cred);
-      if (resp.hasOwnProperty('message')) {
-        dispatch(setInitialState(state))
-        Toast.show('Photo updated');
-      }
-    });
-  };
-
   useEffect(() => {
     getUsers();
   }, [state]);
@@ -81,7 +56,7 @@ const ImageDisplay = ({navigation, route}) => {
         <Text style={styles.reviewHotelText}>{route.params.name}</Text>
         <TouchableOpacity
           onPress={() => {
-            pickImage();
+            navigation.navigate('addReview', {id: route.params.id});
           }}>
           <View style={styles.iconHeader}>
             <Icon
@@ -93,32 +68,53 @@ const ImageDisplay = ({navigation, route}) => {
           </View>
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          flex: 1,
-          flexWrap: 'wrap',
-          flexDirection: 'row',
-          backgroundColor: 'black',
-          justifyContent: 'flex-start',
-          alignItems: 'center',
-        }}>
-        {users.length > 0
-          ? users.map(item => {
-              return item.image.map(ele => {
-                return (
-                  <TouchableOpacity key={uuid.v4()}>
-                    <View>
-                      <Image
-                        style={styles.itemImageStyle}
-                        source={{uri: 'https' + ele.substring(4)}}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                );
-              });
-            })
-          : null}
-      </View>
+      {users.length > 0 ? (
+        <View
+          style={{
+            flex: 1,
+            flexWrap: 'wrap',
+            flexDirection: 'row',
+            backgroundColor: 'black',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+          }}>
+          {users.length > 0
+            ? users.map(item => {
+                return item.image.map(ele => {
+                  return (
+                    <TouchableOpacity
+                      onPress={() => {
+                        navigation.navigate('IndividualImg', {
+                          senderName: item.reviewBy,
+                          placeName: route.params.name,
+                          date: item.reviewDate,
+                          profileImg: (
+                            'https' + item.reviewerImage.substring(4)
+                          ).trim(),
+                          image: 'https' + ele.substring(4),
+                        });
+                      }}
+                      key={uuid.v4()}>
+                      <View>
+                        <Image
+                          style={styles.itemImageStyle}
+                          source={{uri: 'https' + ele.substring(4)}}
+                        />
+                      </View>
+                    </TouchableOpacity>
+                  );
+                });
+              })
+            : null}
+        </View>
+      ) : (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:"black"}}>
+          <Text
+            style={{fontFamily: 'Avenir Black', color: 'white', fontSize: 18}}>
+            No Images posted
+          </Text>
+        </View>
+      )}
     </SafeAreaView>
   );
 };

@@ -49,7 +49,7 @@ function AddReviewScreen({navigation, route}) {
   const height1= width > height
   ? Platform.OS === 'ios'
     ? 280
-    : 0
+    : 190
   : Platform.OS === 'ios'
   ? 200
   :190;
@@ -75,7 +75,7 @@ function AddReviewScreen({navigation, route}) {
       resp = await addReviewImage(payload, cred);
     }
     resp1 = await addReview(cred, text, route.params.id);
-    console.log(resp1)
+ 
     if (resp1 !== undefined) {
       if (resp1.message === "Already reviewed this particular place") {
         setImgArray([]);

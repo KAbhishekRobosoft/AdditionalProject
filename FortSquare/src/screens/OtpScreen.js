@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Text,
   StyleSheet,
@@ -11,9 +11,37 @@ import {
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
 import {LargeButton, SmallButton} from '../components/Button';
-import { otpValidationSchema } from '../utils/Functions';
+import {otpValidationSchema} from '../utils/Functions';
+import {register} from '../services/UserCredentials';
+import {sendOtp} from '../services/UserCredentials';
+import {verifyOtp} from '../services/UserCredentials';
+import Toast from 'react-native-simple-toast';
+import {deSetReset, setReset} from '../redux/AuthSlice';
+import {useSelector} from 'react-redux';
 
-function OtpScreen() {
+function OtpScreen({navigation, route}) {
+  const reset = useSelector(state => state.auth.reset);
+
+  // useEffect(() => {
+  //   setTimeout(async () => {
+  //     const resp = await sendOtp(route.params.data.email);
+  //   });
+  // }, []);
+
+  async function signUp() {
+    const response = await register(route.params.data);
+    if (response !== undefined) {
+      if (response.hasOwnProperty('message')) {
+        Toast.show('Registered Successfully');
+        navigation.navigate('login');
+      } else {
+        Toast.show('User already exists');
+      }
+    } else {
+      Toast.show('Network Error');
+    }
+  }
+
   const {height, width} = useWindowDimensions();
   const top =
     width > height
@@ -85,10 +113,22 @@ function OtpScreen() {
 
             <Formik
               initialValues={{
-                  otp:''
+                otp: '',
               }}
               validationSchema={otpValidationSchema}
-              onSubmit={values => console.log(values)}>
+              onSubmit={async values => {
+                const resp = await verifyOtp(values.otp);
+
+                if (resp === true) {
+                  if(reset === false)
+                    signUp();
+                  else{
+                    navigation.navigate('resetPassword',{email:route.params.email})
+                  }
+                } else {
+                  Toast.show('Enter proper OTP');
+                }
+              }}>
               {({handleSubmit, isValid}) => (
                 <View style={{marginTop: top1}}>
                   <Field

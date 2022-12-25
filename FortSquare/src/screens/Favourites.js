@@ -18,13 +18,16 @@ import {setToken} from '../redux/AuthSlice';
 import ListDisplay from '../components/HotelListDisplay';
 import FavouriteList from '../components/FavouriteList';
 import { searchTextFavourites } from '../services/Places';
+import { setInitialState } from '../redux/AuthSlice';
 
 function Favourites({navigation}) {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [favourite, setFavourite] = useState([]);
   const coord = useSelector(state => state.auth.setCoord);
-
+  const [state,setState]= useState(false)
+  const state1= useSelector(state=>state.auth.initialState)
+  
   useEffect(() => {
     setTimeout(async () => {
       const cred = await getVerifiedKeys(authData.userToken);
@@ -32,7 +35,8 @@ function Favourites({navigation}) {
       const resp = await searchAllFavourites(cred, coord);
       setFavourite(resp);
     }, 500);
-  }, []);
+  }, [state]);
+
 
   async function searchFavourite(text){
       const cred= await getVerifiedKeys(authData.userToken)
@@ -42,7 +46,7 @@ function Favourites({navigation}) {
   }
 
   const renderItem = ({item}) => {
-    return <FavouriteList item={item} navigation={navigation} />;
+    return <FavouriteList state={state} setState={setState} item={item} navigation={navigation} />;
   };
 
   const {height, width} = useWindowDimensions();
@@ -53,7 +57,9 @@ function Favourites({navigation}) {
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
+            dispatch(setInitialState(state1))
           }}>
+
           <View style={styles.iconHeader}>
             <Image
               style={styles.backImg}

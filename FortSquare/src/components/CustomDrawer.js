@@ -48,7 +48,7 @@ function CustomDrawer(props) {
         : 70
       : Platform.OS === 'ios'
       ? 20
-      : 20;
+      : 8;
 
       const marginTop =
       width > height
