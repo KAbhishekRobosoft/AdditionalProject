@@ -156,148 +156,98 @@ function CustomDrawer(props) {
         <DrawerContentScrollView {...props}>
           <View style={{marginVertical: 5}}>
             {authData.userToken !== null && <DrawerItemList {...props} />}
-            <View style={[styles.logoutView, {marginRight: marginRight}]}>
-              {authData.userToken === null && (
-                <>
+            {authData.userToken === null && (
+              <>
+                <View style={[styles.logoutView, {marginRight: marginRight}]}>
+                  <TouchableOpacity style={styles.logout}>
+                    <Icon
+                      style={{marginLeft: 5}}
+                      name="heart-outline"
+                      size={28}
+                      color="grey"
+                    />
+                    <Text style={styles.invalidText}>Favourites</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={[styles.logoutView, {marginRight: marginRight}]}>
+                  <TouchableOpacity style={styles.logout}>
+                    <Icon
+                      style={{marginLeft: 5}}
+                      name="chatbox-outline"
+                      size={28}
+                      color="grey"
+                    />
+                    <Text style={styles.invalidText}>Feedback</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={[styles.logoutView, {marginRight: marginRight}]}>
                   <TouchableOpacity
                     onPress={async () => {
-                      Alert.alert(
-                        'Confirm',
-                        'Are you sure you want to delete ?',
-                        [
-                          {
-                            text: 'Yes',
-                            onPress: async () => {
-                              try {
-                                await AsyncStorage.removeItem('token');
-                                dispatch(logOut());
-                              } catch (e) {
-                                console.log(e);
-                              }
-                            },
-                          },
-                          {
-                            text: 'No',
-                            onPress: () => {
-                              Toast.show('Logout cancelled');
-                            },
-                          },
-                        ],
-                      );
+                      props.navigation.navigate('aboutUs');
                     }}
                     style={styles.logout}>
+                    <Icon
+                      style={{marginLeft: 5}}
+                      name="information-circle-outline"
+                      size={28}
+                      color="white"
+                    />
+                    <Text style={styles.buttonText}>About us</Text>
+                  </TouchableOpacity>
+                </View>
+                <View style={[styles.logoutView, {marginRight: marginRight}]}>
+                  <TouchableOpacity style={styles.logout}>
                     <Icon
                       style={styles.logoutIcon}
                       name="log-out-outline"
                       size={28}
-                      color="white"
+                      color="grey"
                     />
-                    <Text style={styles.buttonText}>Logout</Text>
+                    <Text style={styles.invalidText}>Logout</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      Alert.alert(
-                        'Confirm',
-                        'Are you sure you want to delete ?',
-                        [
-                          {
-                            text: 'Yes',
-                            onPress: async () => {
-                              try {
-                                await AsyncStorage.removeItem('token');
-                                dispatch(logOut());
-                              } catch (e) {
-                                console.log(e);
-                              }
-                            },
+                </View>
+              </>
+            )}
+
+            {authData.userToken !== null && (
+              <View style={[styles.logoutView, {marginRight: marginRight}]}>
+                <TouchableOpacity
+                  onPress={async () => {
+                    Alert.alert(
+                      'Confirm',
+                      'Are you sure you want to Logout ?',
+                      [
+                        {
+                          text: 'Yes',
+                          onPress: async () => {
+                            try {
+                              await AsyncStorage.removeItem('token');
+                              dispatch(logOut());
+                            } catch (e) {
+                              console.log(e);
+                            }
                           },
-                          {
-                            text: 'No',
-                            onPress: () => {
-                              Toast.show('Logout cancelled');
-                            },
+                        },
+                        {
+                          text: 'No',
+                          onPress: () => {
+                            Toast.show('Logout cancelled');
                           },
-                        ],
-                      );
-                    }}
-                    style={styles.logout}>
-                    <Icon
-                      style={styles.logoutIcon}
-                      name="log-out-outline"
-                      size={28}
-                      color="white"
-                    />
-                    <Text style={styles.buttonText}>Logout</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={async () => {
-                      Alert.alert(
-                        'Confirm',
-                        'Are you sure you want to delete ?',
-                        [
-                          {
-                            text: 'Yes',
-                            onPress: async () => {
-                              try {
-                                await AsyncStorage.removeItem('token');
-                                dispatch(logOut());
-                              } catch (e) {
-                                console.log(e);
-                              }
-                            },
-                          },
-                          {
-                            text: 'No',
-                            onPress: () => {
-                              Toast.show('Logout cancelled');
-                            },
-                          },
-                        ],
-                      );
-                    }}
-                    style={styles.logout}>
-                    <Icon
-                      style={styles.logoutIcon}
-                      name="log-out-outline"
-                      size={28}
-                      color="white"
-                    />
-                    <Text style={styles.buttonText}>Logout</Text>
-                  </TouchableOpacity>
-                </>
-              )}
-              <TouchableOpacity
-                onPress={async () => {
-                  Alert.alert('Confirm', 'Are you sure you want to delete ?', [
-                    {
-                      text: 'Yes',
-                      onPress: async () => {
-                        try {
-                          await AsyncStorage.removeItem('token');
-                          dispatch(logOut());
-                        } catch (e) {
-                          console.log(e);
-                        }
-                      },
-                    },
-                    {
-                      text: 'No',
-                      onPress: () => {
-                        Toast.show('Logout cancelled');
-                      },
-                    },
-                  ]);
-                }}
-                style={styles.logout}>
-                <Icon
-                  style={styles.logoutIcon}
-                  name="log-out-outline"
-                  size={28}
-                  color="white"
-                />
-                <Text style={styles.buttonText}>Logout</Text>
-              </TouchableOpacity>
-            </View>
+                        },
+                      ],
+                    );
+                  }}
+                  style={styles.logout}>
+                  <Icon
+                    style={styles.logoutIcon}
+                    name="log-out-outline"
+                    size={28}
+                    color="white"
+                  />
+                  <Text style={styles.buttonText}>Logout</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </DrawerContentScrollView>
       </ImageBackground>
@@ -318,7 +268,7 @@ const styles = StyleSheet.create({
   },
 
   logoutIcon: {
-    marginLeft: 15,
+    marginLeft: 8,
   },
 
   logoutView: {
@@ -363,6 +313,13 @@ const styles = StyleSheet.create({
   profileView: {
     alignItems: 'center',
     width: '100%',
+  },
+
+  invalidText: {
+    marginLeft: 5,
+    fontSize: 18,
+    fontFamily: 'Avenir Medium',
+    color: 'grey',
   },
 });
 

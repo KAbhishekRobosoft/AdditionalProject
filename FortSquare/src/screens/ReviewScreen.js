@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux';
 function ReviewScreen({navigation, route}) {
   const [reviewData, setReviewData] = useState([]);
   const state= useSelector(state=>state.auth.initialState)
+  const authData= useSelector(state=>state.auth)
 
   useEffect(() => {
     setTimeout(async () => {
@@ -48,7 +49,7 @@ function ReviewScreen({navigation, route}) {
           </View>
         </TouchableOpacity>
         <Text style={styles.reviewHotelText}>{route.params.name}</Text>
-        <TouchableOpacity onPress={()=>{
+        {authData.userToken !== null && <TouchableOpacity onPress={()=>{
           navigation.navigate('addReview',{id:route.params.id})
         }}>
           <View style={styles.iconHeader}>
@@ -57,7 +58,17 @@ function ReviewScreen({navigation, route}) {
               source={require('../assets/images/review.png')}
             />
           </View>
-        </TouchableOpacity>
+        </TouchableOpacity>}
+        {authData.userToken === null && <TouchableOpacity onPress={()=>{
+            Toast.show("Account required")
+        }}>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.review}
+              source={require('../assets/images/review.png')}
+            />
+          </View>
+        </TouchableOpacity>}
       </View>
       {reviewData.length > 0 ? (
         <View style={styles.reviewView}>

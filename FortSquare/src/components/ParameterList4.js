@@ -22,7 +22,7 @@ function ParameterList4({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
-  const coord = useSelector(state => state.auth.setCoord);
+  const state1= useSelector(state=> state.auth.initialState1)
 
   useEffect(() => {
     const requestLocationPermission = async () => {

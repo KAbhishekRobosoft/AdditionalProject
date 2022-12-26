@@ -29,10 +29,9 @@ function NearYou({navigation}) {
   const [currentLongitude, setCurrentLongitude] = useState(0);
   const [currentLatitude, setCurrentLatitude] = useState(0);
   const [placeData, setPlaceData] = useState([]);
-  const loading = useSelector(state => state.auth.stateLoader);
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
-  const coord = useSelector(state => state.auth.setCoord);
+  const state1 = useSelector(state => state.auth.initialState1);
 
   async function handleFavourite(id) {
     try {
@@ -71,7 +70,7 @@ function NearYou({navigation}) {
       }
     };
     requestLocationPermission();
-  }, []);
+  }, [state1]);
 
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
@@ -171,6 +170,7 @@ function NearYou({navigation}) {
             renderItem={({item}) => {
               return (
                 <ListDisplay
+                  state1={state1}
                   state={state}
                   navigation={navigation}
                   item={item}

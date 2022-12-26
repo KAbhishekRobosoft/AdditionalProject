@@ -3,7 +3,6 @@ import {createSlice} from '@reduxjs/toolkit';
 const authenticateSlice = createSlice({
   name: 'auth',
   initialState: {
-    userCredentials: {},
     setCoord: {},
     isLoading: null,
     stateLoader: null,
@@ -11,6 +10,8 @@ const authenticateSlice = createSlice({
     places: [],
     favourites: [],
     reset: false,
+    initialState:false,
+    initialState1:false
   },
 
   reducers: {
@@ -59,6 +60,10 @@ const authenticateSlice = createSlice({
       state.initialState = !action.payload;
     },
 
+    setInitialState1:(state,action)=>{
+        state.initialState1= !action.payload
+    },
+
     desetLoader: state => {
       state.stateLoader = false;
     },
@@ -80,5 +85,6 @@ export const {
   setFavourites,
   setReset,
   deSetReset,
+  setInitialState1
 } = authenticateSlice.actions;
 export default authenticateSlice.reducer;

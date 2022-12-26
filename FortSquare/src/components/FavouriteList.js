@@ -9,11 +9,11 @@ import {
   Alert,
 } from 'react-native';
 import {getVerifiedKeys} from '../utils/Functions';
-import {setToken} from '../redux/AuthSlice';
+import {setInitialState, setToken} from '../redux/AuthSlice';
 import {addFavourites} from '../services/Places';
 import { useDispatch, useSelector } from 'react-redux';
 
-function FavouriteList({item, navigation,state,setState}) {
+function FavouriteList({item,navigation,state,favChanged,setFavChanged}) {
   const {height, width} = useWindowDimensions();
   const authData= useSelector(state=>state.auth)
   const dispatch= useDispatch()
@@ -23,7 +23,7 @@ function FavouriteList({item, navigation,state,setState}) {
     dispatch(setToken(cred));
     const resp = await addFavourites(id, cred);
     if (resp !== undefined) {
-      setState(!state);
+        setInitialState(state)
     }
   }
 
@@ -79,12 +79,13 @@ function FavouriteList({item, navigation,state,setState}) {
                       text: 'Yes',
                       onPress: async () => {
                         deleteFavourite(item.placeId)
+                        setFavChanged(true)
                       },
                     },
                     {
                       text: 'No',
                       onPress: () => {
-                        Toast.show('Logout cancelled');
+                        Toast.show('Task declined');
                       },
                     },
                   ]);

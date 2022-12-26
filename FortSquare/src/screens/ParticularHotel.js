@@ -26,7 +26,9 @@ import {addFavourites} from '../services/Places';
 import {setInitialState} from '../redux/AuthSlice';
 import {addRatings} from '../services/Places';
 import {LargeButton} from '../components/Button';
-import { getFavourites } from '../services/Places';
+import {getFavourites} from '../services/Places';
+import {setInitialState1} from '../redux/AuthSlice';
+import Share from 'react-native-share';
 
 function ParticularHotel({navigation, route}) {
   const [data, setData] = useState({});
@@ -38,6 +40,9 @@ function ParticularHotel({navigation, route}) {
   const {height, width} = useWindowDimensions();
   const [modal, setModal] = useState(false);
   const [rate, setRate] = useState(0);
+  const [favChanged, setFavChanged] = useState(false);
+  const state1 = useSelector(state => state.auth.initialState1);
+  const [rateChanged, setRateChanged] = useState(false);
 
   const ratingCompleted = async rating => {
     try {
@@ -119,6 +124,19 @@ function ParticularHotel({navigation, route}) {
     }
   }, [state]);
 
+  const share = async () => {
+    
+    shareOptions = {
+      message: `Image: ${'https' + data.placeImage.substring(4)}${'\n'}Place name: ${data.placeName.trim()}${'\n'}Rating: ${data.rating}${'\n'}Address:${data.address}${'\n'}Distance: ${route.params.distance} km`
+    };
+    try {
+      const shareResponse = await Share.open(shareOptions);
+      Toast.show('Shared Successfully');
+    } catch (error) {
+      console.log('error while sharing');
+    }
+  };
+
   async function handleFavourite(id) {
     try {
       const cred = await getVerifiedKeys(authData.userToken);
@@ -143,7 +161,10 @@ function ParticularHotel({navigation, route}) {
               <TouchableOpacity
                 onPress={() => {
                   navigation.goBack();
-                  dispatch(setInitialState(state));
+                  if (favChanged === true) {
+                    dispatch(setInitialState(state));
+                  }
+                  if (rateChanged === true) dispatch(setInitialState1(state1));
                 }}>
                 <View style={styles.iconHeader}>
                   <Image
@@ -154,7 +175,10 @@ function ParticularHotel({navigation, route}) {
               </TouchableOpacity>
               <Text style={styles.particularText}>{data.placeName.trim()}</Text>
               <View style={styles.shareFav}>
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    share();
+                  }}>
                   <View style={styles.iconHeader}>
                     <Image
                       style={styles.shareImg}
@@ -171,6 +195,7 @@ function ParticularHotel({navigation, route}) {
                         <TouchableOpacity
                           onPress={() => {
                             handleFavourite(route.params.id);
+                            setFavChanged(true);
                           }}>
                           <View style={styles.iconHeader} key={route.params.id}>
                             <Image
@@ -188,6 +213,7 @@ function ParticularHotel({navigation, route}) {
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(route.params.id);
+                          setFavChanged(true);
                         }}>
                         <View style={styles.iconHeader} key={route.params.id}>
                           <Image
@@ -205,6 +231,7 @@ function ParticularHotel({navigation, route}) {
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(route.params.id);
+                        setFavChanged(true);
                       }}>
                       <View style={styles.iconHeader}>
                         <Image
@@ -219,7 +246,7 @@ function ParticularHotel({navigation, route}) {
                     </View>
                   )
                 ) : (
-                  <View>
+                  <View style={styles.iconHeader}>
                     <Image
                       style={styles.favouriteImg}
                       source={require('../assets/images/favouriteEmpty.png')}
@@ -239,24 +266,46 @@ function ParticularHotel({navigation, route}) {
             </View>
           </ImageBackground>
           <View style={styles.userPreference}>
-            {<View style={{marginLeft: 38}}>
+            {authData.userToken !== null && (
+              <View style={{marginLeft: 38}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setModal(true);
+                  }}>
+                  <View>
+                    <Image
+                      style={styles.ratingImg}
+                      source={require('../assets/images/rating_icon.png')}
+                    />
+                    <Text style={styles.ratingText}>Rating</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )}
+            {authData.userToken === null && (
+              <View style={{marginLeft: 38}}>
+                <TouchableOpacity
+                  onPress={() => {
+                    Toast.show('Account required');
+                  }}>
+                  <View>
+                    <Image
+                      style={styles.ratingImg}
+                      source={require('../assets/images/rating_icon.png')}
+                    />
+                    <Text style={styles.ratingText}>Rating</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            )}
+            <View>
               <TouchableOpacity
                 onPress={() => {
-                  setModal(true);
+                  navigation.navigate('imgDisplay', {
+                    id: route.params.id,
+                    name: data.placeName.trim(),
+                  });
                 }}>
-                <View>
-                  <Image
-                    style={styles.ratingImg}
-                    source={require('../assets/images/rating_icon.png')}
-                  />
-                  <Text style={styles.ratingText}>Rating</Text>
-                </View>
-              </TouchableOpacity>
-            </View>}
-            <View>
-              <TouchableOpacity onPress={()=>{
-                navigation.navigate('imgDisplay',{id:route.params.id,name:data.placeName.trim()})
-              }}>
                 <View>
                   <Image
                     style={styles.ratingImg}
@@ -267,12 +316,13 @@ function ParticularHotel({navigation, route}) {
               </TouchableOpacity>
             </View>
             <View style={{marginRight: 38}}>
-              <TouchableOpacity onPress={()=>{
-                navigation.navigate("review",{
-                  id:data._id,
-                  name:data.placeName
-                })
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('review', {
+                    id: data._id,
+                    name: data.placeName,
+                  });
+                }}>
                 <View>
                   <Image
                     style={styles.ratingImg}
@@ -323,20 +373,36 @@ function ParticularHotel({navigation, route}) {
               </View>
             </LinearGradient>
           </View>
-          <View>
-            <LargeButton
-              title="Add Review"
-              backgroundColor="#351347"
-              width="100%"
-              borderRadius="0"
-              fontFamily="Avenir Medium"
-              onPress={()=>{
-                navigation.navigate('addReview',{
-                  id:route.params.id
-                })
-              }}
-            />
-          </View>
+          {authData.userToken !== null && (
+            <View>
+              <LargeButton
+                title="Add Review"
+                backgroundColor="#351347"
+                width="100%"
+                borderRadius="0"
+                fontFamily="Avenir Medium"
+                onPress={() => {
+                  navigation.navigate('addReview', {
+                    id: route.params.id,
+                  });
+                }}
+              />
+            </View>
+          )}
+          {authData.userToken === null && (
+            <View>
+              <LargeButton
+                title="Add Review"
+                backgroundColor="rgb(213,184,255)"
+                width="100%"
+                borderRadius="0"
+                fontFamily="Avenir Medium"
+                onPress={() => {
+                  Toast.show('Account required');
+                }}
+              />
+            </View>
+          )}
         </ScrollView>
       ) : (
         <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
@@ -382,6 +448,7 @@ function ParticularHotel({navigation, route}) {
                 <TouchableOpacity
                   onPress={() => {
                     ratingCompleted(rate);
+                    setRateChanged(true);
                   }}
                   style={{
                     height: 70,

@@ -54,19 +54,37 @@ const ImageDisplay = ({navigation, route}) => {
           </View>
         </TouchableOpacity>
         <Text style={styles.reviewHotelText}>{route.params.name}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate('addReview', {id: route.params.id});
-          }}>
-          <View style={styles.iconHeader}>
-            <Icon
-              style={{marginRight: 15}}
-              color="white"
-              size={30}
-              name="camera-outline"
-            />
-          </View>
-        </TouchableOpacity>
+        {authData.userToken !== null && (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('addReview', {id: route.params.id});
+            }}>
+            <View style={styles.iconHeader}>
+              <Icon
+                style={{marginRight: 15}}
+                color="white"
+                size={30}
+                name="camera-outline"
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+
+        {authData.userToken === null && (
+          <TouchableOpacity
+            onPress={() => {
+              Toast.show('Account required');
+            }}>
+            <View style={styles.iconHeader}>
+              <Icon
+                style={{marginRight: 15}}
+                color="white"
+                size={30}
+                name="camera-outline"
+              />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
       {users.length > 0 ? (
         <View
@@ -108,7 +126,13 @@ const ImageDisplay = ({navigation, route}) => {
             : null}
         </View>
       ) : (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center',backgroundColor:"black"}}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            backgroundColor: 'black',
+          }}>
           <Text
             style={{fontFamily: 'Avenir Black', color: 'white', fontSize: 18}}>
             No Images posted

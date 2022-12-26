@@ -12,6 +12,9 @@ import SearchScreen from '../screens/SearchScreen';
 import ParameterWithHeaderList from '../components/ParameterWithHeaderList';
 import FilterScreen from '../screens/FilterScreen';
 import EmailEntryScreen from '../screens/EmailEntryScreen';
+import AboutUs from '../screens/AboutUs';
+import IndividualImageDisplay from '../screens/IndividualImageDisplay';
+import ImageDisplay from '../screens/ImageDisplay';
 
 const Stack = createStackNavigator();
 
@@ -88,8 +91,30 @@ function NonAccountNavigation() {
         options={{
           headerShown: false,
         }}
+        name="aboutUs"
+        component={AboutUs}
+      />
+
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
         name="search"
         component={SearchScreen}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="imgDisplay"
+        component={ImageDisplay}
+      />
+      <Stack.Screen
+        options={{
+          headerShown: false,
+        }}
+        name="IndividualImg"
+        component={IndividualImageDisplay}
       />
 
       <Stack.Screen

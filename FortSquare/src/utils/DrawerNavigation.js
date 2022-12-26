@@ -6,17 +6,19 @@ import FeedBack from '../screens/FeedBack';
 import AboutUs from '../screens/AboutUs';
 import CustomDrawer from '../components/CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 const Drawer = createDrawerNavigator();
 
-function DrawerNavigation() {
-  const authData= useSelector(state=>state.auth)
-  const color= authData.userToken !== null ? "white" : "grey"
+function DrawerNavigation({navigation}) {
+  const authData = useSelector(state => state.auth);
+  const color = authData.userToken !== null ? 'white' : 'grey';
 
   return (
     <Drawer.Navigator
-      drawerContent={props => <CustomDrawer {...props} />}
+      drawerContent={props => (
+        <CustomDrawer navigation={navigation} {...props} />
+      )}
       initialRouteName="HomePage"
       screenOptions={{
         drawerStyle: {width: '85%'},
@@ -70,7 +72,6 @@ function DrawerNavigation() {
               size={28}
               color="white"
             />
-            
           ),
         }}
         name="Feedback"

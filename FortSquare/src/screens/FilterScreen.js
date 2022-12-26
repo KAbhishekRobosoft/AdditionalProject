@@ -105,9 +105,6 @@ function FilterScreen({navigation}) {
         <View style={styles.searchInput}>
           <View>
             <TextInputComponent
-              onFocus={() => {
-                setFilterScreen(true);
-              }}
               onSubmitEditing={Keyboard.dismiss}
               onChangeText={val => {
                 setSearchText(val);

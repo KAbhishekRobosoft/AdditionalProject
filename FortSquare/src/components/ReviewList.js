@@ -25,7 +25,7 @@ function ReviewList({item}) {
     <TouchableOpacity>
       <View style={styles.reviewListCon}>
         <View style={styles.imgWithDetails}>
-          <Image style={styles.profileImg} source={{uri: item.reviewerImage}} />
+          <Image style={styles.profileImg} source={{uri: 'https'+item.reviewerImage.substring(4)}} />
           <View style={[styles.reviewInfo,{marginLeft:left}]}>
             <Text style={styles.reviewName}>{item.reviewBy}</Text>
             <Text style={styles.reviewDet}>{item.review}</Text>

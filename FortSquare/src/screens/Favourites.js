@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
-  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import TextInputComponent from '../components/TextInputComponent';
@@ -15,19 +14,20 @@ import VirtualList from '../components/VirtualList';
 import {searchAllFavourites} from '../services/Places';
 import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
-import ListDisplay from '../components/HotelListDisplay';
 import FavouriteList from '../components/FavouriteList';
-import { searchTextFavourites } from '../services/Places';
-import { setInitialState } from '../redux/AuthSlice';
+import {searchTextFavourites} from '../services/Places';
+import {setInitialState} from '../redux/AuthSlice';
+
 
 function Favourites({navigation}) {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [favourite, setFavourite] = useState([]);
   const coord = useSelector(state => state.auth.setCoord);
-  const [state,setState]= useState(false)
-  const state1= useSelector(state=>state.auth.initialState)
-  
+const state= useSelector(state=>state.auth.inititalState)
+  const [favChanged,setFavChanged]= useState(false)
+  const favRef= useRef(null)
+
   useEffect(() => {
     setTimeout(async () => {
       const cred = await getVerifiedKeys(authData.userToken);
@@ -37,16 +37,23 @@ function Favourites({navigation}) {
     }, 500);
   }, [state]);
 
-
-  async function searchFavourite(text){
-      const cred= await getVerifiedKeys(authData.userToken)
-      dispatch(setToken(cred))
-      const resp= await searchTextFavourites(cred,coord,text)
-      setFavourite(resp);
+  async function searchFavourite(text) {
+    const cred = await getVerifiedKeys(authData.userToken);
+    dispatch(setToken(cred));
+    const resp = await searchTextFavourites(cred, coord, text);
+    setFavourite(resp);
   }
 
   const renderItem = ({item}) => {
-    return <FavouriteList state={state} setState={setState} item={item} navigation={navigation} />;
+    return (
+      <FavouriteList
+        state={state}
+        item={item}
+        navigation={navigation}
+        favChanged= {favChanged}
+        setFavChanged= {setFavChanged}
+      />
+    );
   };
 
   const {height, width} = useWindowDimensions();
@@ -57,9 +64,9 @@ function Favourites({navigation}) {
         <TouchableOpacity
           onPress={() => {
             navigation.goBack();
-            dispatch(setInitialState(state1))
+            if(favChanged === true)
+              dispatch(setInitialState(state1));
           }}>
-
           <View style={styles.iconHeader}>
             <Image
               style={styles.backImg}
@@ -70,9 +77,14 @@ function Favourites({navigation}) {
         <View style={styles.searchInput}>
           <Text style={styles.favouriteText}>Favourites</Text>
           <View style={{marginTop: 20}}>
-            <TextInputComponent onChangeText={(val)=>{
-                searchFavourite(val)
-            }} placeholder="Search" name="search-outline" />
+            <TextInputComponent
+              onChangeText={val => {
+                searchFavourite(val);
+              }}
+              placeholder="Search"
+              name="search-outline"
+              ref= {favRef}
+            />
           </View>
         </View>
         <TouchableOpacity>

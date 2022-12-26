@@ -12,11 +12,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../utils/Functions';
 import {addFavourites} from '../services/Places';
 import {setToken} from '../redux/AuthSlice';
-import Toast from 'react-native-simple-toast';
 import {setInitialState} from '../redux/AuthSlice';
-import Icon from 'react-native-vector-icons'
 
-function ListDisplay({item, navigation, handleFavourite, state}) {
+
+function ListDisplay({item, navigation, handleFavourite, state,state1}) {
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const favourites = useSelector(state => state.auth.favourites);
@@ -87,6 +86,7 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(item._id);
+               
                         }}>
                         <View style={styles.iconHeader} key={item._id}>
                           <Image
@@ -104,6 +104,7 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(item._id);
+           
                       }}>
                       <View style={styles.iconHeader} key={item._id}>
                         <Image
@@ -121,6 +122,7 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                   <TouchableOpacity
                     onPress={() => {
                       handleFavourite(item._id);
+       
                     }}>
                     <View style={styles.iconHeader}>
                       <Image

@@ -8,8 +8,21 @@ import {
   Image,
 } from 'react-native';
 import moment from 'moment';
+import Share from 'react-native-share'
 
 function IndividualImageDisplay({navigation, route}) {
+  const share = async () => {
+    shareOptions = {
+      message: route.params.image,
+    };
+    try {
+      const shareResponse = await Share.open(shareOptions);
+      Toast.show('Shared Successfully');
+    } catch (error) {
+      console.log('error while sharing');
+    }
+  };
+
   return (
     <View style={styles.individualView}>
       <ImageBackground
@@ -30,7 +43,10 @@ function IndividualImageDisplay({navigation, route}) {
           </TouchableOpacity>
           <Text style={styles.particularText}>{route.params.placeName}</Text>
           <View style={styles.shareFav}>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                share();
+              }}>
               <View style={styles.iconHeader}>
                 <Image
                   style={styles.shareImg}
