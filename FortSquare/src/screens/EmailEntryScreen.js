@@ -66,7 +66,7 @@ function EmailEntryScreen({navigation}) {
               validationSchema={emailEntry}
               onSubmit={values => {
                 dispatch(setReset())
-                navigation.navigate('otp',{email:values.email.toLowerCase()})
+                navigation.navigate('otp',{data:{email:values.email.toLowerCase()}})
               }}>
               {({handleSubmit, isValid}) => (
                 <View style={{marginTop: top1}}>

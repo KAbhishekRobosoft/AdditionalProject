@@ -18,7 +18,6 @@ import {mapStyle} from '../utils/Functions';
 import MapView, {Marker} from 'react-native-maps';
 import {getParticularInfo} from '../services/Places';
 import Toast from 'react-native-simple-toast';
-import {searchAllFavourites} from '../services/Places';
 import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
@@ -125,9 +124,14 @@ function ParticularHotel({navigation, route}) {
   }, [state]);
 
   const share = async () => {
-    
     shareOptions = {
-      message: `Image: ${'https' + data.placeImage.substring(4)}${'\n'}Place name: ${data.placeName.trim()}${'\n'}Rating: ${data.rating}${'\n'}Address:${data.address}${'\n'}Distance: ${route.params.distance} km`
+      message: `Image: ${
+        'https' + data.placeImage.substring(4)
+      }${'\n'}Place name: ${data.placeName.trim()}${'\n'}Rating: ${
+        data.rating
+      }${'\n'}Address:${data.address}${'\n'}Distance: ${
+        route.params.distance
+      } km`,
     };
     try {
       const shareResponse = await Share.open(shareOptions);
@@ -246,12 +250,16 @@ function ParticularHotel({navigation, route}) {
                     </View>
                   )
                 ) : (
-                  <View style={styles.iconHeader}>
-                    <Image
-                      style={styles.favouriteImg}
-                      source={require('../assets/images/favouriteEmpty.png')}
-                    />
-                  </View>
+                  <TouchableOpacity onPress={()=>{
+                    navigation.navigate('login')
+                  }}>
+                    <View style={styles.iconHeader}>
+                      <Image
+                        style={styles.favouriteImg}
+                        source={require('../assets/images/favouriteEmpty.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
                 )}
               </View>
             </View>

@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Text,
   StyleSheet,
   ImageBackground,
   Image,
@@ -15,6 +14,7 @@ import {resetPasswordValidationSchema} from '../utils/Functions';
 import {resetPassword} from '../services/UserCredentials';
 import {useDispatch} from 'react-redux';
 import {deSetReset} from '../redux/AuthSlice';
+import Toast from 'react-native-simple-toast';
 
 function ResetPassword({navigation, route}) {
   const {height, width} = useWindowDimensions();
@@ -61,6 +61,7 @@ function ResetPassword({navigation, route}) {
                 });
                 if (resp !== undefined) {
                   dispatch(deSetReset());
+                  Toast.show('Password updated');
                   navigation.navigate('login');
                 }
               }}>

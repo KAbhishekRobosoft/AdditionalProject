@@ -18,15 +18,14 @@ import FavouriteList from '../components/FavouriteList';
 import {searchTextFavourites} from '../services/Places';
 import {setInitialState} from '../redux/AuthSlice';
 
-
 function Favourites({navigation}) {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const [favourite, setFavourite] = useState([]);
   const coord = useSelector(state => state.auth.setCoord);
-const state= useSelector(state=>state.auth.inititalState)
+  const [state, setState] = useState(false);
+  const state1 = useSelector(state => state.auth.initialState);
   const [favChanged,setFavChanged]= useState(false)
-  const favRef= useRef(null)
 
   useEffect(() => {
     setTimeout(async () => {
@@ -35,7 +34,7 @@ const state= useSelector(state=>state.auth.inititalState)
       const resp = await searchAllFavourites(cred, coord);
       setFavourite(resp);
     }, 500);
-  }, [state]);
+  }, [state,state1]);
 
   async function searchFavourite(text) {
     const cred = await getVerifiedKeys(authData.userToken);
@@ -48,6 +47,7 @@ const state= useSelector(state=>state.auth.inititalState)
     return (
       <FavouriteList
         state={state}
+        setState={setState}
         item={item}
         navigation={navigation}
         favChanged= {favChanged}
@@ -83,7 +83,6 @@ const state= useSelector(state=>state.auth.inititalState)
               }}
               placeholder="Search"
               name="search-outline"
-              ref= {favRef}
             />
           </View>
         </View>

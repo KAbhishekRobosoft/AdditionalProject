@@ -15,7 +15,8 @@ import {setToken} from '../redux/AuthSlice';
 import {setInitialState} from '../redux/AuthSlice';
 
 
-function ListDisplay({item, navigation, handleFavourite, state,state1}) {
+function ListDisplay({item, navigation, handleFavourite, state}) {
+
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const favourites = useSelector(state => state.auth.favourites);

@@ -120,8 +120,9 @@ function OtpScreen({navigation, route}) {
                 if (resp === true) {
                   if (reset === false) signUp();
                   else {
+                    Toast.show('OTP verification successfull');
                     navigation.navigate('resetPassword', {
-                      email: route.params.email,
+                      email: route.params.data.email,
                     });
                   }
                 } else {

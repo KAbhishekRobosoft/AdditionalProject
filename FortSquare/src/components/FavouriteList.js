@@ -9,11 +9,11 @@ import {
   Alert,
 } from 'react-native';
 import {getVerifiedKeys} from '../utils/Functions';
-import {setInitialState, setToken} from '../redux/AuthSlice';
+import {setToken} from '../redux/AuthSlice';
 import {addFavourites} from '../services/Places';
 import { useDispatch, useSelector } from 'react-redux';
 
-function FavouriteList({item,navigation,state,favChanged,setFavChanged}) {
+function FavouriteList({item, navigation,state,setState,setFavChanged}) { 
   const {height, width} = useWindowDimensions();
   const authData= useSelector(state=>state.auth)
   const dispatch= useDispatch()
@@ -23,7 +23,7 @@ function FavouriteList({item,navigation,state,favChanged,setFavChanged}) {
     dispatch(setToken(cred));
     const resp = await addFavourites(id, cred);
     if (resp !== undefined) {
-        setInitialState(state)
+      setState(!state);
     }
   }
 

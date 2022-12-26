@@ -62,7 +62,7 @@ function Login({navigation}) {
     email: '',
     password: '',
   };
-  console.log(email)
+
   return (
     <View style={{flex: 1}}>
       <ImageBackground

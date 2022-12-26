@@ -36,6 +36,7 @@ function SearchScreen({navigation}) {
     SetViewable(Check);
   });
 
+  console.info(Viewable);
   const viewConfigRef = React.useRef({viewAreaCoveragePercentThreshold: 80});
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
@@ -73,7 +74,6 @@ function SearchScreen({navigation}) {
     const resp = await searchParticularPlace(coord, text);
     setPlaceResults(resp);
   };
-
   return (
     <SafeAreaView style={styles.searchContainer}>
       <View style={styles.searchHeader}>
@@ -187,21 +187,6 @@ function SearchScreen({navigation}) {
             onPress={() => {
               setList(false);
               setMapView(true);
-              try {
-                setTimeout(() => {
-                  mapRef.current.animateToRegion(
-                    {
-                      latitude: coords.latitude,
-                      longitude: coords.longitude,
-                      latitudeDelta: 0.1,
-                      longitudeDelta: 0.1,
-                    },
-                    3 * 1000,
-                  );
-                }, 500);
-              } catch (er) {
-                console.log('hello');
-              }
             }}
           />
         </View>
@@ -210,23 +195,41 @@ function SearchScreen({navigation}) {
         (placeResults.length > 0 ? (
           <View style={styles.container}>
             <MapView
-              ref={mapRef}
+              initialRegion={{
+                latitude: coords.latitude,
+                longitude: coords.longitude,
+                latitudeDelta: 0.1,
+                longitudeDelta: 0.1,
+              }}
               style={styles.mapStyle}
               customMapStyle={mapStyle}>
-              {placeResults.map(ele => {
-                return (
-                  <Marker
-                    key={ele._id}
-                    coordinate={{
-                      latitude: ele.location.coordinates[1],
-                      longitude: ele.location.coordinates[0],
-                      latitudeDelta: 0.1,
-                      longitudeDelta: 0.1,
-                    }}
-                    title={ele.placeName}
-                  />
-                );
-              })}
+              {Viewable.length > 0 &&
+                placeResults.map(ele => {
+                  return ele._id === Viewable[0]._id ? (
+                    <Marker
+                      key={ele._id}
+                      coordinate={{
+                        latitude: ele.location.coordinates[1],
+                        longitude: ele.location.coordinates[0],
+                        latitudeDelta: 0.6,
+                        longitudeDelta: 0.6,
+                      }}
+                      title={ele.placeName}
+                      pinColor="green"
+                    />
+                  ) : (
+                    <Marker
+                      key={ele._id}
+                      coordinate={{
+                        latitude: ele.location.coordinates[1],
+                        longitude: ele.location.coordinates[0],
+                        latitudeDelta: 0.5,
+                        longitudeDelta: 0.5,
+                      }}
+                      title={ele.placeName}
+                    />
+                  );
+                })}
             </MapView>
             <View style={{position: 'absolute', width: '100%', top: 0}}>
               <FlatList

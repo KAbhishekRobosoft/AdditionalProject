@@ -18,7 +18,7 @@ export const register = async values => {
 export const checkIn = async values => {
   try {
     const response = await axios.post(`${BASE_URL}/login`, {
-      email: values.email,
+      email: values.email.toLowerCase(),
       password: values.password,
     });
     return response.data;
