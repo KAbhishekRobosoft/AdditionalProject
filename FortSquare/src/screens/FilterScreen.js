@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   SafeAreaView,
   View,
@@ -8,12 +8,19 @@ import {
   useWindowDimensions,
   Text,
   ScrollView,
+  Keyboard,
 } from 'react-native';
 import TextInputComponent from '../components/TextInputComponent';
 import {TextField} from 'rn-material-ui-textfield';
 import Icon from 'react-native-vector-icons/Ionicons';
+import {useSelector} from 'react-redux';
+import {filterSearch} from '../services/Places';
+import VirtualList from '../components/VirtualList';
+import ListDisplay from '../components/HotelListDisplay';
 
 function FilterScreen({navigation}) {
+  const [searchText, setSearchText] = useState('');
+  const [filterScreen, setFilterScreen] = useState(true);
   const [popular, setPopular] = useState(false);
   const [distance, setDistance] = useState(false);
   const [rating, setRating] = useState(false);
@@ -29,6 +36,8 @@ function FilterScreen({navigation}) {
   const [selected6, setSelected6] = useState(false);
   const [selected7, setSelected7] = useState(false);
   const [selected8, setSelected8] = useState(false);
+  const [distanceText, setDistanceText] = useState('');
+  const [filterData, setFilterData] = useState([]);
 
   const color1 = selected1 ? 'black' : '#b4b4b4';
   const color2 = selected2 ? 'black' : '#b4b4b4';
@@ -41,536 +50,688 @@ function FilterScreen({navigation}) {
 
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
-  
+  const coord = useSelector(state => state.auth.setCoord);
+  const fieldRef = useRef(null);
+
+  async function displayFilter() {
+    let obj = {
+      latitude: coord.latitude,
+      longitude: coord.longitude,
+      text: searchText,
+    };
+    if (popular === true) obj['sortBy'] = 'popularityCount';
+    if (rating === true) obj['sortBy'] = 'rating';
+    if (distance === true) obj['sortBy'] = 'distance';
+    if (selected1 === true) obj['acceptedCredit'] = true;
+    if (selected2 === true) obj['delivery'] = true;
+    if (selected3 === true) obj['dogFriendly'] = true;
+    if (selected4 === true) obj['familyFriendly'] = true;
+    if (selected5 === true) obj['inWalkingDistance'] = true;
+    if (selected6 === true) obj['outdoorDining'] = true;
+    if (selected7 === true) obj['parking'] = true;
+    if (selected8 === true) obj['wifi'] = true;
+    if (rupee1 === true) obj['price'] = 1;
+    if (rupee2 === true) obj['price'] = 2;
+    if (rupee3 === true) obj['price'] = 3;
+    if (rupee4 === true) obj['price'] = 4;
+    if (distanceText !== '') obj['radius'] = parseInt(distanceText);
+    const resp = await filterSearch(obj);
+    if (resp !== undefined) {
+      setFilterData(resp);
+      setDistanceText('');
+      if (distanceText.length > 0) fieldRef.current.clear();
+      setFilterScreen(false);
+    }
+  }
+
+  const renderItem = ({item}) => {
+    return <ListDisplay item={item} navigation={navigation} />;
+  };
+
   return (
     <SafeAreaView style={styles.filterContainer}>
-      <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
-        <View style={styles.searchHeader}>
-          <TouchableOpacity
-            onPress={() => {
-              navigation.goBack();
-            }}>
-            <View style={styles.iconHeader}>
-              <Image
-                style={styles.backImg}
-                source={require('../assets/images/back_icon.png')}
-              />
+      <View style={styles.searchHeader}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.goBack();
+          }}>
+          <View style={styles.iconHeader}>
+            <Image
+              style={styles.backImg}
+              source={require('../assets/images/back_icon.png')}
+            />
+          </View>
+        </TouchableOpacity>
+        <View style={styles.searchInput}>
+          <View>
+            <TextInputComponent
+              onFocus={() => {
+                setFilterScreen(true);
+              }}
+              onSubmitEditing={Keyboard.dismiss}
+              onChangeText={val => {
+                setSearchText(val);
+              }}
+              placeholder="Search"
+              name="search-outline"
+            />
+          </View>
+          <View style={{marginTop: 10}}>
+            <TextInputComponent placeholder="Near Me" name="compass-outline" />
+          </View>
+        </View>
+        <TouchableOpacity
+          onPress={() => {
+            displayFilter();
+          }}>
+          <View style={[styles.iconHeader, {marginRight: right}]}>
+            <Text style={styles.filterDone}>Done</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+      {filterScreen && (
+        <>
+          <ScrollView bounces={false} showsVerticalScrollIndicator={false}>
+            <View style={styles.filterSort}>
+              <View style={styles.nearBy}>
+                <Text style={styles.nearByText}>Sort by</Text>
+              </View>
+              <View style={styles.filterParameter}>
+                {!popular && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPopular(true);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/popular.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {popular && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setPopular(false);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/popular_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+
+                {!distance && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDistance(true);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/distance.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {distance && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setDistance(false);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/distance_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {!rating && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRating(true);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/rating.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {rating && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRating(false);
+                    }}>
+                    <Image
+                      style={styles.popularImg}
+                      source={require('../assets/images/rating_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-          </TouchableOpacity>
-          <View style={styles.searchInput}>
+            <View style={styles.filterBy}>
+              <View style={styles.nearBy}>
+                <Text style={styles.nearByText}>Sort by</Text>
+              </View>
+              <TextField
+                ref={fieldRef}
+                label="Set Radius"
+                keyboardType="default"
+                labelFontSize={16}
+                baseColor="#b5abab"
+                textColor="white"
+                onChangeText={val => {
+                  setDistanceText(val);
+                }}
+                lineWidth={1}
+                labelTextStyle={{
+                  fontFamily: 'Avenir Book',
+                  padding: 3,
+                  marginRight: 5,
+                }}
+                style={{fontSize: 18, color: 'black'}}
+                containerStyle={{
+                  width: '85%',
+                  alignSelf: 'center',
+                  height: 75,
+                  marginTop: 20,
+                }}
+                tintColor="#b5abab"
+              />
+              <View style={styles.filterMoney}>
+                {!rupee1 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee1(true);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn1.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {rupee1 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee1(false);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn1_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+
+                {!rupee2 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee2(true);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn2.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {rupee2 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee2(false);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn2_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {!rupee3 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee3(true);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn3.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {rupee3 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee3(false);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn3_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {!rupee4 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee4(true);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn4.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+                {rupee4 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setRupee4(false);
+                    }}>
+                    <Image
+                      style={styles.moneyImg}
+                      source={require('../assets/images/ruppe_btn4_selected.png')}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
             <View>
-              <TextInputComponent placeholder="Search" name="search-outline" />
+              <View style={styles.nearBy}>
+                <Text style={styles.nearByText}>Features</Text>
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color1}]}>
+                  Accepts credit cards
+                </Text>
+                {!selected1 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected1(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected1 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected1(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color2}]}>
+                  Delivery
+                </Text>
+                {!selected2 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected2(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon name="add-outline" size={26} />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected2 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected2(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color3}]}>
+                  Dog friendly
+                </Text>
+                {!selected3 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected3(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected3 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected3(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color4}]}>
+                  Family-friendly places
+                </Text>
+                {!selected4 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected4(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected4 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected4(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color5}]}>
+                  In walking distance
+                </Text>
+                {!selected5 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected5(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected5 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected5(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color6}]}>
+                  Outdoor seating
+                </Text>
+                {!selected6 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected6(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected6 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected6(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color7}]}>Parking</Text>
+                {!selected7 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected7(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected7 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected7(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View style={styles.nearByPlaceList}>
+                <Text style={[styles.placeName, {color: color8}]}>Wi-Fi</Text>
+                {!selected8 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected8(true);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Icon
+                        style={styles.addIcon}
+                        name="add-outline"
+                        size={26}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+                {selected8 && (
+                  <TouchableOpacity
+                    onPress={() => {
+                      setSelected8(false);
+                    }}>
+                    <View
+                      style={{
+                        height: 40,
+                        marginRight: 10,
+                        width: 60,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                      }}>
+                      <Image
+                        style={styles.filterSelected}
+                        source={require('../assets/images/filter_selected.png')}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
-            <View style={{marginTop: 10}}>
-              <TextInputComponent
-                placeholder="Near Me"
-                name="compass-outline"
+          </ScrollView>
+        </>
+      )}
+      {!filterScreen && filterData.length > 0 ? (
+        <View style={{flex: 1}}>
+          <TouchableOpacity onPress={()=>{
+            setFilterScreen(true)
+          }}>
+            <View
+              style={{
+                width: 40,
+                height: 40,
+                alignSelf: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 20,
+                marginBottom: 10,
+                backgroundColor: 'white',
+                borderRadius: 25,
+              }}>
+              <Image
+                style={{height: 20, width: 20}}
+                source={require('../assets/images/close_icon_grey_hdpi.png')}
               />
-            </View>
-          </View>
-          <TouchableOpacity>
-            <View style={[styles.iconHeader, {marginRight: right}]}>
-              <Text style={styles.filterDone}>Done</Text>
             </View>
           </TouchableOpacity>
-        </View>
-        <View style={styles.filterSort}>
-          <View style={styles.nearBy}>
-            <Text style={styles.nearByText}>Sort by</Text>
-          </View>
-          <View style={styles.filterParameter}>
-            {!popular && (
-              <TouchableOpacity
-                onPress={() => {
-                  setPopular(true);
-                }}>
-                <Image
-                  style={styles.popularImg}
-                  source={require('../assets/images/popular.png')}
-                />
-              </TouchableOpacity>
-            )}
-            {popular && (
-              <TouchableOpacity
-                onPress={() => {
-                  setPopular(false);
-                }}>
-                <Image
-                  style={styles.popularImg}
-                  source={require('../assets/images/popular_selected.png')}
-                />
-              </TouchableOpacity>
-            )}
-
-            {!distance && <TouchableOpacity  onPress={() => {
-                  setDistance(true);
-                }}>
-              <Image
-                style={styles.popularImg}
-                source={require('../assets/images/distance.png')}
-              />
-            </TouchableOpacity>}
-            {distance && <TouchableOpacity  onPress={() => {
-                  setDistance(false);
-                }}>
-              <Image
-                style={styles.popularImg}
-                source={require('../assets/images/distance_selected.png')}
-              />
-            </TouchableOpacity>}
-            {!rating && <TouchableOpacity onPress={() => {
-                  setRating(true);
-                }}>
-              <Image
-                style={styles.popularImg}
-                source={require('../assets/images/rating.png')}
-              />
-            </TouchableOpacity>}
-            {rating && <TouchableOpacity onPress={() => {
-                  setRating(false);
-                }}>
-              <Image
-                style={styles.popularImg}
-                source={require('../assets/images/rating_selected.png')}
-              />
-            </TouchableOpacity>}
-          </View>
-        </View>
-        <View style={styles.filterBy}>
-          <View style={styles.nearBy}>
-            <Text style={styles.nearByText}>Sort by</Text>
-          </View>
-          <TextField
-            label="Set Radius"
-            keyboardType="default"
-            labelFontSize={16}
-            baseColor="#b5abab"
-            textColor="white"
-            lineWidth={1}
-            labelTextStyle={{
-              fontFamily: 'Avenir Book',
-              padding: 3,
-              marginRight: 5,
-            }}
-            style={{fontSize: 18, color: 'black'}}
-            containerStyle={{
-              width: '85%',
-              alignSelf: 'center',
-              height: 75,
-              marginTop: 20,
-            }}
-            tintColor="#b5abab"
+          <VirtualList
+            data={filterData}
+            renderItem={renderItem}
+            keyExtractor={item => item._id}
           />
-          <View style={styles.filterMoney}>
-          {!rupee1 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setRupee1(true);
-                }}>
-                <Image
-                  style={styles.moneyImg}
-                  source={require('../assets/images/ruppe_btn1.png')}
-                />
-              </TouchableOpacity>
-            )}
-            {rupee1 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setRupee1(false);
-                }}>
-                <Image
-                  style={styles.moneyImg}
-                  source={require('../assets/images/ruppe_btn1_selected.png')}
-                />
-              </TouchableOpacity>
-            )}
-
-            {!rupee2 && <TouchableOpacity  onPress={() => {
-                  setRupee2(true);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn2.png')}
-              />
-            </TouchableOpacity>}
-            {rupee2 && <TouchableOpacity  onPress={() => {
-                  setRupee2(false);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn2_selected.png')}
-              />
-            </TouchableOpacity>}
-            {!rupee3 && <TouchableOpacity onPress={() => {
-                  setRupee3(true);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn3.png')}
-              />
-            </TouchableOpacity>}
-            {rupee3 && <TouchableOpacity onPress={() => {
-                  setRupee3(false);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn3_selected.png')}
-              />
-            </TouchableOpacity>}
-            {!rupee4 && <TouchableOpacity onPress={() => {
-                  setRupee4(true);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn4.png')}
-              />
-            </TouchableOpacity>}
-            {rupee4 && <TouchableOpacity onPress={() => {
-                  setRupee4(false);
-                }}>
-              <Image
-                style={styles.moneyImg}
-                source={require('../assets/images/ruppe_btn4_selected.png')}
-              />
-            </TouchableOpacity>}
-          </View>
         </View>
-        <View>
-          <View style={styles.nearBy}>
-            <Text style={styles.nearByText}>Features</Text>
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color1}]}>
-              Accepts credit cards
-            </Text>
-            {!selected1 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected1(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected1 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected1(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color2}]}>Delivery</Text>
-            {!selected2 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected2(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected2 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected2(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color3}]}>
-              Dog friendly
-            </Text>
-            {!selected3 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected3(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected3 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected3(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color4}]}>
-              Family-friendly places
-            </Text>
-            {!selected4 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected4(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected4 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected4(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color5}]}>
-              In walking distance
-            </Text>
-            {!selected5 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected5(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected5 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected5(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color6}]}>
-              Outdoor seating
-            </Text>
-            {!selected6 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected6(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected6 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected6(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color7}]}>Parking</Text>
-            {!selected7 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected7(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected7 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected7(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
-          <View style={styles.nearByPlaceList}>
-            <Text style={[styles.placeName, {color: color8}]}>Wi-Fi</Text>
-            {!selected8 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected8(true);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Icon style={styles.addIcon} name="add-outline" size={26} />
-                </View>
-              </TouchableOpacity>
-            )}
-            {selected8 && (
-              <TouchableOpacity
-                onPress={() => {
-                  setSelected8(false);
-                }}>
-                <View
-                  style={{
-                    height: 40,
-                    marginRight: 10,
-                    width: 60,
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                  }}>
-                  <Image
-                    style={styles.filterSelected}
-                    source={require('../assets/images/filter_selected.png')}
-                  />
-                </View>
-              </TouchableOpacity>
-            )}
-          </View>
+      ) : (
+        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+          <Text
+            style={{fontFamily: 'Avenir Book', fontSize: 20, color: 'black'}}>
+            No results found
+          </Text>
         </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

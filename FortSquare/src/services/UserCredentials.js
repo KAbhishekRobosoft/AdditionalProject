@@ -57,7 +57,7 @@ export const uploadImage = async (payload, token) => {
 export const sendOtp = async email => {
   try {
     const response = await axios.post(`${BASE_URL}/sendOtp`, {
-      email: email.toLowerCase,
+      email: email.toLowerCase(),
     });
     return response.data;
   } catch (error) {

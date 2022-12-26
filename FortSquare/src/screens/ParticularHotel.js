@@ -239,7 +239,7 @@ function ParticularHotel({navigation, route}) {
             </View>
           </ImageBackground>
           <View style={styles.userPreference}>
-            <View style={{marginLeft: 38}}>
+            {<View style={{marginLeft: 38}}>
               <TouchableOpacity
                 onPress={() => {
                   setModal(true);
@@ -252,7 +252,7 @@ function ParticularHotel({navigation, route}) {
                   <Text style={styles.ratingText}>Rating</Text>
                 </View>
               </TouchableOpacity>
-            </View>
+            </View>}
             <View>
               <TouchableOpacity onPress={()=>{
                 navigation.navigate('imgDisplay',{id:route.params.id,name:data.placeName.trim()})

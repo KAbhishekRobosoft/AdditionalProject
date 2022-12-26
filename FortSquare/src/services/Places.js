@@ -202,14 +202,10 @@ export const addReviewImage = async (payload, token) => {
   }
 };
 
-export const getImages = async (page) => {
+
+export const filterSearch = async (obj) => {
   try {
-    const response = await axios.post(
-      `${BASE_URL}/getReviewImage?page=${page}}&limit=5`,
-      {
-        _id: "63a178a939dec0f0d95c8565",
-      },
-    );
+    const response = await axios.post(`${BASE_URL}/filterSearch`,obj);
     return response.data;
   } catch (er) {
     console.log('Error');

@@ -16,6 +16,7 @@ const authenticateSlice = createSlice({
   reducers: {
     logOut: state => {
       state.userToken = null;
+      state.initialState = !state.initialState;
     },
 
     setToken: (state, action) => {

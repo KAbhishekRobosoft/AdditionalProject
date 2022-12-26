@@ -17,11 +17,11 @@ import Toast from 'react-native-simple-toast';
 import {getNearPlace} from '../services/Places';
 import {setLoader, desetLoader, setInitialState} from '../redux/AuthSlice';
 import {setCoordinate} from '../redux/AuthSlice';
-import { getVerifiedKeys } from '../utils/Functions';
-import { setFavourites } from '../redux/AuthSlice';
-import { getFavourites } from '../services/Places';
-import { setToken } from '../redux/AuthSlice';
-import { addFavourites } from '../services/Places';
+import {getVerifiedKeys} from '../utils/Functions';
+import {setFavourites} from '../redux/AuthSlice';
+import {getFavourites} from '../services/Places';
+import {setToken} from '../redux/AuthSlice';
+import {addFavourites} from '../services/Places';
 
 function NearYou({navigation}) {
   const mapRef = useRef(null);
@@ -31,8 +31,8 @@ function NearYou({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const loading = useSelector(state => state.auth.stateLoader);
   const authData = useSelector(state => state.auth);
-  const state= useSelector(state=>state.auth.initialState)
-  const coord= useSelector(state=>state.auth.setCoord)
+  const state = useSelector(state => state.auth.initialState);
+  const coord = useSelector(state => state.auth.setCoord);
 
   async function handleFavourite(id) {
     try {
@@ -120,14 +120,16 @@ function NearYou({navigation}) {
     );
   };
 
- useEffect(()=>{
-    setTimeout(async ()=>{
-      const cred= await getVerifiedKeys(authData.userToken)
-      dispatch(setToken(cred))
-      const resp1= await getFavourites(cred)
-      dispatch(setFavourites(resp1))
-    },1000)
-  },[state])
+  useEffect(() => {
+    if (authData.userToken !== null) {
+      setTimeout(async () => {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const resp1 = await getFavourites(cred);
+        dispatch(setFavourites(resp1));
+      }, 1000);
+    }
+  }, [state]);
 
   const {height, width} = useWindowDimensions();
   const height1 =
@@ -167,7 +169,13 @@ function NearYou({navigation}) {
           <VirtualList
             data={placeData}
             renderItem={({item}) => {
-              return <ListDisplay state= {state} navigation={navigation} item={item} />;
+              return (
+                <ListDisplay
+                  state={state}
+                  navigation={navigation}
+                  item={item}
+                />
+              );
             }}
             keyExtractor={item => item._id}
           />

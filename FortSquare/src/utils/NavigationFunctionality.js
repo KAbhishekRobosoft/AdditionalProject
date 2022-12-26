@@ -12,7 +12,6 @@ import { desetLoading,setLoading } from '../redux/AuthSlice';
 function NavigationFunctionality() {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
-
   useEffect(() => {
     dispatch(setLoading())
     setTimeout(async () => {

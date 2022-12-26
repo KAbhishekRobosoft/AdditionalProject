@@ -59,7 +59,6 @@ function ParameterList({navigation}) {
               longitude: position.coords.longitude,
             });
             setPlaceData(resp);
-            
           } catch (error) {
             console.log(error);
           }
@@ -77,12 +76,14 @@ function ParameterList({navigation}) {
   };
 
   useEffect(() => {
-    setTimeout(async () => {
-      const cred = await getVerifiedKeys(authData.userToken);
-      dispatch(setToken(cred));
-      const resp1 = await getFavourites(cred);
-      dispatch(setFavourites(resp1));
-    }, 1000);
+    if (authData.userToken !== null) {
+      setTimeout(async () => {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const resp1 = await getFavourites(cred);
+        dispatch(setFavourites(resp1));
+      }, 1000);
+    }
   }, [state]);
 
   const renderItem = ({item}) => {

@@ -16,17 +16,15 @@ import {register} from '../services/UserCredentials';
 import {sendOtp} from '../services/UserCredentials';
 import {verifyOtp} from '../services/UserCredentials';
 import Toast from 'react-native-simple-toast';
-import {deSetReset, setReset} from '../redux/AuthSlice';
 import {useSelector} from 'react-redux';
 
 function OtpScreen({navigation, route}) {
   const reset = useSelector(state => state.auth.reset);
-
-  // useEffect(() => {
-  //   setTimeout(async () => {
-  //     const resp = await sendOtp(route.params.data.email);
-  //   });
-  // }, []);
+  useEffect(() => {
+    setTimeout(async () => {
+      const resp = await sendOtp(route.params.data.email);
+    });
+  }, []);
 
   async function signUp() {
     const response = await register(route.params.data);
@@ -120,10 +118,11 @@ function OtpScreen({navigation, route}) {
                 const resp = await verifyOtp(values.otp);
 
                 if (resp === true) {
-                  if(reset === false)
-                    signUp();
-                  else{
-                    navigation.navigate('resetPassword',{email:route.params.email})
+                  if (reset === false) signUp();
+                  else {
+                    navigation.navigate('resetPassword', {
+                      email: route.params.email,
+                    });
                   }
                 } else {
                   Toast.show('Enter proper OTP');

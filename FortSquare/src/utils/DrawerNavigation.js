@@ -6,10 +6,14 @@ import FeedBack from '../screens/FeedBack';
 import AboutUs from '../screens/AboutUs';
 import CustomDrawer from '../components/CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { useSelector } from 'react-redux';
 
 const Drawer = createDrawerNavigator();
 
 function DrawerNavigation() {
+  const authData= useSelector(state=>state.auth)
+  const color= authData.userToken !== null ? "white" : "grey"
+
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawer {...props} />}
@@ -21,7 +25,7 @@ function DrawerNavigation() {
         drawerLabelStyle: {
           marginLeft: -25,
           fontSize: 18,
-          color: 'white',
+          color: color,
           fontFamily: 'Avenir Medium',
         },
         drawerItemStyle: {
@@ -49,7 +53,7 @@ function DrawerNavigation() {
               style={{marginLeft: 5}}
               name="heart-outline"
               size={28}
-              color="white"
+              color={color}
             />
           ),
         }}
@@ -66,6 +70,7 @@ function DrawerNavigation() {
               size={28}
               color="white"
             />
+            
           ),
         }}
         name="Feedback"

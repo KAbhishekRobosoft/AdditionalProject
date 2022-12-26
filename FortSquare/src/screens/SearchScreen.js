@@ -106,10 +106,8 @@ function SearchScreen({navigation}) {
                   if (mapView === false) setList(true);
                 }
                 if (val.length === 0) {
-                  if(mapView === true)
-                    setList(false);
-                  if(list === true)
-                    setMapView(false)
+                  if (mapView === true) setList(false);
+                  if (list === true) setMapView(false);
                 }
               }}
               placeholder="Search"
@@ -129,7 +127,10 @@ function SearchScreen({navigation}) {
             />
           </View>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('filter');
+          }}>
           <View style={[styles.iconHeader, {marginRight: right}]}>
             <Image
               style={styles.filterIcon}
@@ -227,7 +228,7 @@ function SearchScreen({navigation}) {
                 );
               })}
             </MapView>
-            <View style={{position:"absolute", width: '100%',top:0}}>
+            <View style={{position: 'absolute', width: '100%', top: 0}}>
               <FlatList
                 data={placeResults}
                 renderItem={renderItem}
@@ -248,18 +249,17 @@ function SearchScreen({navigation}) {
         ))}
 
       {mapView && (
- 
-          <LargeButton
-            title="List View"
-            backgroundColor="#351347"
-            width="100%"
-            borderRadius="0"
-            fontFamily="Avenir Medium"
-            onPress={() => {
-              setList(true);
-              setMapView(false);
-            }}
-          />
+        <LargeButton
+          title="List View"
+          backgroundColor="#351347"
+          width="100%"
+          borderRadius="0"
+          fontFamily="Avenir Medium"
+          onPress={() => {
+            setList(true);
+            setMapView(false);
+          }}
+        />
       )}
     </SafeAreaView>
   );

@@ -22,7 +22,7 @@ function ParameterList4({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
-  const coord= useSelector(state=>state.auth.setCoord)
+  const coord = useSelector(state => state.auth.setCoord);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -77,12 +77,14 @@ function ParameterList4({navigation}) {
   };
 
   useEffect(() => {
-    setTimeout(async () => {
-      const cred = await getVerifiedKeys(authData.userToken);
-      dispatch(setToken(cred));
-      const resp = await getFavourites(cred);
-      dispatch(setFavourites(resp));
-    }, 500);
+    if (authData.userToken !== null) {
+      setTimeout(async () => {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const resp = await getFavourites(cred);
+        dispatch(setFavourites(resp));
+      }, 500);
+    }
   }, [state]);
 
   const renderItem = ({item}) => {

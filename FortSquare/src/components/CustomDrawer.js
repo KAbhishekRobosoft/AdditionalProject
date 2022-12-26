@@ -32,6 +32,7 @@ function CustomDrawer(props) {
   const dispatch = useDispatch();
   const [userData, setUserData] = useState({});
   const authData = useSelector(state => state.auth);
+
   const height1 =
     width > height
       ? Platform.OS === 'ios'
@@ -50,14 +51,14 @@ function CustomDrawer(props) {
       ? 20
       : 8;
 
-      const marginTop =
-      width > height
-        ? Platform.OS === 'ios'
-          ? 20
-          : 20
-        : Platform.OS === 'ios'
-        ? 50
-        : 20;
+  const marginTop =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 20
+        : 20
+      : Platform.OS === 'ios'
+      ? 50
+      : 20;
 
   useEffect(() => {
     if (authData.userToken !== null) {
@@ -109,14 +110,18 @@ function CustomDrawer(props) {
         source={require('../assets/images/background.png')}>
         {authData.userToken !== null ? (
           !authData.stateLoader && JSON.stringify(userData) !== '{}' ? (
-            <View style={[styles.profileView, {height: height1,marginTop:marginTop}]}>
+            <View
+              style={[
+                styles.profileView,
+                {height: height1, marginTop: marginTop},
+              ]}>
               <TouchableOpacity
                 onPress={() => {
                   pickImage();
                 }}>
                 <Image
                   style={styles.profilePic}
-                  source={{uri: userData.userImage}}
+                  source={{uri: 'https' + userData.userImage.substring(4)}}
                 />
               </TouchableOpacity>
               <Text style={styles.profileText}>
@@ -136,7 +141,11 @@ function CustomDrawer(props) {
             </View>
           )
         ) : (
-          <View style={[styles.profileView, {height: height1,marginTop:marginTop}]}>
+          <View
+            style={[
+              styles.profileView,
+              {height: height1, marginTop: marginTop},
+            ]}>
             <Image
               style={styles.profilePic1}
               source={require('../assets/images/profile.png')}
@@ -145,9 +154,118 @@ function CustomDrawer(props) {
         )}
 
         <DrawerContentScrollView {...props}>
-          <View style={{marginVertical:5}}>
-            <DrawerItemList {...props} />
-            <View style={[styles.logoutView,{marginRight:marginRight}]}>
+          <View style={{marginVertical: 5}}>
+            {authData.userToken !== null && <DrawerItemList {...props} />}
+            <View style={[styles.logoutView, {marginRight: marginRight}]}>
+              {authData.userToken === null && (
+                <>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      Alert.alert(
+                        'Confirm',
+                        'Are you sure you want to delete ?',
+                        [
+                          {
+                            text: 'Yes',
+                            onPress: async () => {
+                              try {
+                                await AsyncStorage.removeItem('token');
+                                dispatch(logOut());
+                              } catch (e) {
+                                console.log(e);
+                              }
+                            },
+                          },
+                          {
+                            text: 'No',
+                            onPress: () => {
+                              Toast.show('Logout cancelled');
+                            },
+                          },
+                        ],
+                      );
+                    }}
+                    style={styles.logout}>
+                    <Icon
+                      style={styles.logoutIcon}
+                      name="log-out-outline"
+                      size={28}
+                      color="white"
+                    />
+                    <Text style={styles.buttonText}>Logout</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      Alert.alert(
+                        'Confirm',
+                        'Are you sure you want to delete ?',
+                        [
+                          {
+                            text: 'Yes',
+                            onPress: async () => {
+                              try {
+                                await AsyncStorage.removeItem('token');
+                                dispatch(logOut());
+                              } catch (e) {
+                                console.log(e);
+                              }
+                            },
+                          },
+                          {
+                            text: 'No',
+                            onPress: () => {
+                              Toast.show('Logout cancelled');
+                            },
+                          },
+                        ],
+                      );
+                    }}
+                    style={styles.logout}>
+                    <Icon
+                      style={styles.logoutIcon}
+                      name="log-out-outline"
+                      size={28}
+                      color="white"
+                    />
+                    <Text style={styles.buttonText}>Logout</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={async () => {
+                      Alert.alert(
+                        'Confirm',
+                        'Are you sure you want to delete ?',
+                        [
+                          {
+                            text: 'Yes',
+                            onPress: async () => {
+                              try {
+                                await AsyncStorage.removeItem('token');
+                                dispatch(logOut());
+                              } catch (e) {
+                                console.log(e);
+                              }
+                            },
+                          },
+                          {
+                            text: 'No',
+                            onPress: () => {
+                              Toast.show('Logout cancelled');
+                            },
+                          },
+                        ],
+                      );
+                    }}
+                    style={styles.logout}>
+                    <Icon
+                      style={styles.logoutIcon}
+                      name="log-out-outline"
+                      size={28}
+                      color="white"
+                    />
+                    <Text style={styles.buttonText}>Logout</Text>
+                  </TouchableOpacity>
+                </>
+              )}
               <TouchableOpacity
                 onPress={async () => {
                   Alert.alert('Confirm', 'Are you sure you want to delete ?', [
