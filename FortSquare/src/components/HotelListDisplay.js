@@ -14,9 +14,7 @@ import {addFavourites} from '../services/Places';
 import {setToken} from '../redux/AuthSlice';
 import {setInitialState} from '../redux/AuthSlice';
 
-
 function ListDisplay({item, navigation, handleFavourite, state}) {
-
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const favourites = useSelector(state => state.auth.favourites);
@@ -87,7 +85,6 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(item._id);
-               
                         }}>
                         <View style={styles.iconHeader} key={item._id}>
                           <Image
@@ -105,7 +102,6 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(item._id);
-           
                       }}>
                       <View style={styles.iconHeader} key={item._id}>
                         <Image
@@ -123,7 +119,6 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                   <TouchableOpacity
                     onPress={() => {
                       handleFavourite(item._id);
-       
                     }}>
                     <View style={styles.iconHeader}>
                       <Image
@@ -138,12 +133,16 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                   </View>
                 )
               ) : (
-                <View>
-                  <Image
-                    style={styles.favouriteImg}
-                    source={require('../assets/images/favourite_icon.png')}
-                  />
-                </View>
+                <TouchableOpacity onPress={()=>{
+                  navigation.navigate('login')
+                }}>
+                  <View>
+                    <Image
+                      style={styles.favouriteImg}
+                      source={require('../assets/images/favourite_icon.png')}
+                    />
+                  </View>
+                </TouchableOpacity>
               )}
             </View>
             <View style={styles.ratingView}>
@@ -193,7 +192,7 @@ const styles = StyleSheet.create({
   },
 
   listImg: {
-    height: 123,
+    height: 125,
     width: 120,
   },
 

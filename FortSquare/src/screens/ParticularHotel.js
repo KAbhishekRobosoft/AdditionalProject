@@ -294,7 +294,7 @@ function ParticularHotel({navigation, route}) {
               <View style={{marginLeft: 38}}>
                 <TouchableOpacity
                   onPress={() => {
-                    Toast.show('Account required');
+                    navigation.navigate('login')
                   }}>
                   <View>
                     <Image
@@ -406,7 +406,7 @@ function ParticularHotel({navigation, route}) {
                 borderRadius="0"
                 fontFamily="Avenir Medium"
                 onPress={() => {
-                  Toast.show('Account required');
+                 navigation.navigate('login')
                 }}
               />
             </View>

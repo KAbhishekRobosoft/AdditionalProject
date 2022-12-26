@@ -694,7 +694,7 @@ function FilterScreen({navigation}) {
       )}
       {!filterScreen && filterData.length > 0 ? (
         <View style={{flex: 1}}>
-          <TouchableOpacity onPress={()=>{
+          {/* <TouchableOpacity onPress={()=>{
             setFilterScreen(true)
           }}>
             <View
@@ -704,7 +704,7 @@ function FilterScreen({navigation}) {
                 alignSelf: 'center',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginTop: 20,
+                marginTop: 10,
                 marginBottom: 10,
                 backgroundColor: 'white',
                 borderRadius: 25,
@@ -714,7 +714,7 @@ function FilterScreen({navigation}) {
                 source={require('../assets/images/close_icon_grey_hdpi.png')}
               />
             </View>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <VirtualList
             data={filterData}
             renderItem={renderItem}

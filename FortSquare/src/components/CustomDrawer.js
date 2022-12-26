@@ -195,15 +195,17 @@ function CustomDrawer(props) {
                     <Text style={styles.buttonText}>About us</Text>
                   </TouchableOpacity>
                 </View>
-                <View style={[styles.logoutView, {marginRight: marginRight}]}>
-                  <TouchableOpacity style={styles.logout}>
+                <View style={[styles.logoutView, {marginRight: marginRight,right:3}]}>
+                  <TouchableOpacity onPress={()=>{
+                    props.navigation.navigate('login')
+                  }} style={styles.logout}>
                     <Icon
                       style={styles.logoutIcon}
-                      name="log-out-outline"
+                      name="log-in-outline"
                       size={28}
-                      color="grey"
+                      color="white"
                     />
-                    <Text style={styles.invalidText}>Logout</Text>
+                    <Text style={styles.buttonText}>Login</Text>
                   </TouchableOpacity>
                 </View>
               </>

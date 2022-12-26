@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
   },
 
   listImg: {
-    height: 123,
+    height: 125,
     width: 120,
   },
 

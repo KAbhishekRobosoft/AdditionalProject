@@ -60,7 +60,7 @@ function ReviewScreen({navigation, route}) {
           </View>
         </TouchableOpacity>}
         {authData.userToken === null && <TouchableOpacity onPress={()=>{
-            Toast.show("Account required")
+           navigation.navigate('login')
         }}>
           <View style={styles.iconHeader}>
             <Image

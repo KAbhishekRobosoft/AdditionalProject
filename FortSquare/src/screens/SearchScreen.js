@@ -35,8 +35,7 @@ function SearchScreen({navigation}) {
     }
     SetViewable(Check);
   });
-
-  console.info(Viewable);
+  
   const viewConfigRef = React.useRef({viewAreaCoveragePercentThreshold: 80});
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;

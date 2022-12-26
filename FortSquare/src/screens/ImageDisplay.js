@@ -73,7 +73,7 @@ const ImageDisplay = ({navigation, route}) => {
         {authData.userToken === null && (
           <TouchableOpacity
             onPress={() => {
-              Toast.show('Account required');
+              navigation.navigate('login')
             }}>
             <View style={styles.iconHeader}>
               <Icon
