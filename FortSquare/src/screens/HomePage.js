@@ -30,7 +30,7 @@ function HomePage({navigation}) {
         <View style={styles.homeOptions}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('filter');
+              navigation.navigate('filter',{name:"search"});
             }}>
             <View style={styles.iconHeader}>
               <Image

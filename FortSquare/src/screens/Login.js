@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   Text,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   useWindowDimensions,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
@@ -15,7 +16,7 @@ import {LargeButton} from '../components/Button';
 import {SmallButton} from '../components/Button';
 import {loginValidationSchema} from '../utils/Functions';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import { checkIn } from '../services/UserCredentials';
+import {checkIn} from '../services/UserCredentials';
 import Toast from 'react-native-simple-toast';
 import {setToken} from '../redux/AuthSlice';
 import {useDispatch} from 'react-redux';
@@ -23,17 +24,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Login({navigation}) {
   const dispatch = useDispatch();
-  const [email,setEmail]= useState('')
+  const [loading, setLoading] = useState(false);
 
   async function signIn(userData) {
+    setLoading(true);
     const response = await checkIn(userData);
     if (response !== undefined) {
       try {
         await AsyncStorage.setItem('token', response.access_token);
       } catch (e) {
+        setLoading(false);
         console.log(e);
       }
       dispatch(setToken(response.access_token));
+      setLoading(false);
       Toast.show('Login successfull');
     } else {
       Toast.show("User doesn't exists");
@@ -110,19 +114,39 @@ function Login({navigation}) {
                       title="Forgot Password?"
                     />
                   </View>
-                  <View style={styles.butView}>
-                    <LargeButton
-                      onPress={() => {
-                        handleSubmit();
-                      }}
-                      title="Login"
-                      width="90%"
-                      borderRadius="8"
-                      backgroundColor="transparent"
-                      disabled={!isValid}
-                      fontFamily="Avenir Medium"
-                    />
-                  </View>
+                  {!loading && (
+                    <View style={styles.butView}>
+                      <LargeButton
+                        onPress={() => {
+                          handleSubmit();
+                        }}
+                        title="Login"
+                        width="90%"
+                        borderRadius="8"
+                        backgroundColor="transparent"
+                        disabled={!isValid}
+                        fontFamily="Avenir Medium"
+                      />
+                    </View>
+                  )}
+                  {loading && (
+                    <View style={styles.butView}>
+                      <View style={{width: '100%'}}>
+                        <TouchableOpacity
+                          style={[
+                            styles.buttonView,
+                            {
+                              backgroundColor: 'transparent',
+                              width: '90%',
+                              borderRadius: 8,
+                              alignSelf: 'center',
+                            },
+                          ]}>
+                          <ActivityIndicator size="large" color="white" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>
+                  )}
                 </View>
               )}
             </Formik>
@@ -166,6 +190,14 @@ const styles = StyleSheet.create({
     marginTop: 60,
     right: 40,
     alignSelf: 'flex-end',
+  },
+
+  buttonView: {
+    height: 54,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: 'white',
   },
 
   google: {

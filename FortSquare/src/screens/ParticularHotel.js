@@ -166,9 +166,9 @@ function ParticularHotel({navigation, route}) {
                 onPress={() => {
                   navigation.goBack();
                   if (favChanged === true) {
-                    dispatch(setInitialState(state));
+                    dispatch(setInitialState1(state1));
                   }
-                  if (rateChanged === true) dispatch(setInitialState1(state1));
+                  if (rateChanged === true) dispatch(setInitialState(state));
                 }}>
                 <View style={styles.iconHeader}>
                   <Image

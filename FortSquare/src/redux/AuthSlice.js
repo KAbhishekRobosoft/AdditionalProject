@@ -10,8 +10,9 @@ const authenticateSlice = createSlice({
     places: [],
     favourites: [],
     reset: false,
-    initialState:false,
-    initialState1:false
+    initialState: false,
+    initialState1: false,
+    initialState2: false,
   },
 
   reducers: {
@@ -60,8 +61,12 @@ const authenticateSlice = createSlice({
       state.initialState = !action.payload;
     },
 
-    setInitialState1:(state,action)=>{
-        state.initialState1= !action.payload
+    setInitialState1: (state, action) => {
+      state.initialState1 = !action.payload;
+    },
+
+    setInitialState2: (state, action) => {
+      state.initialState2 = !action.payload;
     },
 
     desetLoader: state => {
@@ -85,6 +90,7 @@ export const {
   setFavourites,
   setReset,
   deSetReset,
-  setInitialState1
+  setInitialState1,
+  setInitialState2
 } = authenticateSlice.actions;
 export default authenticateSlice.reducer;

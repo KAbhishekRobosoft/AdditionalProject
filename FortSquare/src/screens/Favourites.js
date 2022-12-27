@@ -16,7 +16,7 @@ import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
 import FavouriteList from '../components/FavouriteList';
 import {searchTextFavourites} from '../services/Places';
-import {setInitialState} from '../redux/AuthSlice';
+import {setInitialState1} from '../redux/AuthSlice';
 
 function Favourites({navigation}) {
   const authData = useSelector(state => state.auth);
@@ -24,17 +24,18 @@ function Favourites({navigation}) {
   const [favourite, setFavourite] = useState([]);
   const coord = useSelector(state => state.auth.setCoord);
   const [state, setState] = useState(false);
-  const state1 = useSelector(state => state.auth.initialState);
-  const [favChanged,setFavChanged]= useState(false)
+  const state1 = useSelector(state => state.auth.initialState1);
+  const [favChanged, setFavChanged] = useState(false);
 
   useEffect(() => {
     setTimeout(async () => {
       const cred = await getVerifiedKeys(authData.userToken);
       dispatch(setToken(cred));
       const resp = await searchAllFavourites(cred, coord);
+
       setFavourite(resp);
     }, 500);
-  }, [state,state1]);
+  }, [state1, state]);
 
   async function searchFavourite(text) {
     const cred = await getVerifiedKeys(authData.userToken);
@@ -49,9 +50,9 @@ function Favourites({navigation}) {
         state={state}
         setState={setState}
         item={item}
+        state1= {state1}
         navigation={navigation}
-        favChanged= {favChanged}
-        setFavChanged= {setFavChanged}
+        setFavChanged={setFavChanged}
       />
     );
   };
@@ -63,9 +64,10 @@ function Favourites({navigation}) {
       <View style={styles.searchHeader}>
         <TouchableOpacity
           onPress={() => {
+            if (favChanged === true) dispatch(setInitialState1(state1));
+            setState(false);
+            setFavChanged(false)
             navigation.goBack();
-            if(favChanged === true)
-              dispatch(setInitialState(state1));
           }}>
           <View style={styles.iconHeader}>
             <Image
@@ -86,7 +88,9 @@ function Favourites({navigation}) {
             />
           </View>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={()=>{
+          navigation.navigate('filter',{name:"favourite"})
+        }}>
           <View style={[styles.iconHeader, {marginRight: right}]}>
             <Image
               style={styles.filterIcon}

@@ -18,7 +18,7 @@ import {addReview, addReviewImage} from '../services/Places';
 import {getVerifiedKeys} from '../utils/Functions';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/AuthSlice';
-import {setInitialState} from '../redux/AuthSlice';
+import {setInitialState2} from '../redux/AuthSlice';
 
 function AddReviewScreen({navigation, route}) {
   const [imgArray, setImgArray] = useState([]);
@@ -26,7 +26,8 @@ function AddReviewScreen({navigation, route}) {
   const [text, setText] = useState('');
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
-  const state = useSelector(state => state.auth.initialState);
+  const state2 = useSelector(state => state.auth.initialState2);
+  const [revewing,setReviewing]= useState(false)
 
   const left =
     width > height
@@ -46,14 +47,14 @@ function AddReviewScreen({navigation, route}) {
       ? 230
       : 250;
 
-  const height1= width > height
-  ? Platform.OS === 'ios'
-    ? 280
-    : 190
-  : Platform.OS === 'ios'
-  ? 200
-  :190;
-
+  const height1 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 280
+        : 190
+      : Platform.OS === 'ios'
+      ? 200
+      : 190;
 
   const sendReview = async () => {
     let cred = await getVerifiedKeys(authData.userToken);
@@ -75,14 +76,14 @@ function AddReviewScreen({navigation, route}) {
       resp = await addReviewImage(payload, cred);
     }
     resp1 = await addReview(cred, text, route.params.id);
- 
+
     if (resp1 !== undefined) {
-      if (resp1.message === "Already reviewed this particular place") {
+      if (resp1.message === 'Already reviewed this particular place') {
         setImgArray([]);
         setText('');
         Toast.show('Already Reviewed');
-      }
-      else{
+      } else {
+        setReviewing(true)
         setImgArray([]);
         setText('');
         Toast.show('Review Added');
@@ -115,7 +116,8 @@ function AddReviewScreen({navigation, route}) {
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
-              dispatch(setInitialState(state));
+              if(revewing === true)
+                dispatch(setInitialState2(state2));
               navigation.goBack();
             }}>
             <View style={styles.iconHeader}>
@@ -135,7 +137,7 @@ function AddReviewScreen({navigation, route}) {
             onChangeText={val => {
               setText(val);
             }}
-            style={[styles.inputStyle,{height:height1}]}
+            style={[styles.inputStyle, {height: height1}]}
             multiline={true}
             numberOfLines={8}
           />
@@ -183,7 +185,7 @@ function AddReviewScreen({navigation, route}) {
             borderRadius="0"
             fontFamily="Avenir Medium"
             onPress={() => {
-              if (text.length > 0) {
+              if (text.length > 0 && !/^\s*$/.test(text)) {
                 sendReview();
               } else {
                 Toast.show('Please enter your reviews');

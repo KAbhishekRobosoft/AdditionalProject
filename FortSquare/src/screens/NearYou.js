@@ -70,7 +70,7 @@ function NearYou({navigation}) {
       }
     };
     requestLocationPermission();
-  }, [state1]);
+  }, [state]);
 
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
@@ -128,7 +128,7 @@ function NearYou({navigation}) {
         dispatch(setFavourites(resp1));
       }, 1000);
     }
-  }, [state]);
+  }, [state1]);
 
   const {height, width} = useWindowDimensions();
   const height1 =
@@ -171,7 +171,6 @@ function NearYou({navigation}) {
               return (
                 <ListDisplay
                   state1={state1}
-                  state={state}
                   navigation={navigation}
                   item={item}
                 />

@@ -85,7 +85,7 @@ function ParameterList4({navigation}) {
         dispatch(setFavourites(resp));
       }, 500);
     }
-  }, [state]);
+  }, [state1]);
 
   const renderItem = ({item}) => {
     return <ListDisplay state={state} navigation={navigation} item={item} />;

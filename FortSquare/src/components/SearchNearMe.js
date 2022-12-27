@@ -1,10 +1,28 @@
 import React from 'react';
 import {View, TouchableOpacity, Text, StyleSheet, Image} from 'react-native';
+import {useSelector} from 'react-redux';
+import {searchParticularPlace} from '../services/Places';
+function SearchNearMe({
+  setList,
+  setPlaceResults,
+  setSearchNearMe,
+  setMapView1,
+}) {
+  const coord = useSelector(state => state.auth.setCoord);
 
-function SearchNearMe() {
+  const getPlace = async text => {
+    const resp = await searchParticularPlace(coord, text);
+    setPlaceResults(resp);
+  };
+
   return (
     <View style={{flex: 1}}>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          getPlace('');
+          setList(true);
+          setSearchNearMe(false);
+        }}>
         <View style={styles.nearByPlaceList}>
           <Image
             style={styles.nearMe}
@@ -13,7 +31,11 @@ function SearchNearMe() {
           <Text style={styles.placeName}>Use my current location</Text>
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setMapView1(true);
+          setSearchNearMe(false);
+        }}>
         <View style={styles.nearByPlaceList}>
           <Image
             style={styles.nearMe}

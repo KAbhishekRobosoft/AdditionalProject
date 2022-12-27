@@ -47,7 +47,7 @@ function ParameterList3({navigation}) {
       }
     };
     requestLocationPermission();
-  }, [state1]);
+  }, [state]);
 
   const getOneTimeLocation = () => {
     Geolocation.getCurrentPosition(
@@ -84,7 +84,7 @@ function ParameterList3({navigation}) {
         dispatch(setFavourites(resp));
       }, 1000);
     }
-  }, [state]);
+  }, [state1]);
 
   const renderItem = ({item}) => {
     return <ListDisplay state={state} navigation={navigation} item={item} />;

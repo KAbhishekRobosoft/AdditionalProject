@@ -64,7 +64,7 @@ function Register({navigation}) {
                     label="Confirm Password"
                     secureTextEntry
                   />
-                  <View style={styles.butView}>
+                  {<View style={styles.butView}>
                     <LargeButton
                       onPress={() => {
                         handleSubmit();
@@ -76,7 +76,24 @@ function Register({navigation}) {
                       backgroundColor="transparent"
                       fontFamily="Avenir Book"
                     />
-                  </View>
+                  </View>}
+                  {<View style={styles.butView}>
+                      <View style={{width: '100%'}}>
+                        <TouchableOpacity
+                          style={[
+                            styles.buttonView,
+                            {
+                              backgroundColor: 'transparent',
+                              width: '90%',
+                              borderRadius: 8,
+                              alignSelf: 'center',
+                            },
+                          ]}>
+                          <ActivityIndicator size="large" color="white" />
+                        </TouchableOpacity>
+                      </View>
+                    </View>}
+
                 </View>
               )}
             </Formik>

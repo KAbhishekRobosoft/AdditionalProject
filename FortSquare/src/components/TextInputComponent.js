@@ -2,17 +2,18 @@ import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-function TextInputComponent({name, placeholder,onFocus,onChangeText}) {
+function TextInputComponent({name, placeholder, onFocus, onChangeText}) {
   return (
     <View style={styles.inputContainer}>
-      <Icon style={styles.searchIcon} name={name} size={22} color="#dfdfdf" />
+      <View style={styles.searchIcon}>
+        <Icon name={name} size={22} color="#dfdfdf" />
+      </View>
       <TextInput
         style={styles.inputStyle}
         placeholder={placeholder}
         keyboardType="default"
         onChangeText={onChangeText}
         onFocus={onFocus}
-
       />
     </View>
   );
@@ -26,7 +27,6 @@ const styles = StyleSheet.create({
     height: 45,
     fontFamily: 'Avenir Book',
     backgroundColor: 'white',
-    borderColor: 'black',
     borderTopWidth: 1,
     borderColor: 'transparent',
     borderBottomWidth: 1,
@@ -42,19 +42,17 @@ const styles = StyleSheet.create({
     padding: 10,
     borderColor: 'transparent',
     borderTopWidth: 1,
-    borderLeftWidth: 1,
     borderBottomWidth: 1,
-    borderBottomLeftRadius: 6,
+    borderLeftWidth: 1,
     borderTopLeftRadius: 6,
-    borderWidth:1,
+    borderBottomLeftRadius: 6,
+ 
   },
 
   inputContainer: {
     flexDirection: 'row',
-    width: '100%',
-    borderRadius: 6,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems:"center",
+    justifyContent:"center"
   },
 });
 

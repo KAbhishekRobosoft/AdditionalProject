@@ -212,7 +212,7 @@ function CustomDrawer(props) {
             )}
 
             {authData.userToken !== null && (
-              <View style={[styles.logoutView, {marginRight: marginRight}]}>
+              <View style={[styles.logoutView, {marginRight: marginRight,left:3}]}>
                 <TouchableOpacity
                   onPress={async () => {
                     Alert.alert(
@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
 
   logoutIcon: {
-    marginLeft: 8,
+    marginLeft: 11,
   },
 
   logoutView: {

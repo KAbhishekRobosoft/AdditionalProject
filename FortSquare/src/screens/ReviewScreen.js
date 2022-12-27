@@ -1,4 +1,4 @@
-import React, {useEffect,useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -11,12 +11,13 @@ import VirtualList from '../components/VirtualList';
 import ReviewList from '../components/ReviewList';
 import {getReviews} from '../services/Places';
 import Toast from 'react-native-simple-toast';
-import { useSelector } from 'react-redux';
+import {useSelector} from 'react-redux';
 
 function ReviewScreen({navigation, route}) {
   const [reviewData, setReviewData] = useState([]);
-  const state= useSelector(state=>state.auth.initialState)
-  const authData= useSelector(state=>state.auth)
+  const state = useSelector(state => state.auth.initialState);
+  const authData = useSelector(state => state.auth);
+  const state2 = useSelector(state => state.auth.initialState2);
 
   useEffect(() => {
     setTimeout(async () => {
@@ -27,11 +28,10 @@ function ReviewScreen({navigation, route}) {
         Toast.show('Network Error');
       }
     }, 500);
-  }, [state]);
-
+  }, [state2]);
 
   const renderItem = ({item}) => {
-    return <ReviewList item={item} navigation= {navigation}/>;
+    return <ReviewList item={item} navigation={navigation} />;
   };
 
   return (
@@ -49,26 +49,32 @@ function ReviewScreen({navigation, route}) {
           </View>
         </TouchableOpacity>
         <Text style={styles.reviewHotelText}>{route.params.name}</Text>
-        {authData.userToken !== null && <TouchableOpacity onPress={()=>{
-          navigation.navigate('addReview',{id:route.params.id})
-        }}>
-          <View style={styles.iconHeader}>
-            <Image
-              style={styles.review}
-              source={require('../assets/images/review.png')}
-            />
-          </View>
-        </TouchableOpacity>}
-        {authData.userToken === null && <TouchableOpacity onPress={()=>{
-           navigation.navigate('login')
-        }}>
-          <View style={styles.iconHeader}>
-            <Image
-              style={styles.review}
-              source={require('../assets/images/review.png')}
-            />
-          </View>
-        </TouchableOpacity>}
+        {authData.userToken !== null && (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('addReview', {id: route.params.id});
+            }}>
+            <View style={styles.iconHeader}>
+              <Image
+                style={styles.review}
+                source={require('../assets/images/review.png')}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
+        {authData.userToken === null && (
+          <TouchableOpacity
+            onPress={() => {
+              navigation.navigate('login');
+            }}>
+            <View style={styles.iconHeader}>
+              <Image
+                style={styles.review}
+                source={require('../assets/images/review.png')}
+              />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
       {reviewData.length > 0 ? (
         <View style={styles.reviewView}>
@@ -80,7 +86,9 @@ function ReviewScreen({navigation, route}) {
         </View>
       ) : (
         <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
-            <Text style={{fontFamily:"Avenir Book",fontSize:18}}>No reviews posted</Text>
+          <Text style={{fontFamily: 'Avenir Book', fontSize: 18}}>
+            No reviews posted
+          </Text>
         </View>
       )}
     </SafeAreaView>

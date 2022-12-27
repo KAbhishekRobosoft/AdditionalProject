@@ -11,19 +11,28 @@ import {
 import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
 import {addFavourites} from '../services/Places';
-import { useDispatch, useSelector } from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import Toast from 'react-native-simple-toast';
 
-function FavouriteList({item, navigation,state,setState,setFavChanged}) { 
+function FavouriteList({
+  item,
+  navigation,
+  state,
+  setState,
+  setFavChanged,
+  state1,
+}) {
   const {height, width} = useWindowDimensions();
-  const authData= useSelector(state=>state.auth)
-  const dispatch= useDispatch()
-  
+  const authData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
   async function deleteFavourite(id) {
     const cred = await getVerifiedKeys(authData.userToken);
     dispatch(setToken(cred));
     const resp = await addFavourites(id, cred);
     if (resp !== undefined) {
       setState(!state);
+      setFavChanged(true)
     }
   }
 
@@ -78,8 +87,8 @@ function FavouriteList({item, navigation,state,setState,setFavChanged}) {
                     {
                       text: 'Yes',
                       onPress: async () => {
-                        deleteFavourite(item.placeId)
-                        setFavChanged(true)
+                        deleteFavourite(item.placeId);
+                        setFavChanged(true);
                       },
                     },
                     {
@@ -97,16 +106,18 @@ function FavouriteList({item, navigation,state,setState,setFavChanged}) {
               </TouchableOpacity>
             </View>
             <View style={styles.ratingView}>
-              <Text style={styles.listRating}>{item.placeRating * 2}</Text>
+              <Text style={styles.listRating}>
+                {parseFloat(item.rating * 2).toFixed(1)}
+              </Text>
             </View>
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>
                 Indian .{' '}
-                {item.placepPriceRange > 750
+                {item.placepPriceRange === 4
                   ? '₹₹₹₹'
-                  : item.placePriceRange > 500
+                  : item.placePriceRange === 3
                   ? '₹₹₹'
-                  : item.placePriceRange > 250
+                  : item.placePriceRange === 2
                   ? '₹₹'
                   : '₹'}
               </Text>

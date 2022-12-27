@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   StyleSheet,
   View,
@@ -12,22 +12,27 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getVerifiedKeys} from '../utils/Functions';
 import {addFavourites} from '../services/Places';
 import {setToken} from '../redux/AuthSlice';
-import {setInitialState} from '../redux/AuthSlice';
+import {setInitialState1} from '../redux/AuthSlice';
 
-function ListDisplay({item, navigation, handleFavourite, state}) {
+function ListDisplay({item, navigation, handleFavourite,state1}) {
   const dispatch = useDispatch();
   const {height, width} = useWindowDimensions();
   const favourites = useSelector(state => state.auth.favourites);
   const authData = useSelector(state => state.auth);
-  const loading = useSelector(state => state.auth.stateLoader);
+  const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
 
   async function handleFavourite(id) {
     const cred = await getVerifiedKeys(authData.userToken);
     dispatch(setToken(cred));
     const resp = await addFavourites(id, cred);
     if (resp !== undefined) {
-      dispatch(setInitialState(state));
+      dispatch(setInitialState1(state1));
     }
+    if (loading === true) setLoading(false);
+    if (loading1 === true) setLoading1(false);
+    if (loading2 === true) setLoading2(false);
   }
 
   const width1 =
@@ -85,6 +90,7 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(item._id);
+                          setLoading(true);
                         }}>
                         <View style={styles.iconHeader} key={item._id}>
                           <Image
@@ -98,10 +104,11 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                         <ActivityIndicator color="yellow" />
                       </View>
                     )
-                  ) : !loading ? (
+                  ) : !loading1 ? (
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(item._id);
+                        setLoading1(true);
                       }}>
                       <View style={styles.iconHeader} key={item._id}>
                         <Image
@@ -115,10 +122,11 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                       <ActivityIndicator color="yellow" />
                     </View>
                   )
-                ) : !loading ? (
+                ) : !loading2 ? (
                   <TouchableOpacity
                     onPress={() => {
                       handleFavourite(item._id);
+                      setLoading2(true);
                     }}>
                     <View style={styles.iconHeader}>
                       <Image
@@ -133,9 +141,10 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
                   </View>
                 )
               ) : (
-                <TouchableOpacity onPress={()=>{
-                  navigation.navigate('login')
-                }}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('login');
+                  }}>
                   <View>
                     <Image
                       style={styles.favouriteImg}
@@ -146,7 +155,9 @@ function ListDisplay({item, navigation, handleFavourite, state}) {
               )}
             </View>
             <View style={styles.ratingView}>
-              <Text style={styles.listRating}>{item.rating * 2}</Text>
+              <Text style={styles.listRating}>
+                {parseFloat(item.rating * 2).toFixed(1)}
+              </Text>
             </View>
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>

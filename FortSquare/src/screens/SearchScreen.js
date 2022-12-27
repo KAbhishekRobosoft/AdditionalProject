@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
-  ActivityIndicator,
+
   FlatList,
-  KeyboardAvoidingView,
+  Text,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import TextInputComponent from '../components/TextInputComponent';
@@ -17,16 +17,17 @@ import SearchByPlace from '../components/SearchByPlace';
 import SearchNearMe from '../components/SearchNearMe';
 import {LargeButton} from '../components/Button';
 import {searchParticularPlace} from '../services/Places';
-import {useDispatch, useSelector} from 'react-redux';
+import {useSelector} from 'react-redux';
 import ListDisplay from '../components/HotelListDisplay';
 import Card from '../components/Card';
 import {mapStyle} from '../utils/Functions';
+import uuid from 'react-native-uuid';
 
 function SearchScreen({navigation}) {
   const coords = useSelector(state => state.auth.setCoord);
-  const mapRef = useRef(null);
   const [Viewable, SetViewable] = React.useState([]);
   const ref = React.useRef(null);
+  const state1 = useSelector(state => state.auth.initialState1);
 
   const onViewRef = React.useRef(viewableItems => {
     let Check = [];
@@ -35,7 +36,7 @@ function SearchScreen({navigation}) {
     }
     SetViewable(Check);
   });
-  
+
   const viewConfigRef = React.useRef({viewAreaCoveragePercentThreshold: 80});
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
@@ -46,33 +47,23 @@ function SearchScreen({navigation}) {
   const [list, setList] = useState(false);
   const [placeResults, setPlaceResults] = useState([]);
   const [mapView, setMapView] = useState(false);
-  const state = useSelector(state => state.auth.initialState);
-
-  const bottom =
-    width > height
-      ? Platform.OS === 'ios'
-        ? 0
-        : 30
-      : Platform.OS === 'ios'
-      ? 230
-      : 230;
-  const height1 =
-    width > height
-      ? Platform.OS === 'ios'
-        ? '60%'
-        : '60%'
-      : Platform.OS === 'ios'
-      ? '22%'
-      : '22%';
+  const [mapView1, setMapView1] = useState(false);
+  const [markerArr, setMarkerArr] = useState([]);
 
   const renderItem = ({item}) => {
-    return <Card state={state} item={item} navigation={navigation} />;
+    return <Card state1={state1} item={item} navigation={navigation} />;
   };
 
   const getPlace = async text => {
     const resp = await searchParticularPlace(coord, text);
     setPlaceResults(resp);
   };
+
+  const getNearPlaces = async coordinates => {
+    const resp = await searchParticularPlace(coordinates, '');
+    setPlaceResults(resp);
+  };
+
   return (
     <SafeAreaView style={styles.searchContainer}>
       <View style={styles.searchHeader}>
@@ -128,7 +119,7 @@ function SearchScreen({navigation}) {
         </View>
         <TouchableOpacity
           onPress={() => {
-            navigation.navigate('filter');
+            navigation.navigate('filter', {name: 'search'});
           }}>
           <View style={[styles.iconHeader, {marginRight: right}]}>
             <Image
@@ -152,28 +143,40 @@ function SearchScreen({navigation}) {
           />
         </ScrollView>
       )}
-      {searchNearMe && <SearchNearMe />}
+      {searchNearMe && (
+        <SearchNearMe
+          setMapView1={setMapView1}
+          setPlaceResults={setPlaceResults}
+          list={list}
+          setList={setList}
+          mapView={mapView}
+          setMapView={setMapView}
+          setSearchNearMe={setSearchNearMe}
+        />
+      )}
       {list && (
-        <ScrollView>
-          <View style={styles.listView}>
-            {placeResults.length > 0 ? (
-              placeResults.map(ele => {
+        <View style={styles.listView}>
+          {placeResults.length > 0 ? (
+            <ScrollView>
+              {placeResults.map(ele => {
                 return (
                   <ListDisplay
                     navigation={navigation}
                     item={ele}
                     key={ele._id}
-                    state={state}
+                    state1={state1}
                   />
                 );
-              })
-            ) : (
-              <View style={{flex: 1, alignItems: 'center'}}>
-                <ActivityIndicator size="large" color="purple" />
-              </View>
-            )}
-          </View>
-        </ScrollView>
+              })}
+            </ScrollView>
+          ) : (
+            <View style={{alignSelf: 'center'}}>
+              <Text style={{fontSize: 18, fontFamily: 'Avenir Book'}}>
+                No Results found
+              </Text>
+            </View>
+          )}
+        </View>
       )}
       {list && (
         <View>
@@ -246,7 +249,7 @@ function SearchScreen({navigation}) {
         ) : (
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-            <ActivityIndicator size="large" color="purple" />
+                <Text style={{fontFamily:"Avenir Book",fontSize:18}}>No Results found</Text>
           </View>
         ))}
 
@@ -262,6 +265,43 @@ function SearchScreen({navigation}) {
             setMapView(false);
           }}
         />
+      )}
+
+      {mapView1 && (
+        <View style={{flex: 1}}>
+          <MapView
+            initialRegion={{
+              latitude: coords.latitude,
+              longitude: coords.longitude,
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.1,
+            }}
+            onPress={e => {
+              setMarkerArr([e.nativeEvent.coordinate]);
+              getNearPlaces(e.nativeEvent.coordinate);
+              setTimeout(() => {
+                setList(true);
+                setMapView1(false);
+              }, 500);
+            }}
+            style={styles.mapStyle}
+            customMapStyle={mapStyle}>
+            {markerArr.length > 0 &&
+              markerArr.map(ele => {
+                return (
+                  <Marker
+                    key={uuid.v4()}
+                    coordinate={{
+                      latitude: ele.latitude,
+                      longitude: ele.longitude,
+                      latitudeDelta: 0.6,
+                      longitudeDelta: 0.6,
+                    }}
+                  />
+                );
+              })}
+          </MapView>
+        </View>
       )}
     </SafeAreaView>
   );

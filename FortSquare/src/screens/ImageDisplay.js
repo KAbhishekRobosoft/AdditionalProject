@@ -6,6 +6,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView
 } from 'react-native';
 import axios from 'axios';
 import uuid from 'react-native-uuid';
@@ -16,14 +17,12 @@ import {useSelector, useDispatch} from 'react-redux';
 import {setToken} from '../redux/AuthSlice';
 import ImagePicker from 'react-native-image-crop-picker';
 import Toast from 'react-native-simple-toast';
-import {setInitialState} from '../redux/AuthSlice';
 
 const ImageDisplay = ({navigation, route}) => {
   const [users, setUsers] = useState([]);
-  const [image, setImage] = useState(false);
   const dispatch = useDispatch();
   const authData = useSelector(state => state.auth);
-  const state = useSelector(state => state.auth.initialState);
+  const [state, setState] = useState(false);
 
   const getUsers = async () => {
     const response = await axios.post(
@@ -35,110 +34,146 @@ const ImageDisplay = ({navigation, route}) => {
     setUsers([...response.data.reviewImage]);
   };
 
+  const pickImage = () => {
+    ImagePicker.openPicker({
+      width: 200,
+      height: 200,
+      cropping: true,
+    })
+      .then(async image => {
+        const obj = {
+          name: 'image',
+          path: image.path,
+          fileName: image.filename,
+          mime: image.mime,
+        };
+        let cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        let resp;
+        const payload = new FormData();
+        payload.append('_id', route.params.id);
+        payload.append('image', {
+          uri: obj.path,
+          type: obj.mime,
+          name: `${obj.fileName}.${obj.mime.substring(
+            obj.mime.indexOf('/') + 1,
+          )}`,
+        });
+
+        resp = await addReviewImage(payload, cred);
+        if (resp !== undefined) {
+          setState(true);
+          Toast.show('Image Added');
+        }
+      })
+      .catch(er => Toast.show('User cancelled selection'));
+  };
+
   useEffect(() => {
     getUsers();
   }, [state]);
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <View style={styles.reviewHeader}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}>
-          <View style={styles.iconHeader}>
-            <Image
-              style={styles.backIcon}
-              source={require('../assets/images/back_icon.png')}
-            />
-          </View>
-        </TouchableOpacity>
-        <Text style={styles.reviewHotelText}>{route.params.name}</Text>
-        {authData.userToken !== null && (
+    <SafeAreaView style={{flex: 1,backgroundColor:"black"}}>
+        <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
-              navigation.navigate('addReview', {id: route.params.id});
+              navigation.goBack();
             }}>
             <View style={styles.iconHeader}>
-              <Icon
-                style={{marginRight: 15}}
-                color="white"
-                size={30}
-                name="camera-outline"
+              <Image
+                style={styles.backIcon}
+                source={require('../assets/images/back_icon.png')}
               />
             </View>
           </TouchableOpacity>
-        )}
+          <Text style={styles.reviewHotelText}>{route.params.name}</Text>
+          {authData.userToken !== null && (
+            <TouchableOpacity
+              onPress={() => {
+                pickImage();
+              }}>
+              <View style={styles.iconHeader}>
+                <Icon
+                  style={{marginRight: 15}}
+                  color="white"
+                  size={30}
+                  name="camera-outline"
+                />
+              </View>
+            </TouchableOpacity>
+          )}
 
-        {authData.userToken === null && (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('login')
+          {authData.userToken === null && (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate('login');
+              }}>
+              <View style={styles.iconHeader}>
+                <Icon
+                  style={{marginRight: 15}}
+                  color="white"
+                  size={30}
+                  name="camera-outline"
+                />
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+        {users.length > 0 ? (
+          <ScrollView style={{height:"100%"}}>
+          <View
+            style={{
+              flex: 1,
+              flexWrap: 'wrap',
+              flexDirection: 'row',
+              backgroundColor: 'black',
+              justifyContent: 'flex-start',
+              alignItems: 'center',
             }}>
-            <View style={styles.iconHeader}>
-              <Icon
-                style={{marginRight: 15}}
-                color="white"
-                size={30}
-                name="camera-outline"
-              />
-            </View>
-          </TouchableOpacity>
+            {users.map(item =>
+              item.image.map(ele => (
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('IndividualImg', {
+                      senderName: item.reviewBy,
+                      placeName: route.params.name,
+                      date: item.reviewDate,
+                      profileImg: (
+                        'https' + item.reviewerImage.substring(4)
+                      ).trim(),
+                      image: 'https' + ele.substring(4),
+                    });
+                  }}
+                  key={uuid.v4()}>
+                  <View>
+                    <Image
+                      style={styles.itemImageStyle}
+                      source={{uri: 'https' + ele.substring(4)}}
+                    />
+                  </View>
+                </TouchableOpacity>
+              )),
+            )}
+          </View>
+          </ScrollView>
+        ) : (
+          <View
+            style={{
+              flex: 1,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            <Text
+              style={{
+                fontFamily: 'Avenir Black',
+                color: 'white',
+                fontSize: 18,
+              }}>
+              No Images posted
+            </Text>
+          </View>
         )}
-      </View>
-      {users.length > 0 ? (
-        <View
-          style={{
-            flex: 1,
-            flexWrap: 'wrap',
-            flexDirection: 'row',
-            backgroundColor: 'black',
-            justifyContent: 'flex-start',
-            alignItems: 'center',
-          }}>
-          {users.length > 0
-            ? users.map(item => {
-                return item.image.map(ele => {
-                  return (
-                    <TouchableOpacity
-                      onPress={() => {
-                        navigation.navigate('IndividualImg', {
-                          senderName: item.reviewBy,
-                          placeName: route.params.name,
-                          date: item.reviewDate,
-                          profileImg: (
-                            'https' + item.reviewerImage.substring(4)
-                          ).trim(),
-                          image: 'https' + ele.substring(4),
-                        });
-                      }}
-                      key={uuid.v4()}>
-                      <View>
-                        <Image
-                          style={styles.itemImageStyle}
-                          source={{uri: 'https' + ele.substring(4)}}
-                        />
-                      </View>
-                    </TouchableOpacity>
-                  );
-                });
-              })
-            : null}
-        </View>
-      ) : (
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: 'black',
-          }}>
-          <Text
-            style={{fontFamily: 'Avenir Black', color: 'white', fontSize: 18}}>
-            No Images posted
-          </Text>
-        </View>
-      )}
     </SafeAreaView>
   );
 };

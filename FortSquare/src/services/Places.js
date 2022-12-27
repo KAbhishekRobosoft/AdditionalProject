@@ -202,10 +202,22 @@ export const addReviewImage = async (payload, token) => {
   }
 };
 
-
-export const filterSearch = async (obj) => {
+export const filterSearch = async obj => {
   try {
-    const response = await axios.post(`${BASE_URL}/filterSearch`,obj);
+    const response = await axios.post(`${BASE_URL}/filterSearch`, obj);
+    return response.data;
+  } catch (er) {
+    console.log('Error');
+  }
+};
+
+export const filterFavourites = async (obj, token) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/favFilter`, obj, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (er) {
     console.log('Error');
