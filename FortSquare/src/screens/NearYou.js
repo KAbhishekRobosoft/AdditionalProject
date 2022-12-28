@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState, useRef, useCallback} from 'react';
 import {
   View,
   StyleSheet,
@@ -6,6 +6,7 @@ import {
   PermissionsAndroid,
   ActivityIndicator,
   Text,
+  RefreshControl,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {mapStyle} from '../utils/Functions';
@@ -32,6 +33,7 @@ function NearYou({navigation}) {
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
   const state1 = useSelector(state => state.auth.initialState1);
+  const [refreshing, setRefreshing] = useState(false);
 
   async function handleFavourite(id) {
     try {
@@ -130,6 +132,26 @@ function NearYou({navigation}) {
     }
   }, [state1]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    if (authData.userToken !== null) {
+      try {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const resp1 = await getFavourites(cred);
+        if (resp1 !== undefined) {
+          Toast.show('Updating data');
+          dispatch(setFavourites(resp1));
+        } else {
+          Toast.show('Updation failed');
+        }
+      } catch (error) {
+        Toast.show('Error occured in Refreshing');
+      }
+    }
+    setRefreshing(false);
+  }, []);
+
   const {height, width} = useWindowDimensions();
   const height1 =
     width > height
@@ -174,6 +196,9 @@ function NearYou({navigation}) {
                 />
               );
             }}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
             keyExtractor={item => item._id}
           />
         ) : (

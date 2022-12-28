@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState,useCallback} from 'react';
 import {
   View,
   StyleSheet,
   PermissionsAndroid,
   ActivityIndicator,
+  RefreshControl
 } from 'react-native';
 import ListDisplay from './HotelListDisplay';
 import VirtualList from './VirtualList';
@@ -23,6 +24,7 @@ function ParameterList4({navigation}) {
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
   const state1= useSelector(state=> state.auth.initialState1)
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -87,8 +89,28 @@ function ParameterList4({navigation}) {
     }
   }, [state1]);
 
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    if (authData.userToken !== null) {
+      try {
+        const cred = await getVerifiedKeys(authData.userToken);
+        dispatch(setToken(cred));
+        const resp1 = await getFavourites(cred);
+        if (resp1 !== undefined) {
+          Toast.show('Updating data');
+          dispatch(setFavourites(resp1));
+        } else {
+          Toast.show('Updation failed');
+        }
+      } catch (error) {
+        Toast.show('Error occured in Refreshing');
+      }
+    }
+    setRefreshing(false);
+  }, []);
+
   const renderItem = ({item}) => {
-    return <ListDisplay state={state} navigation={navigation} item={item} />;
+    return <ListDisplay state1={state1} state={state} navigation={navigation} item={item} />;
   };
 
   return placeData.length > 0 ? (
@@ -97,6 +119,9 @@ function ParameterList4({navigation}) {
         data={placeData}
         renderItem={renderItem}
         keyExtractor={item => item._id}
+        refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
       />
     </View>
   ) : (

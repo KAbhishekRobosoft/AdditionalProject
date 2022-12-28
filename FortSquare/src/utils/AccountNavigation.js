@@ -10,6 +10,9 @@ import FilterScreen from '../screens/FilterScreen';
 import AddReviewScreen from '../screens/AddReviewScreen';
 import ImageDisplay from '../screens/ImageDisplay';
 import IndividualImageDisplay from '../screens/IndividualImageDisplay';
+import {
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +22,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="drawer"
         component={DrawerNavigation}
@@ -26,6 +30,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="near"
         component={NearYou}
@@ -33,6 +38,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="particular"
         component={ParticularHotel}
@@ -41,6 +47,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="review"
         component={ReviewScreen}
@@ -49,6 +56,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="search"
         component={SearchScreen}
@@ -57,6 +65,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="parameterHeader"
         component={ParameterWithHeaderList}
@@ -65,6 +74,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="filter"
         component={FilterScreen}
@@ -73,6 +83,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="addReview"
         component={AddReviewScreen}
@@ -80,6 +91,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="imgDisplay"
         component={ImageDisplay}
@@ -88,6 +100,7 @@ function AccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="IndividualImg"
         component={IndividualImageDisplay}

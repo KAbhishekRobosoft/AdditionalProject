@@ -15,6 +15,9 @@ import EmailEntryScreen from '../screens/EmailEntryScreen';
 import AboutUs from '../screens/AboutUs';
 import IndividualImageDisplay from '../screens/IndividualImageDisplay';
 import ImageDisplay from '../screens/ImageDisplay';
+import {
+  CardStyleInterpolators,
+} from '@react-navigation/stack';
 
 const Stack = createStackNavigator();
 
@@ -24,6 +27,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="login"
         component={Login}
@@ -31,6 +35,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="register"
         component={Register}
@@ -39,6 +44,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="emailEntry"
         component={EmailEntryScreen}
@@ -47,6 +53,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="otp"
         component={OtpScreen}
@@ -54,6 +61,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="resetPassword"
         component={ResetPassword}
@@ -61,6 +69,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="drawer"
         component={DrawerNavigation}
@@ -68,6 +77,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="near"
         component={NearYou}
@@ -75,6 +85,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="particular"
         component={ParticularHotel}
@@ -82,6 +93,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="review"
         component={ReviewScreen}
@@ -90,6 +102,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="aboutUs"
         component={AboutUs}
@@ -98,6 +111,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="search"
         component={SearchScreen}
@@ -105,6 +119,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="imgDisplay"
         component={ImageDisplay}
@@ -112,6 +127,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="IndividualImg"
         component={IndividualImageDisplay}
@@ -120,6 +136,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="parameterHeader"
         component={ParameterWithHeaderList}
@@ -128,6 +145,7 @@ function NonAccountNavigation() {
       <Stack.Screen
         options={{
           headerShown: false,
+          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         }}
         name="filter"
         component={FilterScreen}

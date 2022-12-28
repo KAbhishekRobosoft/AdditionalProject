@@ -5,7 +5,6 @@ import store from './src/redux/Store';
 import {Provider} from 'react-redux';
 import {PersistGate} from 'redux-persist/integration/react';
 import {persistStore} from 'redux-persist';
-import ImageDisplay from './src/screens/ImageDisplay';
 import SplashScreen from 'react-native-splash-screen';
 
 let persistor = persistStore(store);

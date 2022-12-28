@@ -43,7 +43,7 @@ function ReviewList({item}) {
 const styles = StyleSheet.create({
   reviewListCon: {
     height: 110,
-    marginVertical: 5,
+    marginVertical: 3,
     width: '100%',
     borderBottomWidth: 1,
     borderBottomColor: '#CCCCCC',
