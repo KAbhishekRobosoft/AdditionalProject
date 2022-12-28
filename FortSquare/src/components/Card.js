@@ -36,53 +36,52 @@ const Card = ({item, navigation, state1}) => {
   }
 
   const width1 =
-  width > height
-    ? Platform.OS === 'ios'
+    width > height
+      ? Platform.OS === 'ios'
+        ? '90%'
+        : '90%'
+      : Platform.OS === 'ios'
       ? '90%'
-      : '90%'
-    : Platform.OS === 'ios'
-    ? '90%'
-    : '90%';
+      : '90%';
 
-const width2 =
-  width > height
-    ? Platform.OS === 'ios'
-      ? '75%'
-      : '75%'
-    : Platform.OS === 'ios'
-    ? '69%'
-    : '69%';
+  const width2 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '75%'
+        : '75%'
+      : Platform.OS === 'ios'
+      ? '69%'
+      : '69%';
 
-const width3 =
-  width > height
-    ? Platform.OS === 'ios'
-      ? '70%'
-      : '40%'
-    : Platform.OS === 'ios'
-    ? '97.5%'
-    : '97.5%';
+  const width3 =
+    width > height
+      ? Platform.OS === 'ios'
+        ? '70%'
+        : '40%'
+      : Platform.OS === 'ios'
+      ? '97.5%'
+      : '97.5%';
 
-
-const margin =
-  width > height
-    ? Platform.OS === 'ios'
-      ? 10
-      : 10
-    : Platform.OS === 'ios'
-    ? 5
-    : 5;
+  const margin =
+    width > height
+      ? Platform.OS === 'ios'
+        ? 10
+        : 10
+      : Platform.OS === 'ios'
+      ? 5
+      : 5;
 
   return (
     <View style={[styles.container, {width: width}]}>
       <TouchableOpacity
-      onPress={() => {
-        navigation.navigate('particular', {
-          distance: Math.round(
-            ((item.distance.calculated / 1609) * 100) / 100,
-          ).toFixed(2),
-          id: item._id,
-        });
-      }}>
+        onPress={() => {
+          navigation.navigate('particular', {
+            distance: Math.round(
+              ((item.distance.calculated / 1609) * 100) / 100,
+            ).toFixed(2),
+            id: item._id,
+          });
+        }}>
         <View
           style={[
             styles.listContainer,
@@ -96,23 +95,41 @@ const margin =
             />
             <View style={{width: width2}}>
               <View style={[styles.textWithImage, {width: width1}]}>
-                <Text style={styles.listName}>{item.placeName}</Text>
-             
+              {item.placeName.length > 15 ? <Text style={styles.listName}>{item.placeName.substring(0,16)}...</Text> : <Text style={styles.listName}>{item.placeName}</Text>}
+
                 {authData.userToken !== null ? (
-                favourites.favouritePlaces.length > 0 ? (
-                  favourites.favouritePlaces.filter(
-                    ele => ele.placeId === item._id,
-                  ).length > 0 ? (
-                    !loading ? (
+                  favourites.favouritePlaces.length > 0 ? (
+                    favourites.favouritePlaces.filter(
+                      ele => ele.placeId === item._id,
+                    ).length > 0 ? (
+                      !loading ? (
+                        <TouchableOpacity
+                          onPress={() => {
+                            handleFavourite(item._id);
+                            setLoading(true);
+                          }}>
+                          <View style={styles.iconHeader} key={item._id}>
+                            <Image
+                              style={styles.favouriteImg}
+                              source={require('../assets/images/favourite_icon_selected.png')}
+                            />
+                          </View>
+                        </TouchableOpacity>
+                      ) : (
+                        <View style={styles.iconHeader}>
+                          <ActivityIndicator color="yellow" />
+                        </View>
+                      )
+                    ) : !loading1 ? (
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(item._id);
-                          setLoading(true);
+                          setLoading1(true);
                         }}>
                         <View style={styles.iconHeader} key={item._id}>
                           <Image
                             style={styles.favouriteImg}
-                            source={require('../assets/images/favourite_icon_selected.png')}
+                            source={require('../assets/images/favourite_icon.png')}
                           />
                         </View>
                       </TouchableOpacity>
@@ -121,13 +138,13 @@ const margin =
                         <ActivityIndicator color="yellow" />
                       </View>
                     )
-                  ) : !loading1 ? (
+                  ) : !loading2 ? (
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(item._id);
-                        setLoading1(true);
+                        setLoading2(true);
                       }}>
-                      <View style={styles.iconHeader} key={item._id}>
+                      <View style={styles.iconHeader}>
                         <Image
                           style={styles.favouriteImg}
                           source={require('../assets/images/favourite_icon.png')}
@@ -139,49 +156,42 @@ const margin =
                       <ActivityIndicator color="yellow" />
                     </View>
                   )
-                ) : !loading2 ? (
+                ) : (
                   <TouchableOpacity
                     onPress={() => {
-                      handleFavourite(item._id);
-                      setLoading2(true);
+                      navigation.navigate('login');
                     }}>
-                    <View style={styles.iconHeader}>
+                    <View>
                       <Image
                         style={styles.favouriteImg}
                         source={require('../assets/images/favourite_icon.png')}
                       />
                     </View>
                   </TouchableOpacity>
-                ) : (
-                  <View style={styles.iconHeader}>
-                    <ActivityIndicator color="yellow" />
-                  </View>
-                )
-              ) : (
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate('login');
-                  }}>
-                  <View>
-                    <Image
-                      style={styles.favouriteImg}
-                      source={require('../assets/images/favourite_icon.png')}
-                    />
-                  </View>
-                </TouchableOpacity>
+                )}
+              </View>
+              {item.rating >= 4 && (
+                <View style={styles.ratingView1}>
+                  <Text style={styles.listRating}>
+                    {parseFloat(item.rating * 2).toFixed(1)}
+                  </Text>
+                </View>
               )}
-              </View>
-              <View style={styles.ratingView}>
-                <Text style={styles.listRating}>8.5</Text>
-              </View>
+              {item.rating < 4 && (
+                <View style={styles.ratingView}>
+                  <Text style={styles.listRating}>
+                    {parseFloat(item.rating * 2).toFixed(1)}
+                  </Text>
+                </View>
+              )}
               <View style={styles.typeDist}>
                 <Text style={styles.typeText}>
                   Indian .
-                  {item.priceRange > 750
+                  {item.priceRange === 4
                     ? '₹₹₹₹'
-                    : item.priceRange > 500
+                    : item.priceRange === 3
                     ? '₹₹₹'
-                    : item.priceRange > 250
+                    : item.priceRange === 2
                     ? '₹₹'
                     : '₹'}
                 </Text>
@@ -208,7 +218,6 @@ export default Card;
 const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
-
   },
 
   mapStyle: {
@@ -225,6 +234,16 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     borderColor: 'white',
     alignSelf: 'center',
+  },
+  ratingView1: {
+    backgroundColor: '#7dd350',
+    width: '11%',
+    height: '16%',
+    marginTop: 5,
+    marginLeft: 20,
+    alignItems: 'center',
+    borderRadius: 3,
+    justifyContent: 'center',
   },
 
   shadowProp: {
@@ -265,7 +284,7 @@ const styles = StyleSheet.create({
   },
 
   ratingView: {
-    backgroundColor: '#73cf42',
+    backgroundColor: '#a9da43',
     width: '10%',
     height: '16%',
     marginTop: 5,

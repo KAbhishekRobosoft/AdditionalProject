@@ -13,12 +13,12 @@ import ImagePicker from 'react-native-image-crop-picker';
 import uuid from 'react-native-uuid';
 import Toast from 'react-native-simple-toast';
 import {LargeButton} from '../components/Button';
-import {ScrollView} from 'react-native-gesture-handler';
 import {addReview, addReviewImage} from '../services/Places';
 import {getVerifiedKeys} from '../utils/Functions';
 import {useDispatch, useSelector} from 'react-redux';
 import {setToken} from '../redux/AuthSlice';
 import {setInitialState2} from '../redux/AuthSlice';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 function AddReviewScreen({navigation, route}) {
   const [imgArray, setImgArray] = useState([]);
@@ -27,7 +27,7 @@ function AddReviewScreen({navigation, route}) {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const state2 = useSelector(state => state.auth.initialState2);
-  const [revewing,setReviewing]= useState(false)
+  const [revewing, setReviewing] = useState(false);
 
   const left =
     width > height
@@ -83,7 +83,7 @@ function AddReviewScreen({navigation, route}) {
         setText('');
         Toast.show('Already Reviewed');
       } else {
-        setReviewing(true)
+        setReviewing(true);
         setImgArray([]);
         setText('');
         Toast.show('Review Added');
@@ -111,13 +111,12 @@ function AddReviewScreen({navigation, route}) {
   };
 
   return (
-    <SafeAreaView style={{flex: 1}}>
-      <ScrollView>
+    <KeyboardAwareScrollView enableAutomaticScroll={true}>
+      <SafeAreaView style={{flex: 1}}>
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
-              if(revewing === true)
-                dispatch(setInitialState2(state2));
+              if (revewing === true) dispatch(setInitialState2(state2));
               navigation.goBack();
             }}>
             <View style={styles.iconHeader}>
@@ -193,8 +192,8 @@ function AddReviewScreen({navigation, route}) {
             }}
           />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </KeyboardAwareScrollView>
   );
 }
 

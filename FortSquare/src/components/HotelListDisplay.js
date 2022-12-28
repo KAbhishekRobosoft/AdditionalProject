@@ -22,6 +22,10 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
   const [loading, setLoading] = useState(false);
   const [loading1, setLoading1] = useState(false);
   const [loading2, setLoading2] = useState(false);
+  const [maxRate,setMaxRate]= useState(parseFloat(0))
+  if(item.rating > maxRate)
+    setMaxRate(item.rating)
+
 
   async function handleFavourite(id) {
     const cred = await getVerifiedKeys(authData.userToken);
@@ -71,7 +75,7 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
           id: item._id,
         });
       }}>
-      <View style={[styles.listContainer, styles.shadowProp, {margin: margin}]}>
+      <View style={[styles.listContainer, styles.shadowProp, {marginLeft: margin,marginRight:margin,marginTop:4}]}>
         <View style={styles.listDisplay}>
           <Image
             style={styles.listImg}
@@ -79,7 +83,7 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
           />
           <View style={{width: width2}}>
             <View style={[styles.textWithImage, {width: width1}]}>
-              <Text style={styles.listName}>{item.placeName}</Text>
+              {item.placeName.length > 15 ? <Text style={styles.listName}>{item.placeName.substring(0,16)}...</Text> : <Text style={styles.listName}>{item.placeName}</Text>}
 
               {authData.userToken !== null ? (
                 favourites.favouritePlaces.length > 0 ? (
@@ -101,7 +105,7 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
                       </TouchableOpacity>
                     ) : (
                       <View style={styles.iconHeader}>
-                        <ActivityIndicator color="yellow" />
+                        <ActivityIndicator color="orange" />
                       </View>
                     )
                   ) : !loading1 ? (
@@ -119,7 +123,7 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
                     </TouchableOpacity>
                   ) : (
                     <View style={styles.iconHeader}>
-                      <ActivityIndicator color="yellow" />
+                      <ActivityIndicator color="orange" />
                     </View>
                   )
                 ) : !loading2 ? (
@@ -137,7 +141,7 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
                   </TouchableOpacity>
                 ) : (
                   <View style={styles.iconHeader}>
-                    <ActivityIndicator color="yellow" />
+                    <ActivityIndicator color="orange" />
                   </View>
                 )
               ) : (
@@ -154,11 +158,16 @@ function ListDisplay({item, navigation, handleFavourite,state1}) {
                 </TouchableOpacity>
               )}
             </View>
-            <View style={styles.ratingView}>
+            {item.rating >= 4 && <View style={styles.ratingView1}>
               <Text style={styles.listRating}>
                 {parseFloat(item.rating * 2).toFixed(1)}
               </Text>
-            </View>
+            </View>}
+            {item.rating < 4 && <View style={styles.ratingView}>
+              <Text style={styles.listRating}>
+                {parseFloat(item.rating * 2).toFixed(1)}
+              </Text>
+            </View>}
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>
                 Indian .
@@ -192,6 +201,7 @@ const styles = StyleSheet.create({
     width: '97.5%',
     backgroundColor: 'white',
     borderColor: 'white',
+    marginVertical:4
   },
 
   shadowProp: {
@@ -232,8 +242,19 @@ const styles = StyleSheet.create({
   },
 
   ratingView: {
-    backgroundColor: '#73cf42',
-    width: '10%',
+    backgroundColor: '#a5d839',
+    width: '11%',
+    height: '16%',
+    marginTop: 5,
+    marginLeft: 20,
+    alignItems: 'center',
+    borderRadius: 3,
+    justifyContent: 'center',
+  },
+
+  ratingView1: {
+    backgroundColor: '#7dd350',
+    width: '11%',
     height: '16%',
     marginTop: 5,
     marginLeft: 20,

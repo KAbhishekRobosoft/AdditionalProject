@@ -107,7 +107,7 @@ function CustomDrawer(props) {
       <ImageBackground
         blurRadius={20}
         style={styles.imgBack}
-        source={require('../assets/images/background.png')}>
+        source={require('../assets/images/drawerBack.png')}>
         {authData.userToken !== null ? (
           !authData.stateLoader && JSON.stringify(userData) !== '{}' ? (
             <View
@@ -148,8 +148,23 @@ function CustomDrawer(props) {
             ]}>
             <Image
               style={styles.profilePic1}
-              source={require('../assets/images/profile.png')}
+              source={require('../assets/images/noAccProfile.png')}
             />
+            <TouchableOpacity
+              onPress={() => {
+                props.navigation.navigate('login');
+              }}>
+              <View style={styles.iconHeader}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    fontFamily: 'Avenir Book',
+                    color: '#96888c',
+                  }}>
+                  Login
+                </Text>
+              </View>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -160,22 +175,28 @@ function CustomDrawer(props) {
               <>
                 <View style={[styles.logoutView, {marginRight: marginRight}]}>
                   <TouchableOpacity style={styles.logout}>
-                    <Icon
-                      style={{marginLeft: 5}}
-                      name="heart-outline"
-                      size={28}
-                      color="grey"
+                    <Image
+                      style={{
+                        height: 25,
+                        width: 25,
+                        marginLeft: 8,
+                        tintColor: 'grey',
+                      }}
+                      source={require('../assets/images/drawerFav.png')}
                     />
                     <Text style={styles.invalidText}>Favourites</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={[styles.logoutView, {marginRight: marginRight}]}>
                   <TouchableOpacity style={styles.logout}>
-                    <Icon
-                      style={{marginLeft: 5}}
-                      name="chatbox-outline"
-                      size={28}
-                      color="grey"
+                    <Image
+                      style={{
+                        height: 25,
+                        width: 25,
+                        marginLeft: 8,
+                        tintColor: 'grey',
+                      }}
+                      source={require('../assets/images/feedback.png')}
                     />
                     <Text style={styles.invalidText}>Feedback</Text>
                   </TouchableOpacity>
@@ -186,33 +207,32 @@ function CustomDrawer(props) {
                       props.navigation.navigate('aboutUs');
                     }}
                     style={styles.logout}>
-                    <Icon
-                      style={{marginLeft: 5}}
-                      name="information-circle-outline"
-                      size={28}
-                      color="white"
+                    <Image
+                      style={{height: 25, width: 25, marginLeft: 8}}
+                      source={require('../assets/images/aboutUs.png')}
                     />
                     <Text style={styles.buttonText}>About us</Text>
                   </TouchableOpacity>
                 </View>
-                <View style={[styles.logoutView, {marginRight: marginRight,right:3}]}>
-                  <TouchableOpacity onPress={()=>{
-                    props.navigation.navigate('login')
-                  }} style={styles.logout}>
-                    <Icon
-                      style={styles.logoutIcon}
-                      name="log-in-outline"
-                      size={28}
-                      color="white"
+                <View style={[styles.logoutView, {marginRight: marginRight}]}>
+                  <TouchableOpacity style={styles.logout}>
+                    <Image
+                      style={{
+                        height: 25,
+                        width: 25,
+                        marginLeft: 10,
+                        tintColor: 'grey',
+                      }}
+                      source={require('../assets/images/logout.png')}
                     />
-                    <Text style={styles.buttonText}>Login</Text>
+                    <Text style={styles.invalidText}>Logout</Text>
                   </TouchableOpacity>
                 </View>
               </>
             )}
 
             {authData.userToken !== null && (
-              <View style={[styles.logoutView, {marginRight: marginRight,left:3}]}>
+              <View style={[styles.logoutView, {marginRight: marginRight}]}>
                 <TouchableOpacity
                   onPress={async () => {
                     Alert.alert(
@@ -240,11 +260,9 @@ function CustomDrawer(props) {
                     );
                   }}
                   style={styles.logout}>
-                  <Icon
-                    style={styles.logoutIcon}
-                    name="log-out-outline"
-                    size={28}
-                    color="white"
+                  <Image
+                    style={{height: 25, width: 25, marginLeft: 15}}
+                    source={require('../assets/images/logout.png')}
                   />
                   <Text style={styles.buttonText}>Logout</Text>
                 </TouchableOpacity>
@@ -263,7 +281,7 @@ const styles = StyleSheet.create({
   },
 
   buttonText: {
-    marginLeft: 5,
+    marginLeft: 8,
     fontSize: 18,
     fontFamily: 'Avenir Medium',
     color: 'white',
@@ -301,10 +319,18 @@ const styles = StyleSheet.create({
     borderRadius: 40,
   },
 
+  iconHeader: {
+    height: 40,
+    width: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop:8
+  },
+
   profilePic1: {
     height: 80,
     width: 80,
-    marginTop: 80,
+    marginTop: 50,
     borderRadius: 40,
   },
 
@@ -318,7 +344,7 @@ const styles = StyleSheet.create({
   },
 
   invalidText: {
-    marginLeft: 5,
+    marginLeft: 8,
     fontSize: 18,
     fontFamily: 'Avenir Medium',
     color: 'grey',

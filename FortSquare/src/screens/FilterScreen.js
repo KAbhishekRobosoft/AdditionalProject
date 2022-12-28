@@ -54,7 +54,6 @@ function FilterScreen({navigation, route}) {
   const color6 = selected6 ? 'black' : '#b4b4b4';
   const color7 = selected7 ? 'black' : '#b4b4b4';
   const color8 = selected8 ? 'black' : '#b4b4b4';
-
   const {height, width} = useWindowDimensions();
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
   const coord = useSelector(state => state.auth.setCoord);
@@ -109,7 +108,7 @@ function FilterScreen({navigation, route}) {
   };
 
   const renderItem1 = ({item}) => {
-    return <FavouriteList  item={item} navigation={navigation} />;
+    return <FavouriteList name={route.params.name} item={item} navigation={navigation} />;
   };
 
   return (

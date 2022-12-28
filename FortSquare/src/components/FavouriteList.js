@@ -20,7 +20,7 @@ function FavouriteList({
   state,
   setState,
   setFavChanged,
-  state1,
+  name
 }) {
   const {height, width} = useWindowDimensions();
   const authData = useSelector(state => state.auth);
@@ -81,7 +81,7 @@ function FavouriteList({
           <View style={{width: width2}}>
             <View style={[styles.textWithImage, {width: width1}]}>
               <Text style={styles.listName}>{item.placeName}</Text>
-              <TouchableOpacity
+              {name === "search" && <TouchableOpacity
                 onPress={() => {
                   Alert.alert('Confirm', 'Are you sure you want to delete ?', [
                     {
@@ -103,13 +103,18 @@ function FavouriteList({
                   style={styles.favouriteImg}
                   source={require('../assets/images/close_icon_grey_hdpi.png')}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity>}
             </View>
-            <View style={styles.ratingView}>
+            {item.rating >= 4 && <View style={styles.ratingView1}>
               <Text style={styles.listRating}>
                 {parseFloat(item.rating * 2).toFixed(1)}
               </Text>
-            </View>
+            </View>}
+            {item.rating < 4 && <View style={styles.ratingView}>
+              <Text style={styles.listRating}>
+                {parseFloat(item.rating * 2).toFixed(1)}
+              </Text>
+            </View>}
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>
                 Indian .{' '}
@@ -155,6 +160,17 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 2,
   },
+    ratingView1: {
+    backgroundColor: '#7dd350',
+    width: '11%',
+    height: '16%',
+    marginTop: 5,
+    marginLeft: 20,
+    alignItems: 'center',
+    borderRadius: 3,
+    justifyContent: 'center',
+  },
+
 
   listImg: {
     height: 125,

@@ -53,6 +53,7 @@ function Favourites({navigation}) {
         state1= {state1}
         navigation={navigation}
         setFavChanged={setFavChanged}
+        name="search"
       />
     );
   };

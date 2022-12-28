@@ -1,4 +1,4 @@
-import React, {useState,useRef} from 'react';
+import React, {useState, useRef} from 'react';
 import {
   View,
   Text,
@@ -10,19 +10,20 @@ import {
   TextInput,
   ScrollView,
 } from 'react-native';
-import { addFeedback } from '../services/UserCredentials';
+import {addFeedback} from '../services/UserCredentials';
 import {LargeButton} from '../components/Button';
-import { getVerifiedKeys } from '../utils/Functions';
-import { useDispatch, useSelector } from 'react-redux';
-import { setToken } from '../redux/AuthSlice';
-import Toast from 'react-native-simple-toast'
+import {getVerifiedKeys} from '../utils/Functions';
+import {useDispatch, useSelector} from 'react-redux';
+import {setToken} from '../redux/AuthSlice';
+import Toast from 'react-native-simple-toast';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 function FeedBack({navigation}) {
   const {height, width} = useWindowDimensions();
   const [text, setText] = useState('');
-  const authData= useSelector(state=>state.auth)
-  const dispatch= useDispatch()
-  const textRef= useRef(null)
+  const authData = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+  const textRef = useRef(null);
 
   const height1 =
     width > height
@@ -43,25 +44,23 @@ function FeedBack({navigation}) {
       : 360;
 
   async function addFeedback1() {
-    const cred= await getVerifiedKeys(authData.userToken)
-    dispatch(setToken(cred))
-    const resp= await addFeedback(cred,text)
-    console.log(resp)
-    if(resp !== undefined){
-      if(resp.message === "feedback added successfully"){
-        textRef.current.clear()
-        Toast.show("Feedback added successfully")
-      }
-
-      else{
-        Toast.show("Network Error")
+    const cred = await getVerifiedKeys(authData.userToken);
+    dispatch(setToken(cred));
+    const resp = await addFeedback(cred, text);
+    console.log(resp);
+    if (resp !== undefined) {
+      if (resp.message === 'feedback added successfully') {
+        textRef.current.clear();
+        Toast.show('Feedback added successfully');
+      } else {
+        Toast.show('Network Error');
       }
     }
   }
 
   return (
     <SafeAreaView style={styles.feedBackCon}>
-      <ScrollView>
+      <KeyboardAwareScrollView>
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
@@ -84,8 +83,8 @@ function FeedBack({navigation}) {
             style={[styles.inputStyle, {height: height1}]}
             multiline={true}
             numberOfLines={8}
-            onChangeText={(val)=>{
-              setText(val)
+            onChangeText={val => {
+              setText(val);
             }}
           />
         </View>
@@ -99,14 +98,14 @@ function FeedBack({navigation}) {
             fontFamily="Avenir Medium"
             onPress={() => {
               if (text.length > 0) {
-                addFeedback1()
+                addFeedback1();
               } else {
                 Toast.show('Please enter proper feedback');
               }
             }}
           />
         </View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }

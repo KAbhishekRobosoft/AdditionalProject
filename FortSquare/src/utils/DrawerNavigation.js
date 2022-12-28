@@ -7,6 +7,7 @@ import AboutUs from '../screens/AboutUs';
 import CustomDrawer from '../components/CustomDrawer';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
+import {Image} from 'react-native'
 
 const Drawer = createDrawerNavigator();
 
@@ -25,7 +26,7 @@ function DrawerNavigation({navigation}) {
         drawerType: 'slide',
         overlayColor: 'transparent',
         drawerLabelStyle: {
-          marginLeft: -25,
+          marginLeft: -22,
           fontSize: 18,
           color: color,
           fontFamily: 'Avenir Medium',
@@ -51,12 +52,7 @@ function DrawerNavigation({navigation}) {
         options={{
           headerShown: false,
           drawerIcon: () => (
-            <Icon
-              style={{marginLeft: 5}}
-              name="heart-outline"
-              size={28}
-              color={color}
-            />
+            <Image style={{height:25,width:25,marginLeft:8}} source= {require('../assets/images/drawerFav.png')} />
           ),
         }}
         name="Favourites"
@@ -66,12 +62,7 @@ function DrawerNavigation({navigation}) {
         options={{
           headerShown: false,
           drawerIcon: () => (
-            <Icon
-              style={{marginLeft: 5}}
-              name="chatbox-outline"
-              size={28}
-              color="white"
-            />
+            <Image style={{height:25,width:25,marginLeft:10}} source= {require('../assets/images/feedback.png')} />
           ),
         }}
         name="Feedback"
@@ -81,12 +72,7 @@ function DrawerNavigation({navigation}) {
         options={{
           headerShown: false,
           drawerIcon: () => (
-            <Icon
-              style={{marginLeft: 5}}
-              name="information-circle-outline"
-              size={28}
-              color="white"
-            />
+            <Image style={{height:25,width:25,marginLeft:8}} source={require('../assets/images/aboutUs.png')} />
           ),
         }}
         name="About Us"

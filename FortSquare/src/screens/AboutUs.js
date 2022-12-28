@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { aboutUs } from '../services/UserCredentials';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 function AboutUs({navigation}) {
   const [about,setAbout]= useState('')
@@ -21,6 +22,7 @@ function AboutUs({navigation}) {
 
   return (
     <SafeAreaView style={styles.aboutUs}>
+    <KeyboardAwareScrollView>
       <View style={styles.reviewHeader}>
         <TouchableOpacity
           onPress={() => {
@@ -40,6 +42,7 @@ function AboutUs({navigation}) {
       </View> : <View style={{flex:1,alignItems:"center",justifyContent:"center"}}>
             <ActivityIndicator size= "large" color="purple" />
       </View>}
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
