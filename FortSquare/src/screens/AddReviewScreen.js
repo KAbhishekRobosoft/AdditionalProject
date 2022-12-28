@@ -86,6 +86,8 @@ function AddReviewScreen({navigation, route}) {
         setReviewing(true);
         setImgArray([]);
         setText('');
+        dispatch(setInitialState2(state2))
+        navigation.goBack()
         Toast.show('Review Added');
       }
     }
@@ -116,7 +118,6 @@ function AddReviewScreen({navigation, route}) {
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
-              if (revewing === true) dispatch(setInitialState2(state2));
               navigation.goBack();
             }}>
             <View style={styles.iconHeader}>

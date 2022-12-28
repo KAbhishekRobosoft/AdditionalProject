@@ -30,6 +30,7 @@ import {setInitialState1} from '../redux/AuthSlice';
 import Share from 'react-native-share';
 
 function ParticularHotel({navigation, route}) {
+
   const [data, setData] = useState({});
   const [favourites, setFavourites] = useState([]);
   const authData = useSelector(state => state.auth);
@@ -545,7 +546,7 @@ const styles = StyleSheet.create({
   particularText: {
     fontFamily: 'Avenir Medium',
     fontSize: 22,
-    color: '#b4b4b4',
+    color: 'white',
   },
 
   submitRate: {
@@ -619,7 +620,7 @@ const styles = StyleSheet.create({
   hotelName: {
     fontFamily: 'Avenir Book',
     color: 'white',
-    lineHeight: 21,
+    lineHeight: 22,
     fontSize: 18,
   },
 

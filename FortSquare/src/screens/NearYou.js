@@ -15,7 +15,7 @@ import Geolocation from '@react-native-community/geolocation';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 import {getNearPlace} from '../services/Places';
-import {setLoader, desetLoader, setInitialState} from '../redux/AuthSlice';
+import {desetLoader, setInitialState} from '../redux/AuthSlice';
 import {setCoordinate} from '../redux/AuthSlice';
 import {getVerifiedKeys} from '../utils/Functions';
 import {setFavourites} from '../redux/AuthSlice';
@@ -155,8 +155,6 @@ function NearYou({navigation}) {
                 longitude: currentLongitude,
               }}
               onDragEnd={e => alert(JSON.stringify(e.nativeEvent.coordinate))}
-              title={'Test Marker'}
-              description={'This is a description of the marker'}
             />
           </MapView>
         ) : (

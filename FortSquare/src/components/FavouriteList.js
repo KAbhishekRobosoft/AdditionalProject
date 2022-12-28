@@ -130,7 +130,7 @@ function FavouriteList({
                 {Math.round(
                   ((item.distance.calculated / 1609) * 100) / 100,
                 ).toFixed(2)}{' '}
-                meter
+                Km
               </Text>
             </View>
             <View style={styles.addressView}>
