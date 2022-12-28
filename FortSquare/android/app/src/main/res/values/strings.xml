@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">FortSquare</string>
+    <string name="launcher">launcher</string>
 </resources>
