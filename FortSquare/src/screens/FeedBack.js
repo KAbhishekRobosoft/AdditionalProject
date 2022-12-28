@@ -8,7 +8,6 @@ import {
   Image,
   useWindowDimensions,
   TextInput,
-  ScrollView,
 } from 'react-native';
 import {addFeedback} from '../services/UserCredentials';
 import {LargeButton} from '../components/Button';

@@ -35,13 +35,15 @@ function ParticularHotel({navigation, route}) {
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const state = useSelector(state => state.auth.initialState);
-  const loading = useSelector(state => state.auth.stateLoader);
   const {height, width} = useWindowDimensions();
   const [modal, setModal] = useState(false);
   const [rate, setRate] = useState(0);
   const [favChanged, setFavChanged] = useState(false);
   const state1 = useSelector(state => state.auth.initialState1);
   const [rateChanged, setRateChanged] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [loading1, setLoading1] = useState(false);
+  const [loading2, setLoading2] = useState(false);
 
   const ratingCompleted = async rating => {
     try {
@@ -53,6 +55,7 @@ function ParticularHotel({navigation, route}) {
           Toast.show('You have already rated');
         }
         if (response.message === 'Rating added') {
+          dispatch(setInitialState(state))
           Toast.show('Rated successfully');
         }
       }
@@ -121,7 +124,7 @@ function ParticularHotel({navigation, route}) {
         }
       }, 500);
     }
-  }, [state]);
+  }, [state1]);
 
   const share = async () => {
     shareOptions = {
@@ -147,7 +150,7 @@ function ParticularHotel({navigation, route}) {
       dispatch(setToken(cred));
       const resp = await addFavourites(id, cred);
       if (resp !== undefined) {
-        dispatch(setInitialState(state));
+        dispatch(setInitialState1(state1));
       }
     } catch (er) {
       Toast.show('Network Error');
@@ -199,6 +202,7 @@ function ParticularHotel({navigation, route}) {
                         <TouchableOpacity
                           onPress={() => {
                             handleFavourite(route.params.id);
+                            setLoading(true)
                             setFavChanged(true);
                           }}>
                           <View style={styles.iconHeader} key={route.params.id}>
@@ -213,11 +217,12 @@ function ParticularHotel({navigation, route}) {
                           <ActivityIndicator color="yellow" />
                         </View>
                       )
-                    ) : !loading ? (
+                    ) : !loading1 ? (
                       <TouchableOpacity
                         onPress={() => {
                           handleFavourite(route.params.id);
                           setFavChanged(true);
+                          setLoading1(true)
                         }}>
                         <View style={styles.iconHeader} key={route.params.id}>
                           <Image
@@ -231,11 +236,12 @@ function ParticularHotel({navigation, route}) {
                         <ActivityIndicator color="yellow" />
                       </View>
                     )
-                  ) : !loading ? (
+                  ) : !loading2 ? (
                     <TouchableOpacity
                       onPress={() => {
                         handleFavourite(route.params.id);
                         setFavChanged(true);
+                        setLoading2(true)
                       }}>
                       <View style={styles.iconHeader}>
                         <Image

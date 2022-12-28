@@ -14,7 +14,6 @@ import {
   DrawerItemList,
 } from '@react-navigation/drawer';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {logOut} from '../redux/AuthSlice';
 import {useDispatch, u, useSelector} from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
