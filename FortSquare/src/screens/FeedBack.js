@@ -40,14 +40,13 @@ function FeedBack({navigation}) {
         ? 280
         : 280
       : Platform.OS === 'ios'
-      ? 230
+      ? 360
       : 360;
 
   async function addFeedback1() {
     const cred = await getVerifiedKeys(authData.userToken);
     dispatch(setToken(cred));
     const resp = await addFeedback(cred, text);
-    console.log(resp);
     if (resp !== undefined) {
       if (resp.message === 'feedback added successfully') {
         textRef.current.clear();
@@ -60,7 +59,7 @@ function FeedBack({navigation}) {
 
   return (
     <SafeAreaView style={styles.feedBackCon}>
-      <KeyboardAwareScrollView>
+      <KeyboardAwareScrollView bounces={false}>
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {

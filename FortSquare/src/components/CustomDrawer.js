@@ -48,7 +48,7 @@ function CustomDrawer(props) {
         ? 70
         : 70
       : Platform.OS === 'ios'
-      ? 20
+      ? 8
       : 8;
 
   const marginTop =
@@ -57,7 +57,7 @@ function CustomDrawer(props) {
         ? 20
         : 20
       : Platform.OS === 'ios'
-      ? 50
+      ? 30
       : 20;
 
   useEffect(() => {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
   profilePic: {
     height: 80,
     width: 80,
-    marginTop: 30,
+    marginTop: 40,
     borderRadius: 40,
   },
 

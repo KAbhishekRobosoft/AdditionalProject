@@ -5,7 +5,6 @@ import HomePage from '../screens/HomePage';
 import FeedBack from '../screens/FeedBack';
 import AboutUs from '../screens/AboutUs';
 import CustomDrawer from '../components/CustomDrawer';
-import Icon from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import {Image} from 'react-native'
 
