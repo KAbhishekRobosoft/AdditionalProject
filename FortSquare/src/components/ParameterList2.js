@@ -24,7 +24,7 @@ function ParameterList2({navigation}) {
   const [placeData, setPlaceData] = useState([]);
   const authData = useSelector(state => state.auth);
   const state = useSelector(state => state.auth.initialState);
-  const state1= useSelector(state=>state.auth.inititalState1)
+  const state1= useSelector(state=>state.auth.initialState1)
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
