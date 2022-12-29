@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   Modal,
   useWindowDimensions,
+  StatusBar,
 } from 'react-native';
 import {AirbnbRating} from 'react-native-ratings';
 import LinearGradient from 'react-native-linear-gradient';
@@ -30,7 +31,6 @@ import {setInitialState1} from '../redux/AuthSlice';
 import Share from 'react-native-share';
 
 function ParticularHotel({navigation, route}) {
-
   const [data, setData] = useState({});
   const [favourites, setFavourites] = useState([]);
   const authData = useSelector(state => state.auth);
@@ -56,7 +56,8 @@ function ParticularHotel({navigation, route}) {
           Toast.show('You have already rated');
         }
         if (response.message === 'Rating added') {
-          dispatch(setInitialState(state))
+          setModal(false);
+          dispatch(setInitialState(state));
           Toast.show('Rated successfully');
         }
       }
@@ -110,7 +111,7 @@ function ParticularHotel({navigation, route}) {
         Toast.show('Network Error');
       }
     }, 500);
-  }, []);
+  }, [state]);
 
   useEffect(() => {
     if (authData.userToken !== null) {
@@ -153,6 +154,9 @@ function ParticularHotel({navigation, route}) {
       if (resp !== undefined) {
         dispatch(setInitialState1(state1));
       }
+      if (loading === true) setLoading(false);
+      if (loading1 === true) setLoading1(false);
+      if (loading2 === true) setLoading2(false);
     } catch (er) {
       Toast.show('Network Error');
     }
@@ -160,6 +164,7 @@ function ParticularHotel({navigation, route}) {
 
   return (
     <SafeAreaView style={styles.particularContainer}>
+        <StatusBar backgroundColor="#310D20" />
       {JSON.stringify(data) !== '{}' ? (
         <ScrollView showsVerticalScrollIndicator={false} bounces={false}>
           <ImageBackground
@@ -169,10 +174,6 @@ function ParticularHotel({navigation, route}) {
               <TouchableOpacity
                 onPress={() => {
                   navigation.goBack();
-                  if (favChanged === true) {
-                    dispatch(setInitialState1(state1));
-                  }
-                  if (rateChanged === true) dispatch(setInitialState(state));
                 }}>
                 <View style={styles.iconHeader}>
                   <Image
@@ -202,9 +203,8 @@ function ParticularHotel({navigation, route}) {
                       !loading ? (
                         <TouchableOpacity
                           onPress={() => {
+                            setLoading(true);
                             handleFavourite(route.params.id);
-                            setLoading(true)
-                            setFavChanged(true);
                           }}>
                           <View style={styles.iconHeader} key={route.params.id}>
                             <Image
@@ -221,9 +221,8 @@ function ParticularHotel({navigation, route}) {
                     ) : !loading1 ? (
                       <TouchableOpacity
                         onPress={() => {
+                          setLoading1(true);
                           handleFavourite(route.params.id);
-                          setFavChanged(true);
-                          setLoading1(true)
                         }}>
                         <View style={styles.iconHeader} key={route.params.id}>
                           <Image
@@ -240,9 +239,8 @@ function ParticularHotel({navigation, route}) {
                   ) : !loading2 ? (
                     <TouchableOpacity
                       onPress={() => {
+                        setLoading2(true);
                         handleFavourite(route.params.id);
-                        setFavChanged(true);
-                        setLoading2(true)
                       }}>
                       <View style={styles.iconHeader}>
                         <Image
@@ -257,9 +255,10 @@ function ParticularHotel({navigation, route}) {
                     </View>
                   )
                 ) : (
-                  <TouchableOpacity onPress={()=>{
-                    navigation.navigate('login')
-                  }}>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate('login');
+                    }}>
                     <View style={styles.iconHeader}>
                       <Image
                         style={styles.favouriteImg}
@@ -301,7 +300,7 @@ function ParticularHotel({navigation, route}) {
               <View style={{marginLeft: 38}}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('login')
+                    navigation.navigate('login');
                   }}>
                   <View>
                     <Image
@@ -369,8 +368,6 @@ function ParticularHotel({navigation, route}) {
                   latitudeDelta: 0.1,
                   longitudeDelta: 0.1,
                 }}
-                title={'Test Marker'}
-                description={'This is a description of the marker'}
               />
             </MapView>
             <LinearGradient
@@ -413,7 +410,7 @@ function ParticularHotel({navigation, route}) {
                 borderRadius="0"
                 fontFamily="Avenir Medium"
                 onPress={() => {
-                 navigation.navigate('login')
+                  navigation.navigate('login');
                 }}
               />
             </View>
@@ -447,7 +444,7 @@ function ParticularHotel({navigation, route}) {
                   backgroundColor: 'white',
                 }}>
                 <Text style={styles.ratingText1}>Overall Rating</Text>
-                <Text style={styles.ratingVal}>{data.rating}</Text>
+                <Text style={styles.ratingVal}>{parseFloat(data.rating).toFixed(1)}</Text>
                 <Text style={styles.howRate}>
                   How would you rate your experience?
                 </Text>
@@ -463,7 +460,6 @@ function ParticularHotel({navigation, route}) {
                 <TouchableOpacity
                   onPress={() => {
                     ratingCompleted(rate);
-                    setRateChanged(true);
                   }}
                   style={{
                     height: 70,

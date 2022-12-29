@@ -4,7 +4,8 @@ import {
   StyleSheet,
   PermissionsAndroid,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import ListDisplay from './HotelListDisplay';
 import VirtualList from './VirtualList';
@@ -13,7 +14,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {getParameter} from '../services/Places';
 import Toast from 'react-native-simple-toast';
 import {getVerifiedKeys} from '../utils/Functions';
-import {addFavourites} from '../services/Places';
 import {setToken} from '../redux/AuthSlice';
 import {getFavourites} from '../services/Places';
 import {setFavourites} from '../redux/AuthSlice';
@@ -114,7 +114,7 @@ function ParameterList4({navigation}) {
   };
 
   return placeData.length > 0 ? (
-    <View style={styles.parameterContainer}>
+    <SafeAreaView style={styles.parameterContainer}>
       <VirtualList
         data={placeData}
         renderItem={renderItem}
@@ -123,7 +123,7 @@ function ParameterList4({navigation}) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
       />
-    </View>
+    </SafeAreaView>
   ) : (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <ActivityIndicator size="large" color="purple" />

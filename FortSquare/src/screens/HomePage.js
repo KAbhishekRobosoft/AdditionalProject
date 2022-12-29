@@ -5,12 +5,14 @@ import {
   View,
   Image,
   TouchableOpacity,
+  StatusBar,
 } from 'react-native';
 import TopBar from '../components/TopBar';
 
 function HomePage({navigation}) {
   return (
     <SafeAreaView style={styles.homeContainer}>
+      <StatusBar backgroundColor="#310D20" />
       <View style={styles.homeHeader}>
         <TouchableOpacity
           onPress={() => {

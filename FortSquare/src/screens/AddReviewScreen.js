@@ -8,6 +8,7 @@ import {
   Image,
   useWindowDimensions,
   TextInput,
+  StatusBar
 } from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 import uuid from 'react-native-uuid';
@@ -115,6 +116,7 @@ function AddReviewScreen({navigation, route}) {
   return (
     <KeyboardAwareScrollView enableAutomaticScroll={true}>
       <SafeAreaView style={{flex: 1}}>
+      <StatusBar backgroundColor="#310D20" />
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {

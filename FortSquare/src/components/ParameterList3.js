@@ -4,7 +4,8 @@ import {
   StyleSheet,
   PermissionsAndroid,
   ActivityIndicator,
-  RefreshControl
+  RefreshControl,
+  SafeAreaView
 } from 'react-native';
 import ListDisplay from './HotelListDisplay';
 import VirtualList from './VirtualList';
@@ -113,7 +114,7 @@ function ParameterList3({navigation}) {
   };
 
   return placeData.length > 0 ? (
-    <View style={styles.parameterContainer}>
+    <SafeAreaView style={styles.parameterContainer}>
       <VirtualList
         data={placeData}
         renderItem={renderItem}
@@ -122,7 +123,7 @@ function ParameterList3({navigation}) {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
       />
-    </View>
+    </SafeAreaView>
   ) : (
     <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
       <ActivityIndicator size="large" color="purple" />

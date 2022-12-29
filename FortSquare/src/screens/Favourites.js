@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
+  StatusBar,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import TextInputComponent from '../components/TextInputComponent';
@@ -23,19 +24,17 @@ function Favourites({navigation}) {
   const dispatch = useDispatch();
   const [favourite, setFavourite] = useState([]);
   const coord = useSelector(state => state.auth.setCoord);
-  const [state, setState] = useState(false);
   const state1 = useSelector(state => state.auth.initialState1);
-  const [favChanged, setFavChanged] = useState(false);
+  const [text, setText] = useState('');
 
   useEffect(() => {
     setTimeout(async () => {
       const cred = await getVerifiedKeys(authData.userToken);
       dispatch(setToken(cred));
-      const resp = await searchAllFavourites(cred, coord);
-
+      const resp = await searchTextFavourites(cred, coord, text);
       setFavourite(resp);
     }, 500);
-  }, [state1, state]);
+  }, [state1]);
 
   async function searchFavourite(text) {
     const cred = await getVerifiedKeys(authData.userToken);
@@ -47,12 +46,9 @@ function Favourites({navigation}) {
   const renderItem = ({item}) => {
     return (
       <FavouriteList
-        state={state}
-        setState={setState}
         item={item}
-        state1= {state1}
+        state1={state1}
         navigation={navigation}
-        setFavChanged={setFavChanged}
         name="search"
       />
     );
@@ -62,12 +58,10 @@ function Favourites({navigation}) {
   const right = width > height ? (Platform.OS === 'ios' ? 40 : 30) : 0;
   return (
     <SafeAreaView style={styles.favouriteContainer}>
+       <StatusBar backgroundColor="#310D20" />
       <View style={styles.searchHeader}>
         <TouchableOpacity
           onPress={() => {
-            if (favChanged === true) dispatch(setInitialState1(state1));
-            setState(false);
-            setFavChanged(false)
             navigation.goBack();
           }}>
           <View style={styles.iconHeader}>
@@ -83,15 +77,17 @@ function Favourites({navigation}) {
             <TextInputComponent
               onChangeText={val => {
                 searchFavourite(val);
+                setText(val);
               }}
               placeholder="Search"
               name="search-outline"
             />
           </View>
         </View>
-        <TouchableOpacity onPress={()=>{
-          navigation.navigate('filter',{name:"favourite"})
-        }}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('filter', {name: 'favourite'});
+          }}>
           <View style={[styles.iconHeader, {marginRight: right}]}>
             <Image
               style={styles.filterIcon}

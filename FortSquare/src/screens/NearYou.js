@@ -7,6 +7,8 @@ import {
   ActivityIndicator,
   Text,
   RefreshControl,
+  StatusBar,
+  SafeAreaView
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import {mapStyle} from '../utils/Functions';
@@ -35,18 +37,6 @@ function NearYou({navigation}) {
   const state1 = useSelector(state => state.auth.initialState1);
   const [refreshing, setRefreshing] = useState(false);
 
-  async function handleFavourite(id) {
-    try {
-      const cred = await getVerifiedKeys(authData.userToken);
-      dispatch(setToken(cred));
-      const resp = await addFavourites(id, cred);
-      if (resp !== undefined) {
-        dispatch(setInitialState(state));
-      }
-    } catch (er) {
-      Toast.show('Network Error');
-    }
-  }
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -163,7 +153,7 @@ function NearYou({navigation}) {
       : 200;
 
   return (
-    <View style={styles.main_container}>
+    <SafeAreaView style={styles.main_container}>
       <View style={[styles.mapView, styles.shadowProp, {height: height1}]}>
         {currentLatitude !== 0 && currentLongitude !== 0 ? (
           <MapView
@@ -208,7 +198,7 @@ function NearYou({navigation}) {
           </View>
         )}
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

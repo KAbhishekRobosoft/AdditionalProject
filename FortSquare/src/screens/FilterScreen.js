@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef,useEffect} from 'react';
 import {
   SafeAreaView,
   View,
@@ -9,6 +9,7 @@ import {
   Text,
   ScrollView,
   Keyboard,
+  StatusBar
 } from 'react-native';
 import TextInputComponent from '../components/TextInputComponent';
 import {TextField} from 'rn-material-ui-textfield';
@@ -21,6 +22,8 @@ import {filterFavourites} from '../services/Places';
 import {getVerifiedKeys} from '../utils/Functions';
 import {setToken} from '../redux/AuthSlice';
 import FavouriteList from '../components/FavouriteList';
+import { setFavourites } from '../redux/AuthSlice';
+import { getFavourites } from '../services/Places';
 
 function FilterScreen({navigation, route}) {
   const authData = useSelector(state => state.auth);
@@ -45,7 +48,7 @@ function FilterScreen({navigation, route}) {
   const [selected8, setSelected8] = useState(false);
   const [distanceText, setDistanceText] = useState('');
   const [filterData, setFilterData] = useState([]);
-  const state1 = useSelector(state => state.auth.inititalState1);
+  const state1 = useSelector(state => state.auth.initialState1);
   const color1 = selected1 ? 'black' : '#b4b4b4';
   const color2 = selected2 ? 'black' : '#b4b4b4';
   const color3 = selected3 ? 'black' : '#b4b4b4';
@@ -108,11 +111,12 @@ function FilterScreen({navigation, route}) {
   };
 
   const renderItem1 = ({item}) => {
-    return <FavouriteList name={route.params.name} item={item} navigation={navigation} />;
+    return <FavouriteList state1={state1} name={route.params.name} item={item} navigation={navigation} />;
   };
 
   return (
     <SafeAreaView style={styles.filterContainer}>
+        <StatusBar backgroundColor="#310D20" />
       <View style={styles.searchHeader}>
         <TouchableOpacity
           onPress={() => {

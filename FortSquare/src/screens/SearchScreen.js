@@ -6,9 +6,9 @@ import {
   TouchableOpacity,
   Image,
   useWindowDimensions,
-
   FlatList,
   Text,
+  StatusBar,
 } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 import TextInputComponent from '../components/TextInputComponent';
@@ -66,6 +66,7 @@ function SearchScreen({navigation}) {
 
   return (
     <SafeAreaView style={styles.searchContainer}>
+      <StatusBar backgroundColor="#310D20" />
       <View style={styles.searchHeader}>
         <TouchableOpacity
           onPress={() => {
@@ -249,7 +250,9 @@ function SearchScreen({navigation}) {
         ) : (
           <View
             style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-                <Text style={{fontFamily:"Avenir Book",fontSize:18}}>No Results found</Text>
+            <Text style={{fontFamily: 'Avenir Book', fontSize: 18}}>
+              No Results found
+            </Text>
           </View>
         ))}
 

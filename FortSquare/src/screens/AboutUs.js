@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ActivityIndicator,
+  StatusBar
 } from 'react-native';
 import { aboutUs } from '../services/UserCredentials';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
@@ -22,6 +23,7 @@ function AboutUs({navigation}) {
 
   return (
     <SafeAreaView style={styles.aboutUs}>
+       <StatusBar backgroundColor="#310D20" />
     <KeyboardAwareScrollView>
       <View style={styles.reviewHeader}>
         <TouchableOpacity
@@ -58,6 +60,7 @@ const styles = StyleSheet.create({
     color: 'white',
     width: '80%',
     textAlign: 'center',
+    right:10
   },
 
   aboutDesc1:{

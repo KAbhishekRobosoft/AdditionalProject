@@ -8,6 +8,7 @@ import {
   Image,
   useWindowDimensions,
   TextInput,
+  StatusBar
 } from 'react-native';
 import {addFeedback} from '../services/UserCredentials';
 import {LargeButton} from '../components/Button';
@@ -58,6 +59,7 @@ function FeedBack({navigation}) {
 
   return (
     <SafeAreaView style={styles.feedBackCon}>
+        <StatusBar backgroundColor="#310D20" />
       <KeyboardAwareScrollView bounces={false}>
         <View style={styles.reviewHeader}>
           <TouchableOpacity

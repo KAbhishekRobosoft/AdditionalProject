@@ -9,6 +9,7 @@ import {
   useWindowDimensions,
   Platform,
   ActivityIndicator,
+  StatusBar
 } from 'react-native';
 import {Formik, Field} from 'formik';
 import CustomField from '../components/CustomField';
@@ -41,6 +42,7 @@ function Login({navigation}) {
       Toast.show('Login successfull');
     } else {
       Toast.show("User doesn't exists");
+      setLoading(false);
     }
   }
 

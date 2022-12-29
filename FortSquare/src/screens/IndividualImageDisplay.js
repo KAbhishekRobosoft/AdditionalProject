@@ -6,6 +6,7 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  StatusBar
 } from 'react-native';
 import moment from 'moment';
 import Share from 'react-native-share'
@@ -25,6 +26,7 @@ function IndividualImageDisplay({navigation, route}) {
 
   return (
     <View style={styles.individualView}>
+          <StatusBar backgroundColor="#310D20" />
       <ImageBackground
         style={styles.backImg}
         resizeMode="cover"

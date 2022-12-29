@@ -6,6 +6,7 @@ import {
   Image,
   TouchableOpacity,
   Text,
+  StatusBar
 } from 'react-native';
 import VirtualList from '../components/VirtualList';
 import ReviewList from '../components/ReviewList';
@@ -36,6 +37,7 @@ function ReviewScreen({navigation, route}) {
 
   return (
     <SafeAreaView style={styles.reviewContainer}>
+      <StatusBar backgroundColor="#310D20" />
       <View style={styles.reviewHeader}>
         <TouchableOpacity
           onPress={() => {

@@ -55,7 +55,7 @@ export const addFavourites = async (id, token) => {
   }
 };
 
-export const searchAllFavourites = async (token, coord) => {
+export const searchAllFavourites = async (token, coord,text) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/searchFavourite`,

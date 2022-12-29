@@ -9,19 +9,12 @@ import {
   Alert,
 } from 'react-native';
 import {getVerifiedKeys} from '../utils/Functions';
-import {setToken} from '../redux/AuthSlice';
+import {setInitialState1, setToken} from '../redux/AuthSlice';
 import {addFavourites} from '../services/Places';
 import {useDispatch, useSelector} from 'react-redux';
 import Toast from 'react-native-simple-toast';
 
-function FavouriteList({
-  item,
-  navigation,
-  state,
-  setState,
-  setFavChanged,
-  name
-}) {
+function FavouriteList({item, navigation, name, state1}) {
   const {height, width} = useWindowDimensions();
   const authData = useSelector(state => state.auth);
   const dispatch = useDispatch();
@@ -31,8 +24,7 @@ function FavouriteList({
     dispatch(setToken(cred));
     const resp = await addFavourites(id, cred);
     if (resp !== undefined) {
-      setState(!state);
-      setFavChanged(true)
+      dispatch(setInitialState1(state1));
     }
   }
 
@@ -81,40 +73,49 @@ function FavouriteList({
           <View style={{width: width2}}>
             <View style={[styles.textWithImage, {width: width1}]}>
               <Text style={styles.listName}>{item.placeName}</Text>
-              {name === "search" && <TouchableOpacity
-                onPress={() => {
-                  Alert.alert('Confirm', 'Are you sure you want to delete ?', [
-                    {
-                      text: 'Yes',
-                      onPress: async () => {
-                        deleteFavourite(item.placeId);
-                        setFavChanged(true);
-                      },
-                    },
-                    {
-                      text: 'No',
-                      onPress: () => {
-                        Toast.show('Task declined');
-                      },
-                    },
-                  ]);
-                }}>
-                <Image
-                  style={styles.favouriteImg}
-                  source={require('../assets/images/close_icon_grey_hdpi.png')}
-                />
-              </TouchableOpacity>}
+              {name === 'search' && (
+                <TouchableOpacity
+                  onPress={() => {
+                    Alert.alert(
+                      'Confirm',
+                      'Are you sure you want to delete ?',
+                      [
+                        {
+                          text: 'Yes',
+                          onPress: async () => {
+                            deleteFavourite(item.placeId);
+                          },
+                        },
+                        {
+                          text: 'No',
+                          onPress: () => {
+                            Toast.show('Task declined');
+                          },
+                        },
+                      ],
+                    );
+                  }}>
+                  <Image
+                    style={styles.favouriteImg}
+                    source={require('../assets/images/close_icon_grey_hdpi.png')}
+                  />
+                </TouchableOpacity>
+              )}
             </View>
-            {item.rating >= 4 && <View style={styles.ratingView1}>
-              <Text style={styles.listRating}>
-                {parseFloat(item.rating * 2).toFixed(1)}
-              </Text>
-            </View>}
-            {item.rating < 4 && <View style={styles.ratingView}>
-              <Text style={styles.listRating}>
-                {parseFloat(item.rating * 2).toFixed(1)}
-              </Text>
-            </View>}
+            {item.rating >= 4 && (
+              <View style={styles.ratingView1}>
+                <Text style={styles.listRating}>
+                  {parseFloat(item.rating * 2).toFixed(1)}
+                </Text>
+              </View>
+            )}
+            {item.rating < 4 && (
+              <View style={styles.ratingView}>
+                <Text style={styles.listRating}>
+                  {parseFloat(item.rating * 2).toFixed(1)}
+                </Text>
+              </View>
+            )}
             <View style={styles.typeDist}>
               <Text style={styles.typeText}>
                 Indian .{' '}
@@ -160,7 +161,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
     elevation: 2,
   },
-    ratingView1: {
+  ratingView1: {
     backgroundColor: '#7dd350',
     width: '11%',
     height: '16%',
@@ -170,7 +171,6 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     justifyContent: 'center',
   },
-
 
   listImg: {
     height: 125,

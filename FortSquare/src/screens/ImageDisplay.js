@@ -6,7 +6,8 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
-  ScrollView
+  ScrollView,
+  StatusBar
 } from 'react-native';
 import axios from 'axios';
 import uuid from 'react-native-uuid';
@@ -75,6 +76,7 @@ const ImageDisplay = ({navigation, route}) => {
 
   return (
     <SafeAreaView style={{flex: 1,backgroundColor:"black"}}>
+      <StatusBar backgroundColor="#310D20" />
         <View style={styles.reviewHeader}>
           <TouchableOpacity
             onPress={() => {
